@@ -2,18 +2,18 @@
   <nav class="navbar" :class="{ 'scrolled': isScrolled }">
     <div class="container nav-content">
       <div class="logo">
-        <div class="logo-placeholder">B</div>
+        <img src="/src/assets/bookmarkoLogo.png" alt="Bookmarko Logo" class="logo-image" />
         <span class="logo-text">Bookmarko</span>
       </div>
       
-      <div class="nav-links">
+      <div class="nav-links" v-if="showNavLinks">
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#blog">Blog</a>
         <a href="#about">About</a>
       </div>
       
-      <div class="nav-actions">
+      <div class="nav-actions" v-if="showJoinButton">
         <button class="btn-primary">Join Waitlist</button>
       </div>
       
@@ -30,6 +30,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
+const showNavLinks = ref(false); // Hidden per user request
+const showJoinButton = ref(false); // Hidden per user request
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20;
@@ -78,16 +80,11 @@ onUnmounted(() => {
   color: var(--text);
 }
 
-.logo-placeholder {
+.logo-image {
   width: 40px;
   height: 40px;
-  background-color: var(--primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-size: 1.25rem;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .nav-links {

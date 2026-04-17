@@ -5,13 +5,14 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <div class="logo inverted">
-            <div class="logo-placeholder">B</div>
+            <img src="/src/assets/bookmarkoLogo.png" alt="Bookmarko Logo" class="logo-image" />
             <span class="logo-text">Bookmarko</span>
           </div>
-          <p class="brand-tagline">Your personal library for the digital age. Save what matters, forget the rest.</p>
+          <p class="brand-tagline">Because your brain deserves better than 100 open tabs. Your digital sanctuary for great reads. 🚀✨</p>
         </div>
         
-        <div class="footer-links-group">
+        <div class="footer-links-group" v-if="false">
+          <!-- Hidden per user request -->
           <h3>Product</h3>
           <ul>
             <li><a href="#">Features</a></li>
@@ -21,7 +22,8 @@
           </ul>
         </div>
         
-        <div class="footer-links-group">
+        <div class="footer-links-group" v-if="false">
+          <!-- Hidden per user request -->
           <h3>Company</h3>
           <ul>
             <li><a href="#">About Us</a></li>
@@ -31,9 +33,8 @@
         </div>
         
         <div class="footer-links-group">
-          <h3>Support</h3>
+          <h3>Legal</h3>
           <ul>
-            <li><a href="#">Help Center</a></li>
             <li><a href="#">Privacy Policy</a></li>
             <li><a href="#">Terms of Service</a></li>
           </ul>
@@ -41,12 +42,7 @@
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2026 Bookmarko Inc. Built with love for readers.</p>
-        <div class="social-links">
-          <a href="#" aria-label="Twitter">Twitter</a>
-          <a href="#" aria-label="Instagram">Instagram</a>
-          <a href="#" aria-label="LinkedIn">LinkedIn</a>
-        </div>
+        <p class="footer-bottom-text">&copy; 2026 Bookmarko Inc. Built with love for readers.</p>
       </div>
     </div>
   </footer>
@@ -124,12 +120,24 @@
 
 .footer-bottom {
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  /* Increased border opacity so the line is actually visible */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #000000;
-  font-size: 0.875rem;
+  
+  /* Force white and improve readability */
+  color: #FFFFFF !important; 
+  font-weight: 600;
+  font-size: 0.9rem;
+  
+  /* This helps text stand out against vibrant backgrounds */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.footer-bottom-text {
+  color: #FFFFFF;
 }
 
 .social-links {
@@ -147,15 +155,11 @@
   color: white;
 }
 
-.logo-placeholder {
+.logo-image {
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-size: 1.25rem;
-  font-weight: 800;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 @media (max-width: 900px) {

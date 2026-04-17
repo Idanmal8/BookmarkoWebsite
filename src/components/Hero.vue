@@ -2,8 +2,8 @@
   <section class="hero">
     <div class="container hero-content">
       <div class="hero-text-area">
-        <h1 class="animate-up">Save your wisdom like writing in <span class="accent">Apple Notes.</span></h1>
-        <p class="animate-up delay-1">Bookmarko seamlessly captures links, annotations, and thoughts. The ultimate home for your digital reading experience.</p>
+        <h1 class="animate-up">Ready to rewire your brain again with <span class="accent">bookmarko.</span></h1>
+        <p class="animate-up delay-1">We want to make you read again and reading great to maintain your health and focus for the rest of your life.</p>
         
         <div class="waitlist-form animate-up delay-2">
           <div class="input-group">
