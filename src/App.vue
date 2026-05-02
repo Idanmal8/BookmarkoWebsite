@@ -2,9 +2,10 @@
   <div class="app-wrapper">
     <Navbar />
     <main>
-      <Hero />
+      <EmailConfirmed v-if="isConfirmed" />
+      <Hero v-else />
     </main>
-    <Footer />
+    <Footer v-if="!isConfirmed" />
   </div>
 </template>
 
@@ -12,6 +13,10 @@
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import Footer from './components/Footer.vue'
+import EmailConfirmed from './components/EmailConfirmed.vue'
+
+const params = new URLSearchParams(window.location.search)
+const isConfirmed = params.has('confirmed') || window.location.hash === '#confirmed'
 </script>
 
 <style>
