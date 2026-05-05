@@ -35,8 +35,8 @@
         <div class="footer-links-group">
           <h3>Legal</h3>
           <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li><a href="/privacy.html">Privacy Policy</a></li>
+            <li><a href="/terms.html">Terms of Service</a></li>
           </ul>
         </div>
       </div>
