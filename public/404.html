@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bookmarko</title>
+    <!--
+      SPA GitHub Pages fallback (rafgraph/spa-github-pages technique).
+      Encodes the requested path/query as ?p=…&q=… and redirects to /,
+      where index.html reverses the encoding and restores the original URL.
+    -->
+    <script>
+      (function () {
+        var segmentCount = 0; // 0 because this is served from the apex (custom domain or user.github.io root)
+        var l = window.location;
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
+          l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
+          (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
