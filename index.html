@@ -16,18 +16,20 @@
     <script>
       (function () {
         var l = window.location;
-        if (l.search && l.search.indexOf('&p=/') !== -1) {
-          var q = l.search.slice(1).split('&').reduce(function (acc, kv) {
-            var i = kv.indexOf('=');
-            var k = i < 0 ? kv : kv.slice(0, i);
-            var v = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/~and~/g, '&'));
-            acc[k] = v;
-            return acc;
-          }, {});
-          if (q.p) {
-            var newUrl = l.pathname.slice(0, -1) + q.p + (q.q ? '?' + q.q : '') + l.hash;
-            window.history.replaceState(null, '', newUrl);
-          }
+        if (!l.search) return;
+        var raw = l.search.slice(1); // strip leading "?"
+        if (raw.indexOf('p=/') !== 0 && raw.indexOf('&p=/') === -1) return;
+        var q = raw.split('&').reduce(function (acc, kv) {
+          var i = kv.indexOf('=');
+          var k = i < 0 ? kv : kv.slice(0, i);
+          var v = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/~and~/g, '&'));
+          acc[k] = v;
+          return acc;
+        }, {});
+        if (q.p) {
+          var base = l.pathname.endsWith('/') ? l.pathname.slice(0, -1) : l.pathname;
+          var newUrl = base + q.p + (q.q ? '?' + q.q : '') + l.hash;
+          window.history.replaceState(null, '', newUrl);
         }
       })();
     </script>
