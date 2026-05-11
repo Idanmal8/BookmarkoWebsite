@@ -12,6 +12,25 @@
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@700&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- SPA GitHub Pages fallback: restore the original path that 404.html encoded into the query string. -->
+    <script>
+      (function () {
+        var l = window.location;
+        if (l.search && l.search.indexOf('&p=/') !== -1) {
+          var q = l.search.slice(1).split('&').reduce(function (acc, kv) {
+            var i = kv.indexOf('=');
+            var k = i < 0 ? kv : kv.slice(0, i);
+            var v = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/~and~/g, '&'));
+            acc[k] = v;
+            return acc;
+          }, {});
+          if (q.p) {
+            var newUrl = l.pathname.slice(0, -1) + q.p + (q.q ? '?' + q.q : '') + l.hash;
+            window.history.replaceState(null, '', newUrl);
+          }
+        }
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
