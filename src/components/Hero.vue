@@ -32,7 +32,9 @@
             </label>
           </div>
           
-          <p v-if="submitted" class="success-msg">Thanks for joining! We'll be in touch soon.</p>
+          <p v-if="submitted && !alreadyJoined" class="success-msg">Thanks for joining! We'll be in touch soon.</p>
+          <p v-if="submitted && alreadyJoined" class="success-msg">You're already on the list — we'll be in touch soon.</p>
+          <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
         </div>
       </div>
       
@@ -63,24 +65,28 @@ const email = ref('');
 const subscribeNewsletter = ref(true);
 const isSubmitting = ref(false);
 const submitted = ref(false);
+const alreadyJoined = ref(false);
+const errorMsg = ref<string | null>(null);
 
 const store = useWaitlistStore();
 
 const handleJoin = async () => {
+  errorMsg.value = null;
   if (!email.value || !email.value.includes('@')) {
-    alert('Please enter a valid email');
+    errorMsg.value = 'Please enter a valid email';
     return;
   }
-  
+
   isSubmitting.value = true;
-  const result = await store.joinWaitlist(email.value, subscribeNewsletter.value);
+  const result = await store.joinWaitlist(email.value.trim(), subscribeNewsletter.value);
   isSubmitting.value = false;
-  
+
   if (result.success) {
     submitted.value = true;
+    alreadyJoined.value = result.alreadyJoined;
     email.value = '';
   } else {
-    alert(store.error || 'Something went wrong. Please try again.');
+    errorMsg.value = store.error || 'Something went wrong. Please try again.';
   }
 };
 </script>
@@ -187,6 +193,13 @@ const handleJoin = async () => {
   color: #10b981;
   font-size: 1rem;
   font-weight: 600;
+  margin-top: 1rem;
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 0.9375rem;
+  font-weight: 500;
   margin-top: 1rem;
 }
 
