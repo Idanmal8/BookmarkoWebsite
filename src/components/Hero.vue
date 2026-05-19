@@ -1,315 +1,319 @@
 <template>
-  <section class="hero">
-    <div class="container hero-content">
-      <div class="hero-text-area">
-        <h1 class="animate-up">Ready to rewire your brain again with <span class="accent">bookmarko.</span></h1>
-        <p class="animate-up delay-1">We want to make you read again and reading great to maintain your health and focus for the rest of your life.</p>
-        
-        <div class="waitlist-form animate-up delay-2">
-          <div class="input-group">
-            <input 
-              v-model="email" 
-              type="email" 
-              placeholder="Enter your email" 
-              class="input-field"
-              :disabled="isSubmitting"
-            />
-            <button 
-              class="btn-primary" 
-              @click="handleJoin" 
-              :disabled="isSubmitting"
-            >
-              {{ isSubmitting ? 'Joining...' : 'Join Waitlist' }}
-            </button>
+  <section class="hero" id="top">
+    <div class="hero__shelf hero__shelf--left">
+      <Bookshelf side="left" :width="180" :height="900" :shelves="8" />
+      <div class="hero__shelf-fade hero__shelf-fade--bottom" />
+    </div>
+
+    <div class="hero__center">
+      <h1 class="hero__title">
+        Welcome <em>home,</em><br />
+        reader.
+      </h1>
+
+      <p class="hero__sub">
+        Bookmarko is the warm, well-lit shelf for everything you're reading —
+        the novel by your bed, the longform you saved on the train, the chapter
+        you keep meaning to finish. One place. No 47 open tabs.
+      </p>
+
+      <form class="hero__form" id="waitlist" @submit.prevent="submit" v-if="state !== 'success'">
+        <div class="field">
+          <input
+            type="email"
+            class="field__input"
+            placeholder="you@quietreader.com"
+            v-model="email"
+            :disabled="state === 'submitting'"
+            @input="state === 'error' && (state = 'idle')"
+          />
+          <button type="submit" class="field__btn" :disabled="state === 'submitting'">
+            {{ state === 'submitting' ? 'Saving your seat…' : 'Pull up a chair' }}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+        <div v-if="err" class="field__err" role="alert">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4" />
+            <path d="M7 4v3.5M7 9.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
+          <span>{{ err }}</span>
+        </div>
+        <div class="hero__form-meta">
+          <span>No card · No spam · Just a quieter way to read</span>
+        </div>
+      </form>
+
+      <div v-else class="hero__form field__success-wrap">
+        <div class="field__success">
+          <div class="field__success-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </div>
-          <p class="sub-text">No credit card required</p>
-          
-          <div class="newsletter-option">
-            <label class="checkbox-container">
-              <input v-model="subscribeNewsletter" type="checkbox" />
-              <span class="checkmark"></span>
-              Sign in to the newsletter also
-            </label>
+          <div>
+            <strong>{{ alreadyJoined ? "You're on the list." : 'Seat saved.' }}</strong>
+            <span>We'll write when the doors open.</span>
           </div>
-          
-          <p v-if="submitted && !alreadyJoined" class="success-msg">Thanks for joining! We'll be in touch soon.</p>
-          <p v-if="submitted && alreadyJoined" class="success-msg">You're already on the list — we'll be in touch soon.</p>
-          <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
         </div>
       </div>
-      
-      <div class="hero-image-area animate-fade-in delay-1">
-        <div class="mockup-container">
-          <!-- Placeholder for the video/mockup -->
-          <div class="mockup-inner">
-            <div class="video-placeholder">
-              <div class="play-btn">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 5V19L19 12L8 5Z" fill="white"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-shadow"></div>
+
+      <div class="hero__stats">
+        <div class="stat">
+          <span class="stat__num" :class="{ 'stat__num--bumped': bumped }">{{ formattedCount }}</span>
+          <span class="stat__label">readers waiting</span>
+        </div>
+        <div class="stat__divider" />
+        <div class="stat">
+          <span class="stat__num">∞</span>
+          <span class="stat__label">tabs you'll close</span>
+        </div>
+        <div class="stat__divider" />
+        <div class="stat">
+          <span class="stat__num">1</span>
+          <span class="stat__label">quiet shelf</span>
         </div>
       </div>
+    </div>
+
+    <div class="hero__shelf hero__shelf--right">
+      <Bookshelf side="right" :width="180" :height="900" :shelves="8" />
+      <div class="hero__shelf-fade hero__shelf-fade--bottom" />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useWaitlistStore } from '@/stores/waitlist';
+import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import Bookshelf from './Bookshelf.vue'
+import { useWaitlistStore } from '@/stores/waitlist'
 
-const email = ref('');
-const subscribeNewsletter = ref(true);
-const isSubmitting = ref(false);
-const submitted = ref(false);
-const alreadyJoined = ref(false);
-const errorMsg = ref<string | null>(null);
+const store = useWaitlistStore()
+const { waitingCount } = storeToRefs(store)
+const formattedCount = computed(() => waitingCount.value.toLocaleString('en-US'))
 
-const store = useWaitlistStore();
+const email = ref('')
+const state = ref<'idle' | 'submitting' | 'success' | 'error'>('idle')
+const err = ref('')
+const alreadyJoined = ref(false)
+const bumped = ref(false)
 
-const handleJoin = async () => {
-  errorMsg.value = null;
-  if (!email.value || !email.value.includes('@')) {
-    errorMsg.value = 'Please enter a valid email';
-    return;
+async function submit() {
+  err.value = ''
+  if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    err.value = 'A real email, please.'
+    state.value = 'error'
+    return
   }
-
-  isSubmitting.value = true;
-  const result = await store.joinWaitlist(email.value.trim(), subscribeNewsletter.value);
-  isSubmitting.value = false;
-
-  if (result.success) {
-    submitted.value = true;
-    alreadyJoined.value = result.alreadyJoined;
-    email.value = '';
+  state.value = 'submitting'
+  const res = await store.joinWaitlist(email.value.trim(), true)
+  if (res.success) {
+    alreadyJoined.value = res.alreadyJoined
+    state.value = 'success'
+    if (!res.alreadyJoined) {
+      bumped.value = true
+      window.setTimeout(() => (bumped.value = false), 1200)
+    }
   } else {
-    errorMsg.value = store.error || 'Something went wrong. Please try again.';
+    err.value = store.error || 'Something went wrong. Please try again.'
+    state.value = 'error'
   }
-};
+}
 </script>
 
 <style scoped>
 .hero {
-  padding-top: 10rem;
-  padding-bottom: 8rem;
-  overflow: hidden;
-}
-
-.hero-content {
+  position: relative;
+  min-height: 100vh;
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 4rem;
-  align-items: center;
+  grid-template-columns: 180px 1fr 180px;
+  gap: 24px;
+  align-items: stretch;
+  padding: 0 0 64px;
 }
-
-.hero-text-area {
-  max-width: 600px;
+.hero__center {
+  max-width: 560px;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  padding: 140px 24px 32px;
 }
-
-.accent {
-  color: var(--primary);
-}
-
-.waitlist-form {
-  margin-top: 3rem;
-}
-
-.input-group {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.input-group .input-field {
-  flex: 1;
-}
-
-.newsletter-option {
-  margin-bottom: 1rem;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
+.hero__shelf {
   position: relative;
-  padding-left: 35px;
-  cursor: pointer;
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  user-select: none;
-}
-
-.checkbox-container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 24px;
-  width: 24px;
-  background-color: #eee;
-  border-radius: 6px;
-  transition: var(--transition);
-}
-
-.checkbox-container:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-.checkbox-container input:checked ~ .checkmark {
-  background-color: var(--primary);
-}
-
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-container .checkmark:after {
-  left: 9px;
-  top: 5px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-}
-
-.success-msg {
-  color: #10b981;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-}
-
-.error-msg {
-  color: #ef4444;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  margin-top: 1rem;
-}
-
-.sub-text {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin-top: -0.5rem;
-  margin-bottom: 2rem;
-  opacity: 0.8;
-}
-
-.mockup-container {
-  position: relative;
-  padding: 1rem;
-}
-
-.mockup-inner {
-  position: relative;
-  z-index: 2;
-  border-radius: 2.5rem;
-  background: var(--white);
-  padding: 0.75rem;
-  box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.12);
-  border: 4px solid #111;
-  aspect-ratio: 9 / 19;
-  max-width: 320px;
-  margin: 0 auto;
+  height: 100%;
+  min-height: 100vh;
+  align-self: stretch;
   overflow: hidden;
 }
-
-.video-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.hero__shelf-fade {
+  position: absolute; left: 0; right: 0;
+  height: 120px;
+  pointer-events: none;
+}
+.hero__shelf-fade--bottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--paper) 0%, rgba(247,249,252,.7) 50%, transparent 100%);
 }
 
-.play-btn {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
+.hero__eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: .04em;
+  text-transform: lowercase;
+  padding: 6px 14px;
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  margin-bottom: 32px;
+  white-space: nowrap;
+}
+.hero__eyebrow-dot {
+  width: 7px; height: 7px;
+  background: var(--accent);
   border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(81,112,255,.18);
+}
+.hero__title {
+  font-family: 'EB Garamond', serif;
+  font-weight: 500;
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+.hero__title em {
+  font-style: italic;
+  color: #fff;
+  font-weight: 400;
+}
+.hero__sub {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  font-weight: 500;
+  max-width: 440px;
+  margin: 0 auto 32px;
+}
+
+.hero__form { max-width: 460px; margin: 0 auto; }
+.field {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px;
+  box-shadow: var(--shadow-soft);
+}
+.field__input {
+  flex: 1;
+  border: 0; background: transparent;
+  padding: 10px 18px;
+  font: inherit; font-size: 15px;
+  color: var(--ink);
+  outline: none;
+}
+.field__input::placeholder { color: var(--ink-mute); }
+.field__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  padding: 10px 18px;
+  font: inherit; font-size: 14px; font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+.field__btn:hover { background: var(--accent-deep); transform: translateX(2px); }
+.field__btn:disabled { opacity: .6; cursor: wait; }
+.field__err {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: #FDECE7;
+  color: #B54A3A;
+  border: 1px solid #F1C8BD;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  animation: errIn .3s cubic-bezier(.16,.84,.44,1) both;
+}
+@keyframes errIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero__form-meta {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  letter-spacing: .01em;
+}
+.field__success {
+  display: flex; align-items: center; gap: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 16px 20px;
+  text-align: left;
+  box-shadow: var(--shadow-soft);
+  animation: fadeInUp .5s cubic-bezier(.16,.84,.44,1) both;
+}
+.field__success-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.field__success strong {
+  display: block; font-size: 15px; color: var(--ink); font-weight: 700;
+}
+.field__success span {
+  display: block; font-size: 13px; color: var(--ink-soft);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.play-btn:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.3);
+.hero__stats {
+  margin-top: 40px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
 }
-
-.mockup-shadow {
-  position: absolute;
-  bottom: -20px;
-  left: 10%;
-  right: 10%;
-  height: 40px;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
-  z-index: 1;
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat__num {
+  font-family: 'EB Garamond', serif;
+  font-size: 24px; font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  transition: color .3s;
+  display: inline-block;
 }
-
-/* Animations */
-.animate-up {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideUp 0.8s forwards ease-out;
+.stat__num--bumped {
+  color: var(--accent-deep);
+  animation: countBump .9s cubic-bezier(.16,.84,.44,1);
 }
-
-.animate-fade-in {
-  opacity: 0;
-  animation: fadeIn 1.2s forwards ease-out;
+@keyframes countBump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
-
-.delay-1 { animation-delay: 0.2s; }
-.delay-2 { animation-delay: 0.4s; }
-
-@keyframes slideUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.stat__label {
+  font-size: 12px;
+  color: var(--ink-mute);
+  letter-spacing: .04em;
 }
+.stat__divider { width: 1px; height: 32px; background: var(--line); }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 900px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
-  .hero-text-area {
-    margin: 0 auto;
-  }
-  
-  .input-group {
-    flex-direction: column;
-  }
-  
-  .checkbox-container {
-    justify-content: center;
-  }
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; padding-top: 80px; }
+  .hero__shelf { display: none; }
 }
 </style>

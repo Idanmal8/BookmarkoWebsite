@@ -1,116 +1,79 @@
 <template>
-  <nav class="navbar" :class="{ 'scrolled': isScrolled }">
-    <div class="container nav-content">
-      <div class="logo">
-        <img src="/src/assets/bookmarkoLogo.png" alt="Bookmarko Logo" class="logo-image" />
-        <span class="logo-text">Bookmarko</span>
-      </div>
-      
-      <div class="nav-links" v-if="showNavLinks">
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#blog">Blog</a>
-        <a href="#about">About</a>
-      </div>
-      
-      <div class="nav-actions" v-if="showJoinButton">
-        <button class="btn-primary">Join Waitlist</button>
-      </div>
-      
-      <div class="mobile-menu-btn" @click="isMobileMenuOpen = !isMobileMenuOpen">
-        <span></span>
-        <span></span>
-      </div>
+  <nav class="nav" :class="{ 'nav--scrolled': scrolled }">
+    <a href="/" class="nav__brand">
+      <img src="/src/assets/bookmarkoLogo.png" alt="" class="nav__logo" />
+      <span class="nav__wordmark">Bookmarko</span>
+    </a>
+    <div class="nav__links" v-if="variant === 'home'">
+      <a href="#how">How it works</a>
+      <a href="#ginie">Ask Ginie</a>
+      <a href="#now-reading">Now reading</a>
+      <a href="#waitlist" class="nav__cta">Join the waitlist</a>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const isScrolled = ref(false);
-const isMobileMenuOpen = ref(false);
-const showNavLinks = ref(false); // Hidden per user request
-const showJoinButton = ref(false); // Hidden per user request
+withDefaults(defineProps<{ variant?: 'home' | 'plain' }>(), { variant: 'home' })
 
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20;
-};
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
+const scrolled = ref(false)
+const onScroll = () => (scrolled.value = window.scrollY > 40)
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 </script>
 
 <style scoped>
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  transition: var(--transition);
-  padding: 1.5rem 0;
-  background-color: transparent;
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 36px;
+  background: #5170ff;
+  transition: padding .3s;
 }
-
-.navbar.scrolled {
-  background-color: rgba(249, 250, 251, 0.8);
-  backdrop-filter: blur(12px);
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.nav-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--text);
-}
-
-.logo-image {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 2.5rem;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: var(--text-secondary);
+.nav--scrolled { padding: 10px 36px; }
+.nav__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; }
+.nav__logo { width: 36px; height: 36px; object-fit: contain; }
+.nav__wordmark {
+  font-family: 'EB Garamond', serif;
   font-weight: 600;
-  font-size: 1rem;
-  transition: var(--transition);
+  font-size: 22px;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.nav__links {
+  display: flex; align-items: center; gap: 24px;
+  flex-wrap: nowrap;
+}
+.nav__links a {
+  text-decoration: none;
+  color: rgba(255,255,255,.78);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color .2s;
+  white-space: nowrap;
+}
+.nav__links a:hover { color: #fff; }
+.nav__cta {
+  background: #fff;
+  color: var(--accent) !important;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 600 !important;
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+.nav__cta:hover {
+  background: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -6px rgba(0,0,0,.25);
 }
 
-.nav-links a:hover {
-  color: var(--primary);
+@media (max-width: 1040px) {
+  .nav__links a:not(.nav__cta) { display: none; }
 }
-
-.mobile-menu-btn {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .nav-links {
-    display: none;
-  }
+@media (max-width: 760px) {
+  .nav { padding: 14px 18px; }
 }
 </style>

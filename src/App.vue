@@ -1,11 +1,18 @@
 <template>
-  <div class="app-wrapper">
-    <Navbar />
+  <div class="app-wrapper" :class="{ home: route === 'home' }">
+    <Navbar :variant="route === 'home' ? 'home' : 'plain'" />
     <main>
       <DeleteAccountConfirm v-if="route === 'delete-confirm'" />
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
-      <Hero v-else />
+      <template v-else>
+        <Hero />
+        <Features />
+        <GinieSection />
+        <NowReading />
+        <Quote />
+        <Finale />
+      </template>
     </main>
     <Footer v-if="route !== 'email-confirmed'" />
   </div>
@@ -14,6 +21,11 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
+import Features from './components/Features.vue'
+import GinieSection from './components/GinieSection.vue'
+import NowReading from './components/NowReading.vue'
+import Quote from './components/Quote.vue'
+import Finale from './components/Finale.vue'
 import Footer from './components/Footer.vue'
 import EmailConfirmed from './components/EmailConfirmed.vue'
 import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
@@ -43,10 +55,5 @@ const route = resolveRoute()
 
 main {
   flex: 1;
-}
-
-/* Global scroll smoothing */
-html {
-  scroll-behavior: smooth;
 }
 </style>
