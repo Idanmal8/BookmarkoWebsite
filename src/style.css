@@ -1,4 +1,23 @@
+/* ─── Design tokens ───────────────────────────────────────────────────── */
 :root {
+  /* Brand */
+  --accent: #5170ff;
+  --accent-deep: #3d59e6;
+  --accent-soft: #A5C2F4;
+  --accent-tint: #E2ECFB;
+  --ink: #14193A;
+  --ink-deep: #0E1230;
+  --ink-soft: #3D4670;
+  --ink-mute: #6B7298;
+  --paper: #F7F9FC;
+  --paper-deep: var(--accent-tint);
+  --paper-deepest: #D5E1F4;
+  --line: rgba(20, 25, 58, .1);
+  --line-soft: rgba(20, 25, 58, .05);
+  --shadow-soft: 0 1px 2px rgba(20,25,58,.04), 0 8px 24px rgba(20,25,58,.06);
+  --shadow-warm: 0 30px 60px -30px rgba(81,112,255,.22), 0 14px 30px -20px rgba(20,25,58,.12);
+
+  /* Legacy tokens for delete-account / email-confirmed routes */
   --primary: #5170ff;
   --primary-hover: #3d59e6;
   --bg: #F9FAFB;
@@ -11,26 +30,67 @@
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Raleway', system-ui, -apple-system, sans-serif;
   background-color: var(--bg);
-  color: var(--text);
+  color: var(--ink);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-.logo-text {
-  font-family: 'EB Garamond', serif;
-  letter-spacing: -0.01em;
-  font-size: 1.6rem;
+/* Home wrapper hosts the long vertical gradient (top: brand blue → middle: paper → bottom: deep indigo) */
+.app-wrapper.home {
+  background:
+    linear-gradient(
+      180deg,
+      #5170ff 0%,
+      #5170ff 4%,
+      #A5C2F4 10%,
+      #DEEAFC 15%,
+      var(--paper) 20%,
+      var(--paper) 78%,
+      #C7CDDF 86%,
+      #2D3360 93%,
+      var(--ink-deep) 100%
+    );
 }
 
+/* Paper grain — barely-there */
+.app-wrapper.home::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: .18;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(17,24,39,.05) 1px, transparent 0),
+    radial-gradient(circle at 7px 4px, rgba(17,24,39,.04) 1px, transparent 0);
+  background-size: 14px 14px, 17px 17px;
+}
+
+.serif { font-family: 'EB Garamond', Georgia, serif; }
+
+/* Reveal-on-scroll */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .9s cubic-bezier(.16,.84,.44,1), transform .9s cubic-bezier(.16,.84,.44,1);
+}
+[data-reveal].is-revealed { opacity: 1; transform: translateY(0); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper-deep); }
+::-webkit-scrollbar-thumb { background: rgba(40,30,20,.2); border-radius: 999px; }
+
+/* ─── Legacy helpers for delete-account / email-confirmed routes ──────── */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -72,25 +132,11 @@ button {
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(66, 0, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(81, 112, 255, 0.12);
 }
 
-h1 {
-  font-size: 4rem;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-}
-
-p {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
+.logo-text {
+  font-family: 'EB Garamond', serif;
+  letter-spacing: -0.01em;
+  font-size: 1.6rem;
 }

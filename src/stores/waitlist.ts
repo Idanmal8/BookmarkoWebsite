@@ -7,11 +7,14 @@ type JoinResponse = {
   alreadyJoined: boolean
 }
 
+const BASE_COUNT = 2841
+
 export const useWaitlistStore = defineStore('waitlist', {
   state: () => ({
     isSubmitting: false,
     alreadyJoined: false,
     error: null as string | null,
+    waitingCount: BASE_COUNT,
   }),
   actions: {
     async joinWaitlist(email: string, newsletter: boolean) {
@@ -41,6 +44,7 @@ export const useWaitlistStore = defineStore('waitlist', {
 
         const data = (await res.json()) as JoinResponse
         this.alreadyJoined = data.alreadyJoined
+        if (!data.alreadyJoined) this.waitingCount += 1
         return { success: true as const, alreadyJoined: data.alreadyJoined }
       } catch {
         this.error = 'Network error. Please check your connection and try again.'

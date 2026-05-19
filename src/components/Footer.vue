@@ -1,181 +1,98 @@
 <template>
   <footer class="footer">
-    <div class="footer-wave"></div>
-    <div class="container footer-content">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="logo inverted">
-            <img src="/src/assets/bookmarkoLogo.png" alt="Bookmarko Logo" class="logo-image" />
-            <span class="logo-text">Bookmarko</span>
-          </div>
-          <p class="brand-tagline">Because your brain deserves better than 100 open tabs. Your digital sanctuary for great reads. 🚀✨</p>
-        </div>
-        
-        <div class="footer-links-group" v-if="false">
-          <!-- Hidden per user request -->
-          <h3>Product</h3>
-          <ul>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">Integrations</a></li>
-            <li><a href="#">Changelog</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-links-group" v-if="false">
-          <!-- Hidden per user request -->
-          <h3>Company</h3>
-          <ul>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Careers</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-links-group">
-          <h3>Legal</h3>
-          <ul>
-            <li><a href="/privacy.html">Privacy Policy</a></li>
-            <li><a href="/terms.html">Terms of Service</a></li>
-          </ul>
-        </div>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="/src/assets/bookmarkoLogo-mark.png" alt="" class="footer__logo" />
+        <span class="footer__wordmark">Bookmarko</span>
       </div>
-      
-      <div class="footer-bottom">
-        <p class="footer-bottom-text">&copy; 2026 Bookmarko Inc. Built with love for readers.</p>
-      </div>
+      <nav class="footer__legal" aria-label="Legal">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </nav>
+    </div>
+    <div class="footer__base">
+      <span>© 2026 Bookmarko. Built quietly, for readers.</span>
+      <span class="footer__sig">Made with a cup of tea and a closed tab.</span>
+    </div>
+    <div class="footer__mark" aria-hidden="true">
+      <img src="/src/assets/bookmarkoLogo-mark.png" alt="" />
     </div>
   </footer>
 </template>
 
 <style scoped>
 .footer {
-  background-color: var(--primary);
-  color: white;
+  background: var(--ink-deep);
+  color: rgba(247,249,252,.7);
+  padding: 60px 36px 40px;
+  border-top: 1px solid rgba(247,249,252,.08);
   position: relative;
-  padding-top: 6rem;
-  padding-bottom: 3rem;
-  margin-top: 10rem;
-  border-top-left-radius: 4rem;
-  border-top-right-radius: 4rem;
+  overflow: hidden;
 }
-
-.footer-content {
+.app-wrapper.home .footer {
+  background: transparent;
+}
+.footer__inner {
+  max-width: 1180px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(247,249,252,.08);
   position: relative;
   z-index: 2;
 }
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 4rem;
-  margin-bottom: 4rem;
+.footer__brand {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--paper);
 }
-
-.footer-brand .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 800;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.footer-brand .logo-placeholder {
-  background-color: white;
-  color: var(--primary);
-}
-
-.brand-tagline {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
-  max-width: 300px;
-}
-
-.footer-links-group h3 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
-
-.footer-links-group ul {
-  list-style: none;
-}
-
-.footer-links-group li {
-  margin-bottom: 0.75rem;
-}
-
-.footer-links-group a {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-.footer-links-group a:hover {
-  color: white;
-  padding-left: 5px;
-}
-
-.footer-bottom {
-  padding-top: 2rem;
-  /* Increased border opacity so the line is actually visible */
-  border-top: 1px solid rgba(255, 255, 255, 0.3); 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  
-  /* Force white and improve readability */
-  color: #FFFFFF !important; 
+.footer__logo { width: 28px; height: 28px; object-fit: contain; }
+.footer__wordmark {
+  font-family: 'EB Garamond', serif;
   font-weight: 600;
-  font-size: 0.9rem;
-  
-  /* This helps text stand out against vibrant backgrounds */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-size: 20px;
+  letter-spacing: -.01em;
 }
-
-.footer-bottom-text {
-  color: #FFFFFF;
+.footer__legal {
+  display: flex; align-items: center; gap: 28px;
 }
-
-.social-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.social-links a {
-  color: #000000;
+.footer__legal a {
+  color: rgba(247,249,252,.6);
   text-decoration: none;
-  transition: var(--transition);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  transition: color .2s;
 }
-
-.social-links a:hover {
-  color: white;
+.footer__legal a:hover { color: var(--paper); }
+.footer__base {
+  max-width: 1180px; margin: 24px auto 0;
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 12px;
+  color: rgba(247,249,252,.45);
+  position: relative;
+  z-index: 2;
 }
+.footer__sig { font-family: 'EB Garamond', serif; font-style: italic; }
 
-.logo-image {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  border-radius: 8px;
+.footer__mark {
+  position: absolute;
+  right: -60px;
+  bottom: -80px;
+  width: 320px;
+  height: 320px;
+  pointer-events: none;
+  opacity: .09;
+  z-index: 1;
 }
+.footer__mark img { width: 100%; height: 100%; object-fit: contain; }
 
-@media (max-width: 900px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  
-  .footer-brand {
-    grid-column: span 2;
-  }
-  
-  .footer-bottom {
+@media (max-width: 720px) {
+  .footer__inner {
     flex-direction: column;
-    gap: 1.5rem;
-    text-align: center;
+    align-items: flex-start;
+    gap: 18px;
   }
+  .footer__base { flex-direction: column; gap: 6px; }
+  .footer__mark { width: 220px; height: 220px; right: -50px; bottom: -60px; }
 }
 </style>
