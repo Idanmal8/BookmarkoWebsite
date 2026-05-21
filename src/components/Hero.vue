@@ -60,6 +60,29 @@
         </div>
       </div>
 
+      <div class="hero__stores">
+        <a
+          class="store"
+          href="https://apps.apple.com/us/app/bookmarko/id6762641879"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Download Bookmarko on the App Store"
+        >
+          <img :src="appStoreBadge" alt="Download on the App Store" />
+        </a>
+        <div class="store store--soon" aria-label="Google Play coming soon">
+          <div class="store__inner">
+            <img :src="googleStoreBadge" alt="Get it on Google Play" />
+          </div>
+          <span class="store__ribbon">
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
+              <path d="M1.5 1h9v12L6 9.5 1.5 13V1z" fill="currentColor" />
+            </svg>
+            Coming soon
+          </span>
+        </div>
+      </div>
+
       <div class="hero__stats">
         <div class="stat">
           <span class="stat__num" :class="{ 'stat__num--bumped': bumped }">{{ formattedCount }}</span>
@@ -90,6 +113,8 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import Bookshelf from './Bookshelf.vue'
 import { useWaitlistStore } from '@/stores/waitlist'
+import appStoreBadge from '@/assets/appStore.png'
+import googleStoreBadge from '@/assets/googleStore.png'
 
 const store = useWaitlistStore()
 const { waitingCount } = storeToRefs(store)
@@ -281,6 +306,58 @@ async function submit() {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.hero__stores {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.store {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  transition: transform .2s ease;
+}
+.store img {
+  height: 100%;
+  width: auto;
+  display: block;
+  border-radius: 8px;
+}
+a.store:hover { transform: translateY(-2px); }
+.store--soon {
+  cursor: not-allowed;
+}
+.store--soon .store__inner {
+  opacity: .45;
+  filter: grayscale(.2);
+  height: 100%;
+  display: inline-flex;
+}
+.store__ribbon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: 4px 9px 4px 7px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(81,112,255,.28);
+  transform: rotate(4deg);
+  white-space: nowrap;
+}
+.store__ribbon svg { flex-shrink: 0; }
 
 .hero__stats {
   margin-top: 40px;
