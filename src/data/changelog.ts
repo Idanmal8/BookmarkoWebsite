@@ -17,6 +17,17 @@ export const changelog: ChangelogEntry[] = [
   {
     version: 'Client',
     date: '2026-05-22',
+    title: 'Safer book deletion from status lists',
+    summary: 'Client-side changes only — bundles into the next app release. Deleting a book while inside a system status list (Reading, Finished, etc.) now prompts a confirmation that explains the action removes the book from your entire library, with an opt-out for users who clean up in bulk.',
+    changes: [
+      { tag: 'fix', text: 'Tapping delete on a book inside a status list (Reading, Finished, Want to Read, DNF) no longer fails silently with a confusing "cannot manually remove" message.' },
+      { tag: 'feature', text: 'New destructive confirmation dialog explains that status lists are filters, not folders — confirming deletes the book from the whole library along with its progress and notes.' },
+      { tag: 'improvement', text: 'Added a "Don\'t show this again" option, persisted locally, so power users deleting many books in a row aren\'t re-prompted.' },
+    ],
+  },
+  {
+    version: 'Client',
+    date: '2026-05-22',
     title: 'Cross-source descriptions + safer release builds',
     summary: 'Client-side changes only — bundles into the next app release. Hebrew books missing a description in their primary provider now get one from NLI automatically, and archive builds can no longer accidentally point at sandbox.',
     changes: [
