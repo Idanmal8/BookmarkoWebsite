@@ -5,6 +5,7 @@
       <DeleteAccountConfirm v-if="route === 'delete-confirm'" />
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
+      <Changelog v-else-if="route === 'changelog'" />
       <template v-else>
         <Hero />
         <Features />
@@ -30,8 +31,9 @@ import Footer from './components/Footer.vue'
 import EmailConfirmed from './components/EmailConfirmed.vue'
 import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
+import Changelog from './components/Changelog.vue'
 
-type Route = 'home' | 'email-confirmed' | 'delete-request' | 'delete-confirm'
+type Route = 'home' | 'email-confirmed' | 'delete-request' | 'delete-confirm' | 'changelog'
 
 function resolveRoute(): Route {
   const params = new URLSearchParams(window.location.search)
@@ -40,6 +42,7 @@ function resolveRoute(): Route {
   const path = window.location.pathname.replace(/\/$/, '')
   if (path === '/delete-account/confirm') return 'delete-confirm'
   if (path === '/delete-account') return 'delete-request'
+  if (path === '/changelog') return 'changelog'
   return 'home'
 }
 
