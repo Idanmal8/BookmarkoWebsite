@@ -15,7 +15,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
-    version: 'Client',
+    version: 'Client 0.1.3+10',
+    date: '2026-05-23',
+    title: 'Easier way to add books and collections',
+    summary: 'Client-side changes only — bundles into the next app release. Many users tapped the (+) in the library header expecting to search for a book; that button only created collections. The library now has a single floating (+) menu that makes both actions obvious.',
+    changes: [
+      { tag: 'feature', text: 'New expandable (+) floating button in the library opens a menu with two clear pill actions: "Add Book" (opens search) and "Collection" (opens the create-collection sheet).' },
+      { tag: 'improvement', text: 'Removed the small (+) icon from the library header that previously only created collections and was being mistaken for a book-search shortcut.' },
+    ],
+  },
+  {
+    version: 'Client 0.1.3+9',
     date: '2026-05-22',
     title: 'Safer book deletion from status lists',
     summary: 'Client-side changes only — bundles into the next app release. Deleting a book while inside a system status list (Reading, Finished, etc.) now prompts a confirmation that explains the action removes the book from your entire library, with an opt-out for users who clean up in bulk.',
@@ -26,7 +36,7 @@ export const changelog: ChangelogEntry[] = [
     ],
   },
   {
-    version: 'Client',
+    version: 'Client 0.1.3+9',
     date: '2026-05-22',
     title: 'Cross-source descriptions + safer release builds',
     summary: 'Client-side changes only — bundles into the next app release. Hebrew books missing a description in their primary provider now get one from NLI automatically, and archive builds can no longer accidentally point at sandbox.',
@@ -49,7 +59,7 @@ export const changelog: ChangelogEntry[] = [
     ],
   },
   {
-    version: '0.1.2+9',
+    version: '0.1.3+9',
     date: '2026-05-21',
     title: 'Ginnie chat keyboard polish',
     summary: 'Fixed the floating navigation bar overlapping the Ginnie chat input when the keyboard opens.',
