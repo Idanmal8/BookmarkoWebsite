@@ -15,6 +15,33 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.4+11',
+    date: '2026-05-25',
+    title: 'Import your Goodreads library in one tap',
+    summary: 'Client-side changes only — bundles into the next app release. Bring your whole Goodreads history into Bookmarko without leaving the app: sign in to Goodreads, press Export Library, and we sync everything automatically. CSV upload is kept as a manual fallback.',
+    changes: [
+      { tag: 'feature', text: 'New "Import from Goodreads" entry in the profile settings sheet opens a dedicated screen with a step-by-step guide.' },
+      { tag: 'feature', text: 'In-app Goodreads sign-in via WebView: we detect the CSV download the moment you tap Export Library and pipe it straight into your library — no copy/paste, no email round-trip, and your Goodreads cookies never leave the device.' },
+      { tag: 'feature', text: 'Manual CSV upload fallback for users who already exported their library — only accepts files named goodreads_* so you can\'t pick the wrong CSV by mistake.' },
+      { tag: 'feature', text: 'Import summary card breaks down what landed: rows in file, imported, skipped, failed, reviews created, and lists created — plus any rows that couldn\'t be matched.' },
+      { tag: 'improvement', text: 'Library refreshes automatically the moment an import completes, so books appear without a restart.' },
+      { tag: 'improvement', text: 'Goodreads shelves are rebuilt as Bookmarko collections, ratings become reviews, and reading status (Read / Currently Reading / Want to Read) maps to the right Bookmarko state.' },
+      { tag: 'improvement', text: 'Hebrew + English copy throughout the import flow, with a polished step-based "How it works" intro and pill-shaped CTAs.' },
+    ],
+  },
+  {
+    version: 'Backend',
+    date: '2026-05-25',
+    title: 'Goodreads CSV import endpoint',
+    summary: 'Backend changes only — no app update required. Powers the new in-app Goodreads import: a single multipart endpoint that parses a Goodreads export, resolves each row to a Bookmarko book, and rebuilds your library, reviews, and collections in one shot.',
+    changes: [
+      { tag: 'feature', text: 'New POST /library/import/goodreads accepts a Goodreads CSV and imports the user\'s full library, ratings, reviews, and shelves in a single call.' },
+      { tag: 'improvement', text: 'Smart book resolution: tries existing-by-ISBN first, then Google Books ISBN lookup, then title + author search, and only falls back to a synthetic Goodreads record if nothing else matches — so imported books re-use the same canonical entries already in the database.' },
+      { tag: 'improvement', text: 'Custom RFC4180 CSV parser handles Goodreads quirks (HTML in reviews, Excel-formula ISBN cells like ="0063433087", embedded newlines) without pulling in a third-party CSV library.' },
+      { tag: 'improvement', text: 'Goodreads bookshelves are deduplicated against existing user_list rows by name, so re-importing won\'t create duplicate collections.' },
+    ],
+  },
+  {
     version: 'Client 0.1.3+10',
     date: '2026-05-23',
     title: 'Easier way to add books and collections',
