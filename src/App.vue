@@ -8,6 +8,7 @@
       <Changelog v-else-if="route === 'changelog'" />
       <template v-else>
         <Hero />
+        <GoodreadsImport />
         <Features />
         <GinieSection />
         <NowReading />
@@ -23,6 +24,7 @@
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import Features from './components/Features.vue'
+import GoodreadsImport from './components/GoodreadsImport.vue'
 import GinieSection from './components/GinieSection.vue'
 import NowReading from './components/NowReading.vue'
 import Quote from './components/Quote.vue'
