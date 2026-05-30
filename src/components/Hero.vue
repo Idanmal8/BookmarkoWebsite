@@ -14,7 +14,7 @@
       <p class="hero__sub">
         Bookmarko is the warm, well-lit shelf for everything you're reading —
         the novel by your bed, the longform you saved on the train, the chapter
-        you keep meaning to finish. One place. No 47 open tabs.
+        you keep meaning to finish. One place. Doom scrolling elimenated.
       </p>
 
       <form class="hero__form" id="waitlist" @submit.prevent="submit" v-if="state !== 'success'">

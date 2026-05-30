@@ -5,9 +5,10 @@
       <span class="nav__wordmark">Bookmarko</span>
     </a>
     <div class="nav__links" v-if="variant === 'home'">
-      <a href="#how">How it works</a>
+      <a href="#endless-shelf">The shelf</a>
+      <a href="#goodreads">Import</a>
+      <a href="#leaderboard">Leaderboard</a>
       <a href="#ginie">Ask Ginie</a>
-      <a href="#now-reading">Now reading</a>
       <a href="#waitlist" class="nav__cta">Join the waitlist</a>
     </div>
   </nav>

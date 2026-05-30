@@ -8,11 +8,10 @@
       <Changelog v-else-if="route === 'changelog'" />
       <template v-else>
         <Hero />
+        <BookSectionHero />
         <GoodreadsImport />
         <Leaderboard />
-        <Features />
         <GinieSection />
-        <NowReading />
         <Quote />
         <Finale />
       </template>
@@ -24,11 +23,10 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
-import Features from './components/Features.vue'
+import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
 import Leaderboard from './components/Leaderboard.vue'
 import GinieSection from './components/GinieSection.vue'
-import NowReading from './components/NowReading.vue'
 import Quote from './components/Quote.vue'
 import Finale from './components/Finale.vue'
 import Footer from './components/Footer.vue'
