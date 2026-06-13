@@ -15,6 +15,26 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.8+16',
+    date: '2026-06-13',
+    title: 'A reader built for focus — with translate, highlights, and read-aloud',
+    summary: 'Client-side changes only — bundles into the next app release. The EPUB reader was rebuilt around reading: an immersive, distraction-free page with the controls tucked away until you want them. Tap to turn pages or reveal the bar, change the font, theme, and spacing, highlight passages, translate any selection on-device, ask Ginnie about a passage, or have the book read aloud to you.',
+    changes: [
+      { tag: 'feature', text: 'Immersive reading mode: tap the center of the page to hide the bars and give the text the whole screen, tap again to bring them back. Turn pages by swiping, tapping the page edges, or the new arrow buttons.' },
+      { tag: 'feature', text: 'Display settings sheet: adjust font size, line spacing, font family (Book / Serif / Sans), and switch between Light, Sepia, and Dark themes — your choices are remembered across books.' },
+      { tag: 'feature', text: 'Highlighter: select any text and pick one of four colors. Highlights are saved per book, listed in their own sheet (tap to jump back, swipe to delete), and tapping a highlight lets you remove it.' },
+      { tag: 'feature', text: 'Translate any passage on-device: select text, choose from ten languages, and get an instant translation that works offline and for free — no data leaves your phone.' },
+      { tag: 'feature', text: 'Ask Ginnie about what you\'re reading: select a passage, type a question, and get a streamed answer in context (premium feature).' },
+      { tag: 'feature', text: 'Read aloud: have the book narrated to you, with a choice of just the current page or the whole book from where you are, plus an adjustable speech rate.' },
+      { tag: 'feature', text: 'Chapters sheet for jumping straight to any chapter, and a progress scrubber to move anywhere in the book.' },
+      { tag: 'improvement', text: 'The reader resumes exactly where you left off, and the progress bar now shows your real position the moment the book opens.' },
+      { tag: 'improvement', text: 'Backing out of the reader is instant again — progress now syncs in the background instead of holding up the screen.' },
+      { tag: 'improvement', text: 'Generous page margins so the first and last lines are never tucked behind the bars.' },
+      { tag: 'fix', text: 'Fixed a freeze where swiping stopped working after jumping pages with the scrubber, chapters, or a font change.' },
+      { tag: 'improvement', text: 'Full Hebrew and English copy throughout the new reader.' },
+    ],
+  },
+  {
     version: 'Client 0.1.4+11',
     date: '2026-05-25',
     title: 'Import your Goodreads library in one tap',
