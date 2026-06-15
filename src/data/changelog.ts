@@ -15,6 +15,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.9+17',
+    date: '2026-06-15',
+    title: 'Smoother loading — skeleton screens everywhere',
+    summary: 'Client-side changes only — bundles into the next app release. Spinners are replaced with shimmer skeletons shaped like the real content, so screens feel faster and no longer jump around as data arrives. Each part of a screen now loads on its own — the pieces that are ready show immediately instead of waiting for the slowest one.',
+    changes: [
+      { tag: 'improvement', text: 'Posts feed: shimmer post-card placeholders (avatar, cover, caption, actions) while the feed loads, instead of a single spinner.' },
+      { tag: 'improvement', text: 'Library: a book-grid skeleton when you open a collection, and a currently-reading placeholder while your library loads.' },
+      { tag: 'improvement', text: 'Leaderboard: shimmer row placeholders while the rankings load.' },
+      { tag: 'improvement', text: 'Profile loads each section independently — your avatar and background appear the moment they\'re ready without waiting on your reading goal, stats, or EXP, each with its own placeholder.' },
+      { tag: 'improvement', text: 'A single reusable shimmer effect shared across the app for a consistent loading look.' },
+    ],
+  },
+  {
     version: 'Client 0.1.8+16',
     date: '2026-06-13',
     title: 'A reader built for focus — with translate, highlights, and read-aloud',
