@@ -11,7 +11,7 @@
         The chair is yours.
       </h2>
       <p class="finale__sub">
-        Join the waitlist and we'll save you a quiet seat by the window.
+        Join the journey and we'll save you a quiet seat by the window.
       </p>
       <a href="#waitlist" class="finale__cta">
         Take me to the shelf
