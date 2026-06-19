@@ -15,6 +15,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.10+19',
+    date: '2026-06-19',
+    title: 'A calmer, more polished EPUB reader',
+    summary: 'Client-side changes only — bundles into the next app release. The reader\'s visuals were refactored for a more immersive, modern feel: the controls now float as frosted-glass panels over the page, and opening a book reveals an already-settled page instead of the load jump.',
+    changes: [
+      { tag: 'improvement', text: 'The top and bottom controls are now floating, frosted-glass panels that detach from the screen edges, round their corners, and tint themselves to match your reader theme (Light, Sepia, or Dark).' },
+      { tag: 'improvement', text: 'Opening a book now holds a themed loading veil over the reader until the page has rendered and settled on where you left off, then cross-fades away — so you no longer see the page jump or re-flow as it loads.' },
+      { tag: 'improvement', text: 'Slightly larger page margins leave a clean gap between the text and the floating bars, so the first and last lines are never tucked behind them.' },
+    ],
+  },
+  {
     version: 'Client 0.1.9+17',
     date: '2026-06-15',
     title: 'Smoother loading — skeleton screens everywhere',
