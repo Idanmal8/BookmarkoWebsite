@@ -7,7 +7,7 @@ type JoinResponse = {
   alreadyJoined: boolean
 }
 
-const BASE_COUNT = 2841
+const BASE_COUNT = 3123
 
 export const useWaitlistStore = defineStore('waitlist', {
   state: () => ({

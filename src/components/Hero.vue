@@ -84,7 +84,7 @@
       <div class="hero__stats">
         <div class="stat">
           <span class="stat__num" :class="{ 'stat__num--bumped': bumped }">{{ formattedCount }}</span>
-          <span class="stat__label">readers waiting</span>
+          <span class="stat__label">readers already joined</span>
         </div>
         <div class="stat__divider" />
         <div class="stat">
