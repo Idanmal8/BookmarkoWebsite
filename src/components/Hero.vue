@@ -70,17 +70,15 @@
         >
           <img :src="appStoreBadge" alt="Download on the App Store" />
         </a>
-        <div class="store store--soon" aria-label="Google Play coming soon">
-          <div class="store__inner">
-            <img :src="googleStoreBadge" alt="Get it on Google Play" />
-          </div>
-          <span class="store__ribbon">
-            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
-              <path d="M1.5 1h9v12L6 9.5 1.5 13V1z" fill="currentColor" />
-            </svg>
-            Coming soon
-          </span>
-        </div>
+        <a
+          class="store"
+          href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Get Bookmarko on Google Play"
+        >
+          <img :src="googleStoreBadge" alt="Get it on Google Play" />
+        </a>
       </div>
 
       <div class="hero__stats">
@@ -330,34 +328,6 @@ async function submit() {
   border-radius: 8px;
 }
 a.store:hover { transform: translateY(-2px); }
-.store--soon {
-  cursor: not-allowed;
-}
-.store--soon .store__inner {
-  opacity: .45;
-  filter: grayscale(.2);
-  height: 100%;
-  display: inline-flex;
-}
-.store__ribbon {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .03em;
-  padding: 4px 9px 4px 7px;
-  border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(81,112,255,.28);
-  transform: rotate(4deg);
-  white-space: nowrap;
-}
-.store__ribbon svg { flex-shrink: 0; }
 
 .hero__stats {
   margin-top: 40px;
