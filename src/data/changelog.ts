@@ -15,6 +15,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.10+20',
+    date: '2026-06-20',
+    title: 'A friendlier book status & reading-progress experience',
+    summary: 'Client-side changes only — bundles into the next app release. On a book\'s page, changing your reading status and updating your progress both got a refresh: the status picker now expands inline instead of popping up a menu, and you can type your exact page instead of fighting the slider.',
+    changes: [
+      { tag: 'improvement', text: 'The reading-status control now expands inline on the book page — tap it to reveal Want to Read, Reading, Finished, and Did not finish, with your current choice marked, instead of a floating popup menu.' },
+      { tag: 'feature', text: 'Set your exact page: tap the page number on the progress card to type the precise page you\'re on — handy when the slider won\'t land on the right page.' },
+      { tag: 'improvement', text: 'Redesigned reading-progress card with a clearer percentage, a tappable page count, and the familiar slider kept for quick adjustments.' },
+    ],
+  },
+  {
     version: 'Client 0.1.10+19',
     date: '2026-06-19',
     title: 'A calmer, more polished EPUB reader',
