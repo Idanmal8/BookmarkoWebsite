@@ -29,6 +29,7 @@
 
         <!-- title fades away as the book opens -->
         <header class="act-open__head">
+          <img class="act-open__logo" :src="logoMark" alt="Bookmarko" />
           <p class="act-open__kicker">Bookmarko presents</p>
           <h1 class="act-open__title">
             Every story<br /><em>is a door.</em>
@@ -63,7 +64,7 @@
               <div class="leaf__lines" />
             </div>
 
-            <!-- front cover: leather outside, endpaper inside -->
+            <!-- front cover: cloth outside, endpaper inside -->
             <div class="board board--front">
               <div class="board__face board__face--out">
                 <div class="emblem">
@@ -150,7 +151,36 @@
       </div>
     </section>
 
-    <!-- ═══════════ ACT III — YOUR SHELF, UNBOUND ═══════════ -->
+    <!-- ═══════════ ACT III — TABLE OF CONTENTS (the features) ═══════════ -->
+    <section class="act-toc" id="features">
+      <p class="toc__folio" aria-hidden="true">2</p>
+      <div class="toc__inner">
+        <p class="toc__kicker" data-in>table of contents</p>
+        <h2 class="toc__title" data-in>
+          What you'll find <em>inside.</em>
+        </h2>
+
+        <ol class="toc__list">
+          <li
+            v-for="(ch, i) in chapters"
+            :key="'ch' + i"
+            class="toc__row"
+            data-in
+            :style="{ transitionDelay: i * 0.09 + 's' }"
+          >
+            <span class="toc__num">{{ ch.num }}</span>
+            <div class="toc__body">
+              <h3 class="toc__chapter">{{ ch.title }}</h3>
+              <p class="toc__desc">{{ ch.desc }}</p>
+            </div>
+            <span class="toc__leader" aria-hidden="true" />
+            <span class="toc__page">{{ ch.page }}</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ═══════════ ACT IV — YOUR SHELF, UNBOUND ═══════════ -->
     <section class="act-orbit" id="orbit">
       <div class="orbit__head">
         <p class="orbit__kicker" data-in>your shelf, unbound</p>
@@ -183,6 +213,7 @@
 
     <!-- ═══════════ FINALE — TURN TO PAGE ONE ═══════════ -->
     <section class="act-final" id="final">
+      <img class="final__logo" :src="logoMark" alt="Bookmarko" data-in />
       <p class="final__kicker" data-in>the next chapter is yours</p>
       <h2 class="final__title" data-in>
         Turn to<br /><em>page one.</em>
@@ -209,7 +240,7 @@
 
       <a class="final__back" href="/" data-in>← back to the quiet shelf</a>
       <p class="final__colophon" data-in>
-        Bookmarko · set in Fraunces &amp; EB Garamond · bound by hand
+        Bookmarko · set in EB Garamond &amp; Raleway · bound by hand
       </p>
     </section>
   </div>
@@ -219,6 +250,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import appStoreBadge from '@/assets/appStore.png'
 import googleStoreBadge from '@/assets/googleStore.png'
+import logoMark from '@/assets/bookmarkoLogo-mark.png'
 
 /* ── real covers for the orbit ─────────────────────────────────────────── */
 const coverModules = import.meta.glob('../assets/Books/*.jpg', {
@@ -226,6 +258,34 @@ const coverModules = import.meta.glob('../assets/Books/*.jpg', {
   import: 'default',
 }) as Record<string, string>
 const covers = Object.values(coverModules).slice(0, 12)
+
+/* ── the features, told as chapters ────────────────────────────────────── */
+const chapters = [
+  {
+    num: 'I',
+    title: 'One quiet shelf',
+    desc: 'Every book you’ve ever loved — reading, read, and next — kept in one warm, well-lit place.',
+    page: '04',
+  },
+  {
+    num: 'II',
+    title: 'Pages that count',
+    desc: 'EXP for every page you turn, streaks that keep the fire lit, and a leaderboard of fellow readers.',
+    page: '11',
+  },
+  {
+    num: 'III',
+    title: 'A librarian in the lamp',
+    desc: 'Ask Ginie in your own words. It recommends your next read and teases the chapter after that.',
+    page: '23',
+  },
+  {
+    num: 'IV',
+    title: 'Your past, poured in',
+    desc: 'Export your Goodreads CSV, drop it in, and watch years of reading shelve themselves in minutes.',
+    page: '37',
+  },
+]
 
 /* ── generated scenery ─────────────────────────────────────────────────── */
 const rand = (min: number, max: number) => min + Math.random() * (max - min)
@@ -373,7 +433,7 @@ onMounted(() => {
     ?.querySelectorAll('[data-in]')
     .forEach((el) => io?.observe(el))
 
-  /* dev aid: /newDesign?at=verse|orbit|final jumps straight to an act */
+  /* dev aid: /newDesign?at=verse|features|orbit|final jumps straight to an act */
   const at = new URLSearchParams(window.location.search).get('at')
   if (at) {
     requestAnimationFrame(() =>
@@ -395,28 +455,29 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap');
-</style>
-
 <style scoped>
-/* ═══════════════════════ TOKENS ═══════════════════════ */
+/* ═══════════════════════ TOKENS — the site's design system ═══════════════
+   Mirrors :root in style.css: --accent #5170ff, --ink #14193A,
+   --ink-deep #0E1230, --paper #F7F9FC, --accent-soft #A5C2F4,
+   --accent-tint #E2ECFB. Same fonts as the home route. */
 .nd {
-  --night: #06081a;
-  --night-soft: #0b0f2b;
-  --gold: #e9b868;
-  --gold-hot: #f6d79a;
+  --deep: #0e1230;
+  --deep-soft: #14193a;
+  --foil: #a5c2f4;
+  --foil-hot: #e2ecfb;
   --blue: #5170ff;
-  --cream: #f4ecdc;
-  --cream-deep: #e9dfc8;
-  --ink: #1b1710;
-  --moon: #ece9f8;
-  --moon-dim: rgba(236, 233, 248, 0.55);
+  --blue-deep: #3d59e6;
+  --paper: #f7f9fc;
+  --paper-deep: #e2ecfb;
+  --ink: #14193a;
+  --moon: #f7f9fc;
+  --moon-dim: rgba(247, 249, 252, 0.55);
 
-  --serif: 'Fraunces', 'EB Garamond', Georgia, serif;
+  --serif: 'EB Garamond', Georgia, serif;
   --whisper: 'EB Garamond', Georgia, serif;
+  --sans: 'Raleway', system-ui, sans-serif;
 
-  background: var(--night);
+  background: var(--deep);
   color: var(--moon);
   font-family: var(--serif);
   overflow-x: clip;
@@ -426,8 +487,8 @@ onBeforeUnmount(() => {
   cursor: none;
 }
 .nd ::selection {
-  background: var(--gold);
-  color: var(--night);
+  background: var(--blue);
+  color: #fff;
 }
 
 /* ═══════════════════════ ATMOSPHERE ═══════════════════════ */
@@ -448,7 +509,7 @@ onBeforeUnmount(() => {
   background: radial-gradient(
     120% 100% at 50% 45%,
     transparent 55%,
-    rgba(2, 3, 12, 0.55) 100%
+    rgba(8, 11, 32, 0.5) 100%
   );
 }
 
@@ -475,8 +536,8 @@ onBeforeUnmount(() => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--gold-hot);
-  box-shadow: 0 0 12px 2px rgba(233, 184, 104, 0.65);
+  background: var(--foil-hot);
+  box-shadow: 0 0 12px 2px rgba(81, 112, 255, 0.65);
 }
 .nd-cursor-halo::after {
   content: '';
@@ -486,14 +547,14 @@ onBeforeUnmount(() => {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 1px solid rgba(233, 184, 104, 0.4);
+  border: 1px solid rgba(165, 194, 244, 0.45);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.35s ease, background 0.35s ease;
 }
 .nd-cursor-halo.is-hot::after {
   transform: scale(1.7);
-  border-color: rgba(246, 215, 154, 0.9);
-  background: rgba(233, 184, 104, 0.08);
+  border-color: rgba(226, 236, 251, 0.9);
+  background: rgba(81, 112, 255, 0.12);
 }
 
 /* ═══════════════════════ ACT I — THE OPENING ═══════════════════════ */
@@ -516,8 +577,8 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(90% 70% at 50% 110%, rgba(81, 112, 255, 0.16), transparent 60%),
-    var(--night);
+    radial-gradient(90% 70% at 50% 110%, rgba(81, 112, 255, 0.18), transparent 60%),
+    var(--deep);
 }
 /* glow wash as an opacity-faded overlay: compositor-only, never repaints */
 .act-open__sticky::after {
@@ -526,7 +587,7 @@ onBeforeUnmount(() => {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(70% 55% at 50% 42%, rgba(233, 184, 104, 0.14), transparent 70%);
+  background: radial-gradient(70% 55% at 50% 42%, rgba(165, 194, 244, 0.16), transparent 70%);
   opacity: var(--glow);
   will-change: opacity;
 }
@@ -543,7 +604,7 @@ onBeforeUnmount(() => {
   width: var(--s);
   height: var(--s);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(236, 233, 248, 0.6), transparent 70%);
+  background: radial-gradient(circle, rgba(226, 236, 251, 0.6), transparent 70%);
   animation: nd-drift var(--t) ease-in-out var(--dl) infinite alternate;
 }
 @keyframes nd-drift {
@@ -555,7 +616,7 @@ onBeforeUnmount(() => {
 /* headline */
 .act-open__head {
   position: absolute;
-  top: clamp(3.5rem, 9vh, 7rem);
+  top: clamp(2.5rem, 7vh, 5.5rem);
   left: 50%;
   transform: translate(-50%, calc(var(--p) * -40px));
   text-align: center;
@@ -565,29 +626,34 @@ onBeforeUnmount(() => {
   width: max-content;
   max-width: 92vw;
 }
-.act-open__kicker {
-  font-family: var(--whisper);
-  font-style: italic;
-  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
-  letter-spacing: 0.32em;
-  color: var(--gold);
-  text-transform: lowercase;
+.act-open__logo {
+  height: clamp(38px, 6vh, 52px);
+  margin-bottom: 1rem;
+  opacity: 0.92;
   animation: nd-rise 1.2s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+}
+.act-open__kicker {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  letter-spacing: 0.34em;
+  color: var(--foil);
+  text-transform: uppercase;
+  animation: nd-rise 1.2s 0.1s cubic-bezier(0.16, 0.84, 0.44, 1) both;
 }
 .act-open__title {
   margin-top: 0.9rem;
-  font-weight: 340;
+  font-weight: 500;
   font-size: clamp(2.6rem, 7.5vw, 5.8rem);
   line-height: 1.02;
   letter-spacing: -0.015em;
   color: var(--moon);
-  font-variation-settings: 'opsz' 144;
-  animation: nd-rise 1.2s 0.15s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+  animation: nd-rise 1.2s 0.2s cubic-bezier(0.16, 0.84, 0.44, 1) both;
 }
 .act-open__title em {
   font-style: italic;
-  font-weight: 420;
-  color: var(--gold);
+  font-weight: 500;
+  color: var(--foil);
 }
 .act-open__hint {
   position: absolute;
@@ -612,7 +678,7 @@ onBeforeUnmount(() => {
 .act-open__hint-line {
   width: 1px;
   height: 34px;
-  background: linear-gradient(to bottom, transparent, var(--gold));
+  background: linear-gradient(to bottom, transparent, var(--foil));
   animation: nd-hint 2.2s ease-in-out infinite;
 }
 @keyframes nd-hint {
@@ -662,7 +728,7 @@ onBeforeUnmount(() => {
   width: 190%;
   height: 15%;
   border-radius: 50%;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.65), transparent 70%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(4, 6, 20, 0.7), transparent 70%);
   transform: rotateX(88deg) translateZ(calc(var(--bh) * -0.48));
   filter: blur(6px);
 }
@@ -677,8 +743,8 @@ onBeforeUnmount(() => {
   pointer-events: none;
   background: radial-gradient(
     50% 50% at 50% 50%,
-    rgba(246, 215, 154, 0.55),
-    rgba(233, 184, 104, 0.22) 40%,
+    rgba(226, 236, 251, 0.5),
+    rgba(165, 194, 244, 0.22) 40%,
     transparent 72%
   );
   opacity: var(--glow);
@@ -696,8 +762,8 @@ onBeforeUnmount(() => {
   background: conic-gradient(
     from 178deg at 50% 100%,
     transparent 0deg,
-    rgba(246, 215, 154, 0.5) 5deg,
-    rgba(246, 215, 154, 0.12) 12deg,
+    rgba(226, 236, 251, 0.5) 5deg,
+    rgba(226, 236, 251, 0.12) 12deg,
     transparent 22deg
   );
   filter: blur(8px);
@@ -715,9 +781,9 @@ onBeforeUnmount(() => {
   background: linear-gradient(
     to bottom,
     transparent,
-    var(--gold-hot) 22%,
-    #fff3da 50%,
-    var(--gold-hot) 78%,
+    var(--foil-hot) 22%,
+    #ffffff 50%,
+    var(--foil-hot) 78%,
     transparent
   );
   filter: blur(7px);
@@ -737,43 +803,43 @@ onBeforeUnmount(() => {
 }
 .board--back {
   transform: translateZ(0px);
-  background: linear-gradient(115deg, #101638, #0a0e28 60%);
+  background: linear-gradient(115deg, #17204a, #10163a 60%);
   box-shadow:
-    inset 0 0 0 1px rgba(233, 184, 104, 0.12),
-    -6px 0 0 -2px #0d1230,
-    -11px 0 0 -4px #0a0e26;
+    inset 0 0 0 1px rgba(165, 194, 244, 0.14),
+    -6px 0 0 -2px #121838,
+    -11px 0 0 -4px #0e1230;
 }
 .board__endpaper {
   position: absolute;
   inset: 4px;
   border-radius: 3px 8px 8px 3px;
   background:
-    linear-gradient(90deg, rgba(27, 23, 16, 0.2), transparent 16%),
-    radial-gradient(120% 90% at 0% 50%, rgba(233, 184, 104, 0.45), transparent 60%),
-    repeating-linear-gradient(to bottom, transparent 0 10px, rgba(27, 23, 16, 0.07) 10px 11px),
-    linear-gradient(100deg, #f8f1e2 60%, #efe3c9);
+    linear-gradient(90deg, rgba(20, 25, 58, 0.2), transparent 16%),
+    radial-gradient(120% 90% at 0% 50%, rgba(165, 194, 244, 0.5), transparent 60%),
+    repeating-linear-gradient(to bottom, transparent 0 10px, rgba(20, 25, 58, 0.08) 10px 11px),
+    linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
   opacity: calc(var(--glow) * 0.9 + 0.1);
   will-change: opacity;
 }
 
 .leaf {
   background:
-    linear-gradient(100deg, rgba(27, 23, 16, 0.14), transparent 14%),
-    linear-gradient(280deg, rgba(27, 23, 16, 0.07), transparent 22%),
-    linear-gradient(100deg, #f8f1e2 60%, #eee2c8);
+    linear-gradient(100deg, rgba(20, 25, 58, 0.16), transparent 14%),
+    linear-gradient(280deg, rgba(20, 25, 58, 0.08), transparent 22%),
+    linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
   transform: rotateY(
       calc(clamp(0, (var(--p) - var(--d)) / 0.42, 1) * (-138deg - var(--d) * -40deg))
     )
     translateZ(var(--z));
-  box-shadow: inset -1px 0 0 rgba(27, 23, 16, 0.08);
+  box-shadow: inset -1px 0 0 rgba(20, 25, 58, 0.08);
 }
-/* golden light seeping across the page from the gutter */
+/* cool light seeping across the page from the gutter */
 .leaf::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(100deg, rgba(176, 118, 34, 0.4), rgba(211, 152, 61, 0.1) 45%, transparent 70%);
+  background: linear-gradient(100deg, rgba(81, 112, 255, 0.22), rgba(165, 194, 244, 0.08) 45%, transparent 70%);
   opacity: var(--glow);
   will-change: opacity;
 }
@@ -782,7 +848,7 @@ onBeforeUnmount(() => {
   inset: 11% 9% 12% 13%;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(27, 23, 16, 0.2) 0 1px,
+    rgba(20, 25, 58, 0.22) 0 1px,
     transparent 1px 10px
   );
   opacity: 0.6;
@@ -803,23 +869,23 @@ onBeforeUnmount(() => {
 }
 .board__face--out {
   background:
-    radial-gradient(140% 110% at 15% 8%, rgba(81, 112, 255, 0.28), transparent 55%),
-    linear-gradient(128deg, #17204d 0%, #0e1436 55%, #0a0e28 100%);
+    radial-gradient(140% 110% at 15% 8%, rgba(81, 112, 255, 0.35), transparent 55%),
+    linear-gradient(128deg, #1c2653 0%, #14193a 55%, #0e1230 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(233, 184, 104, 0.16),
-    inset 0 1px 0 rgba(236, 233, 248, 0.1),
-    0 18px 50px -18px rgba(0, 0, 0, 0.8);
+    inset 0 0 0 1px rgba(165, 194, 244, 0.18),
+    inset 0 1px 0 rgba(247, 249, 252, 0.1),
+    0 18px 50px -18px rgba(4, 6, 20, 0.8);
   display: grid;
   place-items: center;
 }
 .board__face--in {
   transform: rotateY(180deg);
   background:
-    radial-gradient(120% 90% at 100% 50%, rgba(233, 184, 104, 0.3), transparent 55%),
-    var(--cream-deep);
+    radial-gradient(120% 90% at 100% 50%, rgba(165, 194, 244, 0.5), transparent 55%),
+    linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
 }
 
-/* the gold-foil emblem */
+/* the foil emblem */
 .emblem {
   position: relative;
   width: 78%;
@@ -829,16 +895,16 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  color: var(--gold);
+  color: var(--foil);
   text-align: center;
 }
 .emblem__frame {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(233, 184, 104, 0.55);
+  border: 1px solid rgba(165, 194, 244, 0.55);
   border-radius: 3px;
-  box-shadow: inset 0 0 0 3px var(--night-soft),
-    inset 0 0 0 4px rgba(233, 184, 104, 0.3);
+  box-shadow: inset 0 0 0 3px var(--deep-soft),
+    inset 0 0 0 4px rgba(165, 194, 244, 0.3);
 }
 .emblem__exlibris {
   font-family: var(--whisper);
@@ -850,27 +916,26 @@ onBeforeUnmount(() => {
 }
 .emblem__mark {
   font-size: clamp(1.7rem, 5vw, 2.5rem);
-  font-weight: 360;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.15;
-  font-variation-settings: 'opsz' 144;
-  background: linear-gradient(160deg, var(--gold-hot), var(--gold) 55%, #b3823c);
+  background: linear-gradient(160deg, var(--foil-hot), var(--foil) 55%, var(--blue));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 28px rgba(233, 184, 104, 0.25);
+  text-shadow: 0 0 28px rgba(81, 112, 255, 0.25);
 }
 .emblem__rule {
   width: 38%;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  background: linear-gradient(to right, transparent, var(--foil), transparent);
 }
 .emblem__motto {
   font-family: var(--whisper);
   font-style: italic;
   font-size: clamp(0.7rem, 1.6vw, 0.85rem);
   letter-spacing: 0.14em;
-  color: rgba(233, 184, 104, 0.7);
+  color: rgba(165, 194, 244, 0.75);
 }
 
 /* escaping glyphs */
@@ -890,8 +955,8 @@ onBeforeUnmount(() => {
   font-family: var(--whisper);
   font-style: italic;
   font-size: var(--gs);
-  color: #ffe9bf;
-  text-shadow: 0 0 10px rgba(246, 215, 154, 0.9), 0 0 26px rgba(233, 184, 104, 0.55);
+  color: var(--foil-hot);
+  text-shadow: 0 0 10px rgba(226, 236, 251, 0.9), 0 0 26px rgba(81, 112, 255, 0.55);
   animation: nd-ascend var(--gt) linear var(--gdl) infinite;
   animation-play-state: paused; /* only animate once the book is glowing */
   will-change: transform, opacity;
@@ -916,7 +981,7 @@ onBeforeUnmount(() => {
   font-style: italic;
   font-size: clamp(1.15rem, 2.6vw, 1.7rem);
   letter-spacing: 0.06em;
-  color: var(--gold-hot);
+  color: var(--foil-hot);
   white-space: nowrap;
   pointer-events: none;
   z-index: 4;
@@ -929,9 +994,9 @@ onBeforeUnmount(() => {
 .act-verse {
   position: relative;
   background:
-    radial-gradient(140% 60% at 50% 0%, rgba(233, 184, 104, 0.22), transparent 55%),
-    repeating-linear-gradient(to bottom, transparent 0 42px, rgba(27, 23, 16, 0.045) 42px 43px),
-    var(--cream);
+    radial-gradient(140% 60% at 50% 0%, rgba(165, 194, 244, 0.35), transparent 55%),
+    repeating-linear-gradient(to bottom, transparent 0 42px, rgba(20, 25, 58, 0.05) 42px 43px),
+    var(--paper);
   color: var(--ink);
   padding: clamp(7rem, 16vh, 12rem) clamp(1.5rem, 8vw, 9rem);
   overflow: clip;
@@ -942,7 +1007,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: clamp(2.5rem, 7vw, 7rem);
   width: 1px;
-  background: rgba(178, 60, 44, 0.35);
+  background: rgba(81, 112, 255, 0.35);
 }
 .verse__folio {
   position: absolute;
@@ -951,37 +1016,36 @@ onBeforeUnmount(() => {
   font-family: var(--whisper);
   font-style: italic;
   font-size: 1rem;
-  color: rgba(27, 23, 16, 0.45);
+  color: rgba(20, 25, 58, 0.45);
 }
 .verse__inner {
   max-width: 60rem;
   margin-inline: auto;
 }
 .verse__kicker {
-  font-family: var(--whisper);
-  font-style: italic;
-  letter-spacing: 0.4em;
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  font-size: clamp(0.75rem, 1.4vw, 0.9rem);
-  color: rgba(27, 23, 16, 0.5);
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  color: var(--blue);
 }
 .verse__poem {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
   gap: 0.2em;
-  font-weight: 380;
+  font-weight: 500;
   font-size: clamp(2.4rem, 6.4vw, 5.4rem);
   line-height: 1.04;
   letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 144;
 }
 .verse__line--em { margin-left: clamp(1rem, 8vw, 7rem); }
 .verse__line:nth-child(3) { margin-left: clamp(0.5rem, 4vw, 3.5rem); }
 .verse__poem em {
   font-style: italic;
-  font-weight: 460;
-  background: linear-gradient(120deg, #9a6a24, #d0983e);
+  font-weight: 500;
+  background: linear-gradient(120deg, var(--blue-deep), var(--blue));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -993,9 +1057,9 @@ onBeforeUnmount(() => {
   font-family: var(--whisper);
   font-size: clamp(1.1rem, 2vw, 1.3rem);
   line-height: 1.75;
-  color: rgba(27, 23, 16, 0.78);
+  color: rgba(20, 25, 58, 0.78);
 }
-.verse__prose em { font-style: italic; color: #9a6a24; }
+.verse__prose em { font-style: italic; color: var(--blue-deep); }
 
 /* marginalia */
 .nota {
@@ -1003,7 +1067,7 @@ onBeforeUnmount(() => {
   font-family: var(--whisper);
   font-style: italic;
   font-size: clamp(0.85rem, 1.6vw, 1.05rem);
-  color: rgba(178, 60, 44, 0.75);
+  color: rgba(61, 89, 230, 0.75);
   white-space: nowrap;
 }
 .nota--1 { top: 24%; right: 6%; transform: rotate(4deg); }
@@ -1024,46 +1088,139 @@ onBeforeUnmount(() => {
   font-style: italic;
   font-size: 15.5px;
   letter-spacing: 0.32em;
-  fill: rgba(27, 23, 16, 0.6);
+  fill: rgba(20, 25, 58, 0.6);
   text-transform: uppercase;
 }
-.stamp__ring { fill: none; stroke: rgba(27, 23, 16, 0.4); stroke-width: 1; }
+.stamp__ring { fill: none; stroke: rgba(20, 25, 58, 0.4); stroke-width: 1; }
 .stamp__mark {
   font-family: var(--serif);
   font-style: italic;
   font-size: 44px;
   text-anchor: middle;
-  fill: rgba(27, 23, 16, 0.65);
+  fill: rgba(20, 25, 58, 0.65);
 }
 @keyframes nd-spin { to { transform: rotate(360deg); } }
 
-/* ═══════════════════════ ACT III — ORBIT ═══════════════════════ */
+/* ═══════════════════ ACT III — TABLE OF CONTENTS ═══════════════════ */
+.act-toc {
+  position: relative;
+  background:
+    linear-gradient(to bottom, var(--paper), var(--paper-deep) 30%, var(--paper-deep) 70%, var(--paper));
+  color: var(--ink);
+  padding: clamp(6rem, 14vh, 10rem) clamp(1.5rem, 8vw, 9rem);
+}
+.toc__folio {
+  position: absolute;
+  top: clamp(1.4rem, 4vh, 2.8rem);
+  left: clamp(1.6rem, 5vw, 4rem);
+  font-family: var(--whisper);
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(20, 25, 58, 0.45);
+}
+.toc__inner {
+  max-width: 52rem;
+  margin-inline: auto;
+}
+.toc__kicker {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  color: var(--blue);
+  text-align: center;
+}
+.toc__title {
+  margin-top: 1.2rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: clamp(2rem, 4.8vw, 3.4rem);
+  letter-spacing: -0.015em;
+}
+.toc__title em { font-style: italic; color: var(--blue); }
+.toc__list {
+  list-style: none;
+  margin-top: clamp(3rem, 7vh, 4.5rem);
+  display: flex;
+  flex-direction: column;
+}
+.toc__row {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1rem, 3vw, 1.8rem);
+  padding: clamp(1.3rem, 3vh, 1.8rem) 0.4rem;
+  border-top: 1px solid rgba(20, 25, 58, 0.12);
+  transition: background 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+.toc__row:last-child { border-bottom: 1px solid rgba(20, 25, 58, 0.12); }
+.toc__row:hover {
+  background: linear-gradient(to right, transparent, rgba(81, 112, 255, 0.07), transparent);
+  transform: translateX(6px);
+}
+.toc__num {
+  flex: none;
+  width: 2.2rem;
+  font-family: var(--whisper);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  color: var(--blue);
+}
+.toc__body { max-width: 30rem; }
+.toc__chapter {
+  font-weight: 600;
+  font-size: clamp(1.25rem, 2.6vw, 1.7rem);
+  letter-spacing: -0.01em;
+}
+.toc__desc {
+  margin-top: 0.35rem;
+  font-family: var(--whisper);
+  font-size: clamp(0.95rem, 1.7vw, 1.1rem);
+  line-height: 1.6;
+  color: rgba(20, 25, 58, 0.68);
+}
+.toc__leader {
+  flex: 1;
+  border-bottom: 2px dotted rgba(20, 25, 58, 0.3);
+  transform: translateY(-0.3em);
+}
+.toc__page {
+  flex: none;
+  font-family: var(--whisper);
+  font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(20, 25, 58, 0.5);
+  transition: color 0.35s ease;
+}
+.toc__row:hover .toc__page { color: var(--blue); }
+
+/* ═══════════════════════ ACT IV — ORBIT ═══════════════════════ */
 .act-orbit {
   position: relative;
   padding: clamp(7rem, 16vh, 12rem) 1.5rem clamp(5rem, 12vh, 9rem);
   background:
-    radial-gradient(80% 50% at 50% 0%, rgba(81, 112, 255, 0.14), transparent 60%),
-    var(--night);
+    radial-gradient(80% 50% at 50% 0%, rgba(81, 112, 255, 0.16), transparent 60%),
+    var(--deep);
   overflow: clip;
 }
 .orbit__head { text-align: center; max-width: 46rem; margin-inline: auto; }
 .orbit__kicker {
-  font-family: var(--whisper);
-  font-style: italic;
-  letter-spacing: 0.4em;
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  font-size: clamp(0.75rem, 1.4vw, 0.9rem);
-  color: var(--gold);
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  color: var(--foil);
 }
 .orbit__title {
   margin-top: 1.4rem;
-  font-weight: 340;
+  font-weight: 500;
   font-size: clamp(2.1rem, 5.4vw, 4.2rem);
   line-height: 1.06;
   letter-spacing: -0.015em;
-  font-variation-settings: 'opsz' 144;
 }
-.orbit__title em { font-style: italic; color: var(--gold); font-weight: 420; }
+.orbit__title em { font-style: italic; color: var(--foil); }
 .orbit__sub {
   margin-top: 1.6rem;
   font-family: var(--whisper);
@@ -1100,7 +1257,7 @@ onBeforeUnmount(() => {
   height: calc(var(--r) * 2.3);
   transform: translate(-50%, -50%) rotateX(90deg);
   border-radius: 50%;
-  border: 1px dashed rgba(233, 184, 104, 0.22);
+  border: 1px dashed rgba(165, 194, 244, 0.25);
 }
 .orbit__card {
   position: absolute;
@@ -1112,8 +1269,8 @@ onBeforeUnmount(() => {
   animation: nd-orbit 70s linear infinite;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.8),
-    inset 0 0 0 1px rgba(236, 233, 248, 0.12);
+  box-shadow: 0 24px 50px -18px rgba(4, 6, 20, 0.8),
+    inset 0 0 0 1px rgba(247, 249, 252, 0.12);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -1132,8 +1289,8 @@ onBeforeUnmount(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(200deg, rgba(236, 233, 248, 0.14), transparent 45%),
-    linear-gradient(to top, rgba(6, 8, 26, 0.35), transparent 45%);
+  background: linear-gradient(200deg, rgba(247, 249, 252, 0.14), transparent 45%),
+    linear-gradient(to top, rgba(14, 18, 48, 0.35), transparent 45%);
 }
 .orbit__center {
   position: relative;
@@ -1146,12 +1303,11 @@ onBeforeUnmount(() => {
 }
 .orbit__count {
   font-size: clamp(3.2rem, 8vw, 5.6rem);
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1;
-  color: var(--gold);
-  font-variation-settings: 'opsz' 144;
-  text-shadow: 0 0 44px rgba(233, 184, 104, 0.35);
+  color: var(--foil);
+  text-shadow: 0 0 44px rgba(81, 112, 255, 0.45);
 }
 .orbit__label {
   font-family: var(--whisper);
@@ -1168,29 +1324,33 @@ onBeforeUnmount(() => {
   text-align: center;
   padding: clamp(7rem, 18vh, 13rem) 1.5rem clamp(4rem, 10vh, 7rem);
   background:
-    radial-gradient(60% 45% at 50% 62%, rgba(233, 184, 104, 0.13), transparent 70%),
-    linear-gradient(to bottom, var(--night), #040511);
+    radial-gradient(60% 45% at 50% 62%, rgba(81, 112, 255, 0.15), transparent 70%),
+    linear-gradient(to bottom, var(--deep), #090c22);
+}
+.final__logo {
+  height: clamp(44px, 7vh, 60px);
+  margin-bottom: 1.6rem;
+  opacity: 0.92;
 }
 .final__kicker {
-  font-family: var(--whisper);
-  font-style: italic;
-  letter-spacing: 0.4em;
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  font-size: clamp(0.75rem, 1.4vw, 0.9rem);
-  color: var(--gold);
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  color: var(--foil);
 }
 .final__title {
   margin-top: 1.6rem;
-  font-weight: 320;
+  font-weight: 500;
   font-size: clamp(3rem, 10vw, 8rem);
   line-height: 0.98;
   letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 144;
 }
 .final__title em {
   font-style: italic;
-  font-weight: 400;
-  background: linear-gradient(150deg, var(--gold-hot), var(--gold) 60%, #b3823c);
+  font-weight: 500;
+  background: linear-gradient(150deg, var(--foil-hot), var(--foil) 60%, var(--blue));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1210,7 +1370,7 @@ onBeforeUnmount(() => {
 }
 .final__stores a:hover img {
   transform: translateY(-4px);
-  box-shadow: 0 18px 34px -14px rgba(233, 184, 104, 0.4);
+  box-shadow: 0 18px 34px -14px rgba(81, 112, 255, 0.5);
 }
 .final__back {
   display: inline-block;
@@ -1221,23 +1381,24 @@ onBeforeUnmount(() => {
   letter-spacing: 0.08em;
   color: var(--moon-dim);
   text-decoration: none;
-  border-bottom: 1px solid rgba(236, 233, 248, 0.25);
+  border-bottom: 1px solid rgba(247, 249, 252, 0.25);
   padding-bottom: 2px;
   transition: color 0.3s ease, border-color 0.3s ease;
 }
-.final__back:hover { color: var(--gold-hot); border-color: var(--gold); }
+.final__back:hover { color: var(--foil-hot); border-color: var(--foil); }
 .final__colophon {
   margin-top: 3.5rem;
   font-family: var(--whisper);
   font-style: italic;
   font-size: 0.85rem;
   letter-spacing: 0.12em;
-  color: rgba(236, 233, 248, 0.3);
+  color: rgba(247, 249, 252, 0.3);
 }
 
 /* ═══════════════════════ RENDER BUDGET ═══════════════════════ */
 /* don't lay out / paint the later acts while the opening is on screen */
 .act-verse,
+.act-toc,
 .act-orbit,
 .act-final {
   content-visibility: auto;
@@ -1259,7 +1420,6 @@ onBeforeUnmount(() => {
 .verse__line[data-in]:nth-child(3) { transition-delay: 0.3s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .nd-grain,
   .mote,
   .glyph,
   .book,
@@ -1282,5 +1442,8 @@ onBeforeUnmount(() => {
   .stamp { left: auto; right: 1.2rem; bottom: 1.2rem; }
   .verse__prose { margin-left: 0; }
   .cap { white-space: normal; text-align: center; width: 88vw; }
+  .toc__row { flex-wrap: wrap; }
+  .toc__leader { display: none; }
+  .toc__page { display: none; }
 }
 </style>
