@@ -296,6 +296,7 @@ function onScroll() {
     const dive = easeInOut(clamp01((p - 0.82) / 0.18))
     el.style.setProperty('--p', p.toFixed(4))
     el.style.setProperty('--glow', glow.toFixed(4))
+    el.classList.toggle('is-lit', glow > 0.02)
     el.style.setProperty('--dive', dive.toFixed(4))
     el.style.setProperty('--head', (1 - clamp01(p / 0.16)).toFixed(4))
     el.style.setProperty('--cap1', win(p, 0.3, 0.13).toFixed(4))
@@ -431,21 +432,14 @@ onBeforeUnmount(() => {
 }
 
 /* ═══════════════════════ ATMOSPHERE ═══════════════════════ */
+/* static grain — an animated grain layer forces full-screen repaints */
 .nd-grain {
   position: fixed;
-  inset: -50%;
+  inset: 0;
   z-index: 60;
   pointer-events: none;
   opacity: 0.07;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: nd-grain 0.9s steps(4) infinite;
-}
-@keyframes nd-grain {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-2%, 3%); }
-  50% { transform: translate(3%, -2%); }
-  75% { transform: translate(-3%, -3%); }
-  100% { transform: translate(2%, 2%); }
 }
 .nd-vignette {
   position: fixed;
@@ -468,6 +462,7 @@ onBeforeUnmount(() => {
   z-index: 90;
   pointer-events: none;
   display: none;
+  will-change: transform;
 }
 .has-cursor .nd-cursor,
 .has-cursor .nd-cursor-halo {
@@ -523,8 +518,18 @@ onBeforeUnmount(() => {
   place-items: center;
   background:
     radial-gradient(90% 70% at 50% 110%, rgba(81, 112, 255, 0.16), transparent 60%),
-    radial-gradient(70% 55% at 50% 42%, rgba(233, 184, 104, calc(var(--glow) * 0.14)), transparent 70%),
     var(--night);
+}
+/* glow wash as an opacity-faded overlay: compositor-only, never repaints */
+.act-open__sticky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(70% 55% at 50% 42%, rgba(233, 184, 104, 0.14), transparent 70%);
+  opacity: var(--glow);
+  will-change: opacity;
 }
 
 /* motes */
@@ -539,8 +544,7 @@ onBeforeUnmount(() => {
   width: var(--s);
   height: var(--s);
   border-radius: 50%;
-  background: rgba(236, 233, 248, 0.5);
-  filter: blur(0.5px);
+  background: radial-gradient(circle, rgba(236, 233, 248, 0.6), transparent 70%);
   animation: nd-drift var(--t) ease-in-out var(--dl) infinite alternate;
 }
 @keyframes nd-drift {
@@ -632,6 +636,7 @@ onBeforeUnmount(() => {
   transform: scale(calc(1 + var(--dive) * 2.4))
     translateY(calc(7vh + var(--dive) * 10vh));
   opacity: calc(1 - var(--dive));
+  will-change: transform, opacity;
   z-index: 2;
 }
 .book {
@@ -643,6 +648,7 @@ onBeforeUnmount(() => {
     rotateY(calc(-14deg + var(--p) * 14deg + var(--mx) * 4deg))
     translateX(calc((1 - var(--p)) * var(--bw) / -2.4));
   animation: nd-float 7s ease-in-out infinite;
+  will-change: transform;
 }
 @keyframes nd-float {
   0%, 100% { translate: 0 0; }
@@ -678,7 +684,7 @@ onBeforeUnmount(() => {
   );
   opacity: var(--glow);
   scale: calc(0.4 + var(--glow) * 0.8);
-  mix-blend-mode: screen;
+  will-change: opacity, scale;
 }
 .book__shaft {
   position: absolute;
@@ -697,7 +703,7 @@ onBeforeUnmount(() => {
   );
   filter: blur(8px);
   opacity: calc(var(--glow) * 0.9);
-  mix-blend-mode: screen;
+  will-change: opacity;
 }
 /* light bursting straight out of the gutter */
 .book__slit {
@@ -717,7 +723,7 @@ onBeforeUnmount(() => {
   );
   filter: blur(7px);
   opacity: var(--glow);
-  mix-blend-mode: screen;
+  will-change: opacity;
   pointer-events: none;
 }
 
@@ -748,6 +754,7 @@ onBeforeUnmount(() => {
     repeating-linear-gradient(to bottom, transparent 0 10px, rgba(27, 23, 16, 0.07) 10px 11px),
     linear-gradient(100deg, #f8f1e2 60%, #efe3c9);
   opacity: calc(var(--glow) * 0.9 + 0.1);
+  will-change: opacity;
 }
 
 .leaf {
@@ -767,9 +774,9 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(100deg, rgba(211, 152, 61, 0.55), rgba(233, 184, 104, 0.12) 45%, transparent 70%);
+  background: linear-gradient(100deg, rgba(176, 118, 34, 0.4), rgba(211, 152, 61, 0.1) 45%, transparent 70%);
   opacity: var(--glow);
-  mix-blend-mode: multiply;
+  will-change: opacity;
 }
 .leaf__lines {
   position: absolute;
@@ -893,7 +900,11 @@ onBeforeUnmount(() => {
   color: #ffe9bf;
   text-shadow: 0 0 10px rgba(246, 215, 154, 0.9), 0 0 26px rgba(233, 184, 104, 0.55);
   animation: nd-ascend var(--gt) linear var(--gdl) infinite;
+  animation-play-state: paused; /* only animate once the book is glowing */
   will-change: transform, opacity;
+}
+.act-open.is-lit .glyph {
+  animation-play-state: running;
 }
 @keyframes nd-ascend {
   0% { transform: translateY(6vh) rotate(0deg) scale(0.7); opacity: 0; }
@@ -1229,6 +1240,15 @@ onBeforeUnmount(() => {
   font-size: 0.85rem;
   letter-spacing: 0.12em;
   color: rgba(236, 233, 248, 0.3);
+}
+
+/* ═══════════════════════ RENDER BUDGET ═══════════════════════ */
+/* don't lay out / paint the later acts while the opening is on screen */
+.act-verse,
+.act-orbit,
+.act-final {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
 }
 
 /* ═══════════════════════ REVEALS & MOTION PREFS ═══════════════════════ */
