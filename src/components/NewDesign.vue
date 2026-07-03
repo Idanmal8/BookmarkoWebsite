@@ -68,11 +68,10 @@
               <div class="board__face board__face--out">
                 <div class="emblem">
                   <div class="emblem__frame" />
-                  <span class="emblem__exlibris">Ex&nbsp;Libris</span>
-                  <span class="emblem__mark">B</span>
-                  <span class="emblem__name">Bookmarko</span>
+                  <span class="emblem__exlibris">the gentle art of</span>
+                  <span class="emblem__mark">Beginning<br />Again.</span>
                   <span class="emblem__rule" />
-                  <span class="emblem__motto">for those who read</span>
+                  <span class="emblem__motto">by the reader within</span>
                 </div>
               </div>
               <div class="board__face board__face--in" />
@@ -646,7 +645,7 @@ onBeforeUnmount(() => {
   transform-style: preserve-3d;
   transform: rotateX(calc(8deg + var(--my) * -3deg))
     rotateY(calc(-14deg + var(--p) * 14deg + var(--mx) * 4deg))
-    translateX(calc((1 - var(--p)) * var(--bw) / -2.4));
+    translateX(calc(var(--p) * var(--bw) / 2));
   animation: nd-float 7s ease-in-out infinite;
   will-change: transform;
 }
@@ -850,22 +849,16 @@ onBeforeUnmount(() => {
   opacity: 0.85;
 }
 .emblem__mark {
-  font-size: clamp(3.4rem, 9vw, 5.2rem);
-  font-weight: 320;
+  font-size: clamp(1.7rem, 5vw, 2.5rem);
+  font-weight: 360;
   font-style: italic;
-  line-height: 1;
+  line-height: 1.15;
   font-variation-settings: 'opsz' 144;
   background: linear-gradient(160deg, var(--gold-hot), var(--gold) 55%, #b3823c);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 28px rgba(233, 184, 104, 0.25);
-}
-.emblem__name {
-  font-size: clamp(0.9rem, 2.4vw, 1.2rem);
-  font-weight: 500;
-  letter-spacing: 0.36em;
-  text-transform: uppercase;
 }
 .emblem__rule {
   width: 38%;
