@@ -49,19 +49,37 @@
             <div class="book__shaft" aria-hidden="true" />
             <div class="book__slit" aria-hidden="true" />
 
-            <!-- back board: stays put, shows endpaper when open -->
+            <!-- back board: stays put, its page carries the chapter opening -->
             <div class="board board--back">
-              <div class="board__endpaper" />
+              <div class="board__endpaper">
+                <p class="page__kicker">Chapter One</p>
+                <p
+                  v-for="(para, i) in storyOpening"
+                  :key="'so' + i"
+                  class="page__para"
+                >
+                  {{ para }}
+                </p>
+              </div>
             </div>
 
-            <!-- fanning leaves -->
+            <!-- fanning leaves, each carrying a page of the story -->
             <div
               v-for="(leaf, i) in leaves"
               :key="'leaf' + i"
               class="leaf"
               :style="{ '--d': leaf.d, '--z': leaf.z + 'px' }"
             >
-              <div class="leaf__lines" />
+              <div class="leaf__face leaf__face--front">
+                <p v-for="(para, j) in storyPages[i]" :key="'f' + j">
+                  {{ para }}
+                </p>
+              </div>
+              <div class="leaf__face leaf__face--back">
+                <p v-for="(para, j) in storyPages[i]" :key="'b' + j">
+                  {{ para }}
+                </p>
+              </div>
             </div>
 
             <!-- front cover: cloth outside, endpaper inside -->
@@ -75,7 +93,11 @@
                   <span class="emblem__motto">by the reader within</span>
                 </div>
               </div>
-              <div class="board__face board__face--in" />
+              <div class="board__face board__face--in">
+                <p class="epigraph">
+                  for every reader<br />who stopped,<br />and started again
+                </p>
+              </div>
             </div>
           </div>
 
@@ -285,6 +307,35 @@ const chapters = [
     desc: 'Export your Goodreads CSV, drop it in, and watch years of reading shelve themselves in minutes.',
     page: '37',
   },
+]
+
+/* ── the story set into the pages ──────────────────────────────────────── */
+/* right-hand page (on the back board) — the chapter opening */
+const storyOpening = [
+  'The library on Elm Street kept a shelf for books that had never been finished. Not abandoned — the librarian was firm about the word — merely paused.',
+  'On that shelf lived a small blue book with silver letters, and inside it, a door.',
+  'Every night the book practiced its first line the way lighthouses practice light. Someday, it knew, a reader would arrive at page one the way travellers arrive at harbours: late, tired, and exactly on time.',
+]
+/* one page per fanning leaf — the story carries on across them */
+const storyPages = [
+  [
+    'The reader came on a Tuesday, in the kind of rain that sends everyone home early. Home, for her, had stopped feeling like a place.',
+    'She pulled the blue book from the shelf because it was the only one that seemed to lean toward her.',
+  ],
+  [
+    '“Begin,” said the first page.',
+    '“You have done it before,” said the second. “Every morning, in fact. Beginnings are only mornings that someone bothered to write down.”',
+  ],
+  [
+    'She read standing up. Then sitting. Then cross-legged on the library floor, coat still on, while the rain forgot itself against the windows.',
+  ],
+  [
+    'The door in the book was small and ordinary, the way real doors are. On its far side stood no castle and no dragon — only Wednesday, waiting to be lived a little braver than Tuesday.',
+  ],
+  [
+    'She left with the book under her arm. The librarian smiled and stamped the card:',
+    'RETURN — but not to this shelf.',
+  ],
 ]
 
 /* ── generated scenery ─────────────────────────────────────────────────── */
@@ -815,45 +866,101 @@ onBeforeUnmount(() => {
   border-radius: 3px 8px 8px 3px;
   background:
     linear-gradient(90deg, rgba(20, 25, 58, 0.2), transparent 16%),
-    radial-gradient(120% 90% at 0% 50%, rgba(165, 194, 244, 0.5), transparent 60%),
-    repeating-linear-gradient(to bottom, transparent 0 10px, rgba(20, 25, 58, 0.08) 10px 11px),
+    radial-gradient(120% 90% at 0% 50%, rgba(165, 194, 244, 0.4), transparent 60%),
     linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
   opacity: calc(var(--glow) * 0.9 + 0.1);
   will-change: opacity;
+  padding: 10% 9% 8% 14%;
+  overflow: hidden;
+}
+
+/* typeset story pages */
+.page__kicker {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: calc(var(--bw) / 30);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.9em;
+}
+.page__para {
+  font-family: var(--whisper);
+  font-size: calc(var(--bw) / 23);
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  color: rgba(20, 25, 58, 0.8);
+}
+.page__para + .page__para {
+  margin-top: 0;
+  text-indent: 1.4em;
+}
+.page__para:first-of-type::first-letter {
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.82;
+  padding: 0.04em 0.1em 0 0;
+  font-style: italic;
+  color: var(--blue);
 }
 
 .leaf {
-  background:
-    linear-gradient(100deg, rgba(20, 25, 58, 0.16), transparent 14%),
-    linear-gradient(280deg, rgba(20, 25, 58, 0.08), transparent 22%),
-    linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
+  transform-style: preserve-3d;
   transform: rotateY(
       calc(clamp(0, (var(--p) - var(--d)) / 0.42, 1) * (-138deg - var(--d) * -40deg))
     )
     translateZ(var(--z));
   box-shadow: inset -1px 0 0 rgba(20, 25, 58, 0.08);
 }
+/* each leaf is a two-sided printed page (backface pattern keeps text unmirrored) */
+.leaf__face {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  padding: 9% 8% 8% 13%;
+  background:
+    linear-gradient(100deg, rgba(20, 25, 58, 0.16), transparent 14%),
+    linear-gradient(280deg, rgba(20, 25, 58, 0.08), transparent 22%),
+    linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
+}
+.leaf__face--back {
+  transform: rotateY(180deg);
+  padding: 9% 13% 8% 8%;
+  background:
+    linear-gradient(280deg, rgba(20, 25, 58, 0.16), transparent 14%),
+    linear-gradient(100deg, rgba(20, 25, 58, 0.08), transparent 22%),
+    linear-gradient(260deg, #fbfcfe 60%, #e6edfa);
+}
+.leaf__face p {
+  font-family: var(--whisper);
+  font-size: calc(var(--bw) / 24);
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  color: rgba(20, 25, 58, 0.78);
+}
+.leaf__face p + p {
+  text-indent: 1.4em;
+}
 /* cool light seeping across the page from the gutter */
-.leaf::after {
+.leaf__face::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(100deg, rgba(81, 112, 255, 0.22), rgba(165, 194, 244, 0.08) 45%, transparent 70%);
+  background: linear-gradient(100deg, rgba(81, 112, 255, 0.2), rgba(165, 194, 244, 0.07) 45%, transparent 70%);
   opacity: var(--glow);
   will-change: opacity;
+  pointer-events: none;
 }
-.leaf__lines {
-  position: absolute;
-  inset: 11% 9% 12% 13%;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(20, 25, 58, 0.22) 0 1px,
-    transparent 1px 10px
-  );
-  opacity: 0.6;
-  mask-image: linear-gradient(105deg, #000 55%, rgba(0, 0, 0, 0.25));
-  -webkit-mask-image: linear-gradient(105deg, #000 55%, rgba(0, 0, 0, 0.25));
+.leaf__face--back::after {
+  background: linear-gradient(280deg, rgba(81, 112, 255, 0.2), rgba(165, 194, 244, 0.07) 45%, transparent 70%);
 }
 
 .board--front {
@@ -883,6 +990,16 @@ onBeforeUnmount(() => {
   background:
     radial-gradient(120% 90% at 100% 50%, rgba(165, 194, 244, 0.5), transparent 55%),
     linear-gradient(100deg, #fbfcfe 60%, #e6edfa);
+  display: grid;
+  place-items: center;
+}
+.epigraph {
+  font-family: var(--whisper);
+  font-style: italic;
+  font-size: calc(var(--bw) / 19);
+  line-height: 1.8;
+  text-align: center;
+  color: rgba(20, 25, 58, 0.6);
 }
 
 /* the foil emblem */
