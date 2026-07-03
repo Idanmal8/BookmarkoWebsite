@@ -1,8 +1,9 @@
 <template>
   <div class="app-wrapper" :class="{ home: route === 'home' }">
-    <Navbar :variant="route === 'home' ? 'home' : 'plain'" />
+    <Navbar v-if="route !== 'new-design'" :variant="route === 'home' ? 'home' : 'plain'" />
     <main>
-      <DeleteAccountConfirm v-if="route === 'delete-confirm'" />
+      <NewDesign v-if="route === 'new-design'" />
+      <DeleteAccountConfirm v-else-if="route === 'delete-confirm'" />
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
       <Changelog v-else-if="route === 'changelog'" />
@@ -16,7 +17,7 @@
         <Finale />
       </template>
     </main>
-    <Footer v-if="route !== 'email-confirmed'" />
+    <Footer v-if="route !== 'email-confirmed' && route !== 'new-design'" />
   </div>
 </template>
 
@@ -34,8 +35,9 @@ import EmailConfirmed from './components/EmailConfirmed.vue'
 import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
 import Changelog from './components/Changelog.vue'
+import NewDesign from './components/NewDesign.vue'
 
-type Route = 'home' | 'email-confirmed' | 'delete-request' | 'delete-confirm' | 'changelog'
+type Route = 'home' | 'email-confirmed' | 'delete-request' | 'delete-confirm' | 'changelog' | 'new-design'
 
 function resolveRoute(): Route {
   const params = new URLSearchParams(window.location.search)
@@ -45,6 +47,7 @@ function resolveRoute(): Route {
   if (path === '/delete-account/confirm') return 'delete-confirm'
   if (path === '/delete-account') return 'delete-request'
   if (path === '/changelog') return 'changelog'
+  if (path.toLowerCase() === '/newdesign') return 'new-design'
   return 'home'
 }
 
