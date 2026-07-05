@@ -203,7 +203,7 @@
 
 <div class="hero">
   <h1>Privacy Policy</h1>
-  <p>Last updated: June 30, 2026 &nbsp;·&nbsp; Effective: June 30, 2026</p>
+  <p>Last updated: July 5, 2026 &nbsp;·&nbsp; Effective: July 5, 2026</p>
 </div>
 
 <div class="container">
@@ -250,7 +250,7 @@
     <ul>
       <li><strong>Account data:</strong> email address, display name, and optionally a phone number when you register.</li>
       <li><strong>Social sign-in:</strong> if you sign in with Google or Apple, we receive a unique identifier and your email from those providers. We do not receive your password.</li>
-      <li><strong>Profile content:</strong> reading preferences (favorite genres, reading goals), profile photo, and bio.</li>
+      <li><strong>Profile content:</strong> reading preferences (favorite genres, reading goals), bio, and a profile photo you optionally upload. You may choose an existing image from your device's photo library or take a new one with the camera; the app requests permission before accessing either, and we only receive the single image you select.</li>
       <li><strong>Library data:</strong> books you add, reading status (Want to Read, Reading, Finished, Did Not Finish), reading progress, and favorite passages.</li>
       <li><strong>Imported book files:</strong> e-book files (EPUB) you choose to import into the personal e-reader. These files are stored <strong>only on your device</strong> and are never uploaded to or accessible by Bookmarko (see Section 15).</li>
       <li><strong>Collections:</strong> custom book lists, names, descriptions, icons, and colors you create.</li>
@@ -309,6 +309,7 @@
       </thead>
       <tbody>
         <tr><td><strong>Supabase</strong></td><td>Database hosting, authentication, file storage</td><td>All app data stored in your account</td></tr>
+        <tr><td><strong>Google Cloud Platform</strong> (Cloud Run, Cloud Storage)</td><td>Backend API hosting and storage of images you upload, such as your profile photo</td><td>Images you upload and requests handled by our API</td></tr>
         <tr><td><strong>Google Firebase</strong></td><td>Analytics, crash reporting, device integrity (App Check)</td><td>Usage events, device identifiers, crash logs</td></tr>
         <tr><td><strong>Google Gemini API</strong></td><td>Powers Ginnie AI responses</td><td>Your messages + relevant library context (see Section 5)</td></tr>
         <tr><td><strong>Google Sign-In</strong></td><td>OAuth authentication</td><td>Google user ID and email (received, not sent)</td></tr>
@@ -320,7 +321,7 @@
     <p>All service providers are contractually required to handle your data only as instructed by us and in compliance with applicable privacy laws.</p>
 
     <h3>4.2 Public Community Content</h3>
-    <p>Posts, quotes, and book reviews you publish are visible to other Bookmarko users. Your display name and profile photo may appear alongside your public content.</p>
+    <p>Posts, quotes, and book reviews you publish are visible to other Bookmarko users. Your display name and profile photo may appear alongside your public content. Because your profile photo is shown to other users, it is served from public cloud storage and can be viewed by anyone who has its link. You can change or remove your profile photo at any time from the app.</p>
 
     <h3>4.3 Legal Requirements</h3>
     <p>We may disclose your information if required by law, court order, or governmental authority, or when we believe disclosure is necessary to protect our rights, your safety, or the safety of others.</p>

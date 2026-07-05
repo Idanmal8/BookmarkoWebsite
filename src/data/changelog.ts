@@ -15,6 +15,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.12+22',
+    date: '2026-07-05',
+    title: 'Add a profile photo — and put a face to every post',
+    summary: 'Make your profile yours with a real photo, and see who\'s behind each post. Pick a picture from your library or snap a new one; it shows on your profile, in the home welcome header, and next to your posts. Author photos now appear across the feed and fade in smoothly as they load.',
+    changes: [
+      { tag: 'feature', text: 'Upload a profile photo: tap your avatar and choose a picture from your gallery or take a new one with the camera. Prefer a preset? The emoji avatars are still there, and you can remove your photo any time to switch back.' },
+      { tag: 'feature', text: 'Your photo now appears on your profile, in the home welcome header, and next to your posts in the feed.' },
+      { tag: 'improvement', text: 'Post authors show their profile photo (or their initial when they haven\'t set one), so it\'s easy to see who shared what.' },
+      { tag: 'improvement', text: 'Avatars fade in with a shimmer placeholder instead of popping in, and the loading state now appears the instant you start an upload.' },
+      { tag: 'fix', text: 'Fixed a visual glitch on the "pick a book" sheet when composing a post.' },
+    ],
+  },
+  {
     version: 'Client 0.1.10+20',
     date: '2026-06-20',
     title: 'A friendlier book status & reading-progress experience',
