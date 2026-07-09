@@ -15,6 +15,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.13+28',
+    date: '2026-07-09',
+    title: 'Ginie can now build your library for you',
+    summary: 'Ginie is no longer just a book-recommender — now it can act. Ask it to add a book and it drops a confirmation card right into the chat; tap Confirm and the book lands in your library with a little celebration. You\'re always in control — nothing changes until you approve it.',
+    changes: [
+      { tag: 'feature', text: 'Ask Ginie to add books to your library — "add Dune", or "add the first two Lord of the Rings books" — and it finds the right editions and offers them as tappable confirmation cards in the chat.' },
+      { tag: 'feature', text: 'Ginie can also manage books you already have: mark one finished, update your reading progress, or favorite it — just ask.' },
+      { tag: 'feature', text: 'Human-in-the-loop by design: every change Ginie proposes waits for your tap. Confirm to apply it, or Dismiss to skip — nothing touches your library until you say so.' },
+      { tag: 'improvement', text: 'A confirmed add plays out live — a book-cover card, a shelf that fills in, and a confetti moment — and your new book shows up in your Library right away.' },
+      { tag: 'improvement', text: 'Ginie now understands series order and exact titles, so "the second book" or "the first three" land on the right editions instead of a near-miss.' },
+    ],
+  },
+  {
     version: 'Client 0.1.12+22',
     date: '2026-07-05',
     title: 'Add a profile photo — and put a face to every post',
