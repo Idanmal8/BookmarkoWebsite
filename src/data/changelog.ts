@@ -15,6 +15,20 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: 'Client 0.1.14+29',
+    date: '2026-07-10',
+    title: 'Ginie replies live — and recommends your next read',
+    summary: 'Ginie\'s chat just got faster and smarter. Answers now stream in as they\'re written instead of appearing all at once, Ginie can suggest your next read picked for your taste, and it always replies in your app\'s language — with stronger guardrails keeping it on-topic.',
+    changes: [
+      { tag: 'feature', text: 'Ginie now streams its replies as they\'re written — you watch the answer form in real time instead of waiting for the whole thing to land.' },
+      { tag: 'feature', text: 'Ask Ginie an open-ended "what should I read next?" (or "surprise me") and it recommends books picked for you from your library and taste, not just a generic list.' },
+      { tag: 'improvement', text: 'Ginie now always replies in your app\'s language — English or Hebrew — no matter which language you type in.' },
+      { tag: 'improvement', text: 'Stronger safety guardrails keep Ginie focused on books and your library, and stop it from being talked out of character or into ignoring its instructions.' },
+      { tag: 'fix', text: 'The e-reader page no longer shifts underneath the "Ask Ginnie" sheet when it opens — the text you\'re reading stays put.' },
+      { tag: 'improvement', text: 'Sign-up names are now limited to Latin letters, keeping profiles and author matching consistent.' },
+    ],
+  },
+  {
     version: 'Client 0.1.13+28',
     date: '2026-07-09',
     title: 'Ginie can now build your library for you',
