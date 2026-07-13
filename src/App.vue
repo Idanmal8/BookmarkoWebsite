@@ -18,6 +18,7 @@
       </template>
     </main>
     <Footer v-if="route !== 'email-confirmed' && route !== 'new-design'" />
+    <CustomCursor />
   </div>
 </template>
 
@@ -36,6 +37,7 @@ import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
 import Changelog from './components/Changelog.vue'
 import NewDesign from './components/NewDesign.vue'
+import CustomCursor from './components/CustomCursor.vue'
 
 type Route = 'home' | 'email-confirmed' | 'delete-request' | 'delete-confirm' | 'changelog' | 'new-design'
 
