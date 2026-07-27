@@ -1,34 +1,56 @@
 <template>
-  <article class="post-page">
-    <a href="/blog" class="back">← All posts</a>
+  <div class="blog">
+    <!-- Small home + back tabs replace the global navbar on blog routes. -->
+    <div class="topbar">
+      <a href="/" class="tab" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            d="M3 11.5 12 4l9 7.5M5.5 10v9h4v-5h5v5h4v-9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>Home</span>
+      </a>
+      <a href="/blog" class="tab tab--ghost">← All posts</a>
+    </div>
 
-    <div v-if="store.loading" class="state">Loading…</div>
-    <div v-else-if="store.error" class="state error">{{ store.error }}</div>
+    <article class="post-page">
+      <!-- Skeleton while the post loads. -->
+      <div v-if="store.loading" aria-hidden="true">
+        <div class="skel-line skel-line--title skel"></div>
+        <div class="skel-line skel-line--meta skel"></div>
+        <div class="cover skel skel-cover"></div>
+        <div v-for="n in 8" :key="n" class="skel-line skel" :class="{ 'skel-line--short': n % 4 === 0 }"></div>
+      </div>
 
-    <template v-else-if="post">
-      <header class="post-head">
-        <h1 class="title">{{ post.title || post.bookTitle }}</h1>
-        <p class="meta">
-          <span>{{ post.bookTitle }}</span>
-          <span v-if="post.bookAuthor"> · {{ post.bookAuthor }}</span>
-        </p>
-        <p v-if="post.rating != null" class="stars" :aria-label="`${post.rating} out of 5`">
-          {{ stars(post.rating) }}
-        </p>
-        <time v-if="post.publishedAt" class="date">{{ formatDate(post.publishedAt) }}</time>
-      </header>
+      <div v-else-if="store.error" class="state error">{{ store.error }}</div>
 
-      <img
-        v-if="post.coverImageUrl"
-        :src="post.coverImageUrl"
-        :alt="post.bookTitle"
-        class="cover"
-      />
+      <template v-else-if="post">
+        <header class="post-head">
+          <h1 class="title">{{ post.title || post.bookTitle }}</h1>
+          <p class="meta">
+            <span>{{ post.bookTitle }}</span>
+            <span v-if="post.bookAuthor"> · {{ post.bookAuthor }}</span>
+          </p>
+          <time v-if="post.publishedAt" class="date">{{ formatDate(post.publishedAt) }}</time>
+        </header>
 
-      <!-- eslint-disable-next-line vue/no-v-html — content is escaped + rendered by renderMarkdown -->
-      <div class="content" v-html="renderedBody"></div>
-    </template>
-  </article>
+        <img
+          v-if="post.coverImageUrl"
+          :src="post.coverImageUrl"
+          :alt="post.bookTitle"
+          class="cover"
+        />
+
+        <!-- eslint-disable-next-line vue/no-v-html — content is escaped + rendered by renderMarkdown -->
+        <div class="content" v-html="renderedBody"></div>
+      </template>
+    </article>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,10 +66,12 @@ const renderedBody = computed(() =>
   post.value?.body ? renderMarkdown(post.value.body) : '',
 )
 
+// Retained for future use — rating is available on the post but not rendered.
 function stars(rating: number): string {
   const full = Math.round(rating)
   return '★'.repeat(full) + '☆'.repeat(Math.max(0, 5 - full))
 }
+void stars
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -61,22 +85,51 @@ onMounted(() => store.fetchPost(props.slug))
 </script>
 
 <style scoped>
+.blog {
+  min-height: 100vh;
+  background: #faf9fc;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 18px;
+  padding: 14px 20px;
+  backdrop-filter: blur(8px);
+  background: rgba(250, 249, 252, 0.8);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #1a1a2e;
+  text-decoration: none;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.15s ease;
+}
+
+.tab:hover {
+  color: #6c4cf1;
+}
+
+.tab--ghost {
+  color: #6c4cf1;
+}
+
+.tab--ghost:hover {
+  text-decoration: underline;
+}
+
 .post-page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 140px 24px 96px;
+  padding: 32px 24px 96px;
   font-family: 'Raleway', sans-serif;
-}
-
-.back {
-  color: #6c4cf1;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-
-.back:hover {
-  text-decoration: underline;
 }
 
 .state {
@@ -90,7 +143,7 @@ onMounted(() => store.fetchPost(props.slug))
 }
 
 .post-head {
-  margin: 28px 0 24px;
+  margin: 8px 0 24px;
 }
 
 .title {
@@ -103,13 +156,6 @@ onMounted(() => store.fetchPost(props.slug))
 
 .meta {
   color: #77778c;
-  margin: 0 0 8px;
-}
-
-.stars {
-  color: #f4a723;
-  letter-spacing: 0.08em;
-  font-size: 1.15rem;
   margin: 0 0 8px;
 }
 
@@ -171,5 +217,62 @@ onMounted(() => store.fetchPost(props.slug))
   padding: 2px 6px;
   border-radius: 5px;
   font-size: 0.92em;
+}
+
+/* ── Skeleton loader ─────────────────────────────────────────────────────── */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: #ececf3;
+}
+
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+.skel-line {
+  height: 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.skel-line--title {
+  height: 34px;
+  width: 80%;
+  margin: 8px 0 16px;
+}
+
+.skel-line--meta {
+  height: 14px;
+  width: 45%;
+  margin-bottom: 28px;
+}
+
+.skel-line--short {
+  width: 55%;
+}
+
+.skel-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  margin: 8px 0 32px;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel::after {
+    animation: none;
+  }
 }
 </style>

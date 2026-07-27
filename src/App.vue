@@ -1,6 +1,9 @@
 <template>
   <div class="app-wrapper" :class="{ home: route === 'home' }">
-    <Navbar v-if="route !== 'new-design'" :variant="route === 'home' ? 'home' : 'plain'" />
+    <Navbar
+      v-if="route !== 'new-design' && route !== 'blog' && route !== 'blog-post'"
+      :variant="route === 'home' ? 'home' : 'plain'"
+    />
     <main>
       <NewDesign v-if="route === 'new-design'" />
       <DeleteAccountConfirm v-else-if="route === 'delete-confirm'" />
