@@ -9,6 +9,7 @@
       <a href="#goodreads">Import</a>
       <a href="#leaderboard">Leaderboard</a>
       <a href="#ginie">Ask Ginie</a>
+      <a href="/blog">Blog</a>
       <a href="#waitlist" class="nav__cta">Join the journey</a>
     </div>
   </nav>
