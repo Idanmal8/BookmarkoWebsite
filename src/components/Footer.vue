@@ -6,6 +6,8 @@
         <span class="footer__wordmark">Bookmarko</span>
       </div>
       <nav class="footer__legal" aria-label="Legal">
+        <a href="/roadmap">Roadmap</a>
+        <a href="/blog">Blog</a>
         <a href="/privacy.html">Privacy</a>
         <a href="/terms.html">Terms</a>
       </nav>

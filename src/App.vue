@@ -10,6 +10,7 @@
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
       <Changelog v-else-if="route === 'changelog'" />
+      <Roadmap v-else-if="route === 'roadmap'" />
       <BlogPost v-else-if="route === 'blog-post'" :slug="blogSlug" />
       <Blog v-else-if="route === 'blog'" />
       <template v-else>
@@ -41,6 +42,7 @@ import EmailConfirmed from './components/EmailConfirmed.vue'
 import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
 import Changelog from './components/Changelog.vue'
+import Roadmap from './components/Roadmap.vue'
 import NewDesign from './components/NewDesign.vue'
 import Blog from './components/Blog.vue'
 import BlogPost from './components/BlogPost.vue'
@@ -52,6 +54,7 @@ type Route =
   | 'delete-request'
   | 'delete-confirm'
   | 'changelog'
+  | 'roadmap'
   | 'new-design'
   | 'blog'
   | 'blog-post'
@@ -64,6 +67,7 @@ function resolveRoute(): Route {
   if (path === '/delete-account/confirm') return 'delete-confirm'
   if (path === '/delete-account') return 'delete-request'
   if (path === '/changelog') return 'changelog'
+  if (path === '/roadmap') return 'roadmap'
   if (path.toLowerCase() === '/newdesign') return 'new-design'
   if (path === '/blog') return 'blog'
   if (path.startsWith('/blog/')) return 'blog-post'
