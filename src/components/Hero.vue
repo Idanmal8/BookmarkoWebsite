@@ -17,7 +17,7 @@
         you keep meaning to finish. One place. Doom scrolling elimenated.
       </p>
 
-      <div class="hero__stores">
+      <div class="hero__stores" id="stores">
         <a
           class="store"
           href="https://apps.apple.com/us/app/bookmarko/id6762641879"
@@ -155,6 +155,9 @@ const bumped = ref(false)
 
 .hero__stores {
   margin-top: 36px;
+  /* Offset the #stores anchor jump so the buttons land clear of the fixed navbar
+     (~64px) with ~100px breathing room, instead of scrolling to their top edge. */
+  scroll-margin-top: 160px;
   display: flex;
   align-items: center;
   justify-content: center;

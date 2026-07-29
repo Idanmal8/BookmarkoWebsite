@@ -13,7 +13,7 @@
       <p class="finale__sub">
         Join the journey and we'll save you a quiet seat by the window.
       </p>
-      <a href="#waitlist" class="finale__cta">
+      <a href="#stores" class="finale__cta">
         Take me to the shelf
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
