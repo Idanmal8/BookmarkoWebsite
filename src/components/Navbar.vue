@@ -10,7 +10,7 @@
       <a href="#leaderboard">Leaderboard</a>
       <a href="#ginie">Ask Ginie</a>
       <a href="/blog">Blog</a>
-      <a href="/roadmap">Roadmap</a>
+      <a href="/roadmap">Requests</a>
     </div>
   </nav>
 </template>
@@ -58,22 +58,12 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   white-space: nowrap;
 }
 .nav__links a:hover { color: #fff; }
-.nav__cta {
-  background: #fff;
-  color: var(--accent) !important;
-  padding: 9px 16px;
-  border-radius: 999px;
-  font-weight: 600 !important;
-  transition: background .2s, transform .2s, box-shadow .2s;
-}
-.nav__cta:hover {
-  background: #fff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px -6px rgba(0,0,0,.25);
-}
 
 @media (max-width: 1040px) {
-  .nav__links a:not(.nav__cta) { display: none; }
+  /* Mobile: just the logo, centered — no links, no wordmark. */
+  .nav { justify-content: center; }
+  .nav__links { display: none; }
+  .nav__wordmark { display: none; }
 }
 @media (max-width: 760px) {
   .nav { padding: 14px 18px; }
