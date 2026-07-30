@@ -27,6 +27,7 @@ jobs:
       - run: npm run build
         env:
           VITE_API_BASE_URL: https://bookmarko-backend-production-587868624215.europe-west1.run.app
+          VITE_GA_MEASUREMENT_ID: G-5C3LGSD51W
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
