@@ -48,6 +48,33 @@
 
         <!-- eslint-disable-next-line vue/no-v-html — content is escaped + rendered by renderMarkdown -->
         <div class="content" v-html="renderedBody"></div>
+
+        <!--
+          Buy CTA. Placed after the review, not before: the 48-hour affiliate
+          cookie means a click only pays if it happens at the moment of intent,
+          and that moment is when someone has just finished reading why the
+          book is good. Hidden entirely when the book isn't purchasable
+          (non-English — Bookshop's catalog is English-only).
+        -->
+        <aside v-if="post.affiliateUrl" class="buy">
+          <p class="buy__lead">Enjoyed this? You can pick it up here.</p>
+          <a
+            class="buy__btn"
+            :href="post.affiliateUrl"
+            target="_blank"
+            rel="noopener sponsored"
+            @click="store.trackAffiliateClick(post)"
+          >
+            Buy “{{ post.bookTitle }}” on Bookshop.org
+          </a>
+          <p class="buy__note">
+            Bookshop.org supports independent bookshops. Ships to the US and UK.
+          </p>
+          <p class="buy__disclosure">
+            We earn a small commission from purchases made through this link, at
+            no extra cost to you.
+          </p>
+        </aside>
       </template>
     </article>
   </div>
@@ -217,6 +244,57 @@ onMounted(() => store.fetchPost(props.slug))
   padding: 2px 6px;
   border-radius: 5px;
   font-size: 0.92em;
+}
+
+/* ── Buy CTA ─────────────────────────────────────────────────────────────── */
+.buy {
+  margin: 44px 0 8px;
+  padding: 26px 24px;
+  border: 1px solid #e6e3f5;
+  border-radius: 14px;
+  background: #f6f4ff;
+  text-align: center;
+}
+
+.buy__lead {
+  margin: 0 0 16px;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.15rem;
+  color: #1a1a2e;
+}
+
+.buy__btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: #6c4cf1;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.buy__btn:hover {
+  background: #573bd6;
+  transform: translateY(-1px);
+}
+
+.buy__note {
+  margin: 14px 0 0;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.85rem;
+  color: #55556a;
+}
+
+/* FTC requires the disclosure be clear and near the link — not buried in a
+   privacy page. Muted, but deliberately not hidden. */
+.buy__disclosure {
+  margin: 6px 0 0;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.78rem;
+  color: #9a9ab0;
 }
 
 /* ── Skeleton loader ─────────────────────────────────────────────────────── */

@@ -12,6 +12,31 @@
         <a href="/terms.html">Terms</a>
       </nav>
     </div>
+    <!--
+      Our Bookshop.org storefront. Deliberately persistent site-wide: the
+      affiliate cookie only lasts 48 hours, so per-book links pay only on
+      immediate intent. A storefront someone bookmarks is the one affiliate
+      asset that keeps earning after the cookie expires.
+    -->
+    <div class="footer__shop">
+      <a
+        href="https://bookshop.org/shop/Bookmarko"
+        target="_blank"
+        rel="noopener sponsored"
+        @click="trackShopClick('WEBSITE_STOREFRONT')"
+      >Our bookshop</a>
+      <span aria-hidden="true">·</span>
+      <a
+        href="https://bookshop.org/a/126827/gift_cards"
+        target="_blank"
+        rel="noopener sponsored"
+        @click="trackShopClick('WEBSITE_STOREFRONT')"
+      >Gift cards</a>
+      <p class="footer__disclosure">
+        Bookshop.org links are affiliate links — we earn a small commission on
+        purchases, at no extra cost to you. It supports independent bookshops.
+      </p>
+    </div>
     <div class="footer__base">
       <span>© 2026 Bookmarko. Built quietly, for readers.</span>
       <span class="footer__sig">Made with a cup of tea and a closed tab.</span>
@@ -21,6 +46,25 @@
     </div>
   </footer>
 </template>
+
+<script setup lang="ts">
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
+
+/**
+ * Log an outbound storefront click. Fire-and-forget, and failures are
+ * swallowed — an analytics row is worth far less than the click itself, which
+ * must never be delayed or blocked. `keepalive` so it still sends while the
+ * browser is navigating away.
+ */
+function trackShopClick(surface: string) {
+  void fetch(`${API_BASE_URL}/affiliate/click`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tier: 'D', surface }),
+    keepalive: true,
+  }).catch(() => {})
+}
+</script>
 
 <style scoped>
 .footer {
@@ -96,5 +140,32 @@
   }
   .footer__base { flex-direction: column; gap: 6px; }
   .footer__mark { width: 220px; height: 220px; right: -50px; bottom: -60px; }
+}
+
+.footer__shop {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 0 0;
+  position: relative;
+  z-index: 2;
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.footer__shop a {
+  color: rgba(247,249,252,.82);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(247,249,252,.25);
+}
+.footer__shop a:hover { color: var(--paper); }
+/* FTC: disclosure must sit next to the links, not on a separate page. */
+.footer__disclosure {
+  flex-basis: 100%;
+  margin: 8px 0 0;
+  font-size: .78rem;
+  color: rgba(247,249,252,.45);
+  line-height: 1.5;
 }
 </style>

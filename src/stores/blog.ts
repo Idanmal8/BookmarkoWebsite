@@ -14,6 +14,13 @@ export interface BlogPost {
   coverImageUrl: string | null
   rating: number | null
   publishedAt: string | null
+  // Bookshop.org affiliate link, resolved server-side. Null when the book
+  // isn't offerable (non-English — Bookshop's catalog is English-only).
+  affiliateUrl: string | null
+  // 'A' | 'B' | 'C' | 'D' — see tasks/AFFILIATE_STRATEGY.md. 'D' means the
+  // link is a search rather than an exact title match.
+  affiliateTier: string | null
+  affiliateIsbn13: string | null
 }
 
 interface ListResponse {
@@ -44,6 +51,24 @@ export const useBlogStore = defineStore('blog', {
       } finally {
         this.loading = false
       }
+    },
+
+    /**
+     * Log an outbound affiliate click. Fire-and-forget: we never await it
+     * before navigating, and a failure is swallowed — losing an analytics row
+     * is far cheaper than delaying or blocking a sale.
+     */
+    trackAffiliateClick(post: BlogPost) {
+      void fetch(`${API_BASE_URL}/affiliate/click`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isbn13: post.affiliateIsbn13 ?? undefined,
+          tier: post.affiliateTier ?? 'D',
+          surface: 'BLOG_POST',
+        }),
+        keepalive: true,
+      }).catch(() => {})
     },
 
     async fetchPost(slug: string) {
