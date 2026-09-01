@@ -17,7 +17,6 @@
         <Hero />
         <BookSectionHero />
         <GoodreadsImport />
-        <Leaderboard />
         <GinieSection />
         <Quote />
         <Finale />
@@ -33,7 +32,6 @@ import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
-import Leaderboard from './components/Leaderboard.vue'
 import GinieSection from './components/GinieSection.vue'
 import Quote from './components/Quote.vue'
 import Finale from './components/Finale.vue'
