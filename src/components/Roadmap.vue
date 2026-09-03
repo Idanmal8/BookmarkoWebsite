@@ -62,8 +62,27 @@
 
     <p v-if="store.error" class="board-error">{{ store.error }}</p>
 
+    <!-- Skeleton board while the columns load, so the page never flashes empty. -->
+    <div v-if="store.loading" class="board" aria-hidden="true">
+      <div v-for="col in columns" :key="col.key" class="column">
+        <div class="col-head" :data-status="col.key">
+          <span class="col-dot" />
+          <h3 class="col-title">{{ col.label }}</h3>
+          <span class="col-count skel skel-count" />
+        </div>
+        <div class="col-body">
+          <article v-for="n in skeletonCounts[col.key]" :key="n" class="card skel-card">
+            <div class="skel skel-line skel-line--title" />
+            <div class="skel skel-line" />
+            <div class="skel skel-line skel-line--short" />
+            <div class="card-foot"><div class="skel skel-pill" /></div>
+          </article>
+        </div>
+      </div>
+    </div>
+
     <!-- Read-only public board -->
-    <div class="board">
+    <div v-else class="board">
       <div v-for="col in columns" :key="col.key" class="column">
         <div class="col-head" :data-status="col.key">
           <span class="col-dot" />
@@ -72,7 +91,7 @@
         </div>
 
         <TransitionGroup tag="div" name="cards" class="col-body">
-          <article v-for="item in publicColumn(col.key)" :key="item.id" class="card">
+          <article v-for="item in visibleColumn(col.key)" :key="item.id" class="card">
             <h4 class="card-title">{{ item.title }}</h4>
             <p class="card-body">{{ item.body }}</p>
             <div class="card-foot">
@@ -91,6 +110,16 @@
             Nothing here yet
           </p>
         </TransitionGroup>
+
+        <button
+          v-if="hiddenCount(col.key) > 0"
+          class="show-more"
+          type="button"
+          @click="showMore(col.key)"
+        >
+          Show {{ Math.min(hiddenCount(col.key), PAGE_SIZE) }} more
+          <span class="show-more-rest">of {{ hiddenCount(col.key) }}</span>
+        </button>
       </div>
     </div>
   </section>
@@ -132,10 +161,34 @@ function resetForm() {
   store.submitError = null
 }
 
+// Staggered placeholder counts so the loading board reads like a real one.
+const skeletonCounts: Record<string, number> = {
+  todo: 3,
+  in_progress: 2,
+  done: 3,
+  aired: 2,
+}
+
 // ── Board access ──────────────────────────────────────────────────────────────
+// The endpoint returns the whole board in one call, so paging is purely visual:
+// each column starts capped and grows a page at a time. No infinite scroll.
+const PAGE_SIZE = 5
+const visibleCount = reactive<Record<string, number>>(
+  Object.fromEntries(columns.map((c) => [c.key, PAGE_SIZE])),
+)
+
 function publicColumn(key: FeatureRequestStatus): FeatureRequest[] {
   if (key === 'pending') return []
   return store.board[key] ?? []
+}
+function visibleColumn(key: FeatureRequestStatus): FeatureRequest[] {
+  return publicColumn(key).slice(0, visibleCount[key])
+}
+function hiddenCount(key: FeatureRequestStatus): number {
+  return Math.max(0, publicColumn(key).length - visibleCount[key])
+}
+function showMore(key: FeatureRequestStatus) {
+  visibleCount[key] += PAGE_SIZE
 }
 
 onMounted(() => store.fetchBoard())
@@ -343,6 +396,57 @@ onMounted(() => store.fetchBoard())
 }
 .vote-btn.voted .chev { animation: bounce 0.4s ease; }
 @keyframes bounce { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-4px); } }
+
+/* ── Show more ──────────────────────────────────────────── */
+.show-more {
+  width: 100%;
+  margin-top: 0.7rem;
+  border: 1px dashed var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.show-more:hover {
+  border-color: var(--accent-soft);
+  color: var(--accent-deep);
+  background: var(--accent-tint);
+}
+.show-more-rest { opacity: 0.65; font-weight: 500; }
+
+/* ── Skeleton board ─────────────────────────────────────── */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: #ececf3;
+  border-radius: 6px;
+}
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+.skel-card { transition: none; }
+.skel-card:hover { transform: none; box-shadow: var(--shadow-soft); }
+.skel-line { height: 11px; margin-bottom: 0.5rem; }
+.skel-line--title { height: 15px; width: 80%; margin-bottom: 0.7rem; }
+.skel-line--short { width: 55%; margin-bottom: 0.7rem; }
+.skel-pill { width: 54px; height: 22px; border-radius: 999px; }
+.skel-count { width: 26px; height: 16px; border-radius: 999px; padding: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .skel::after { animation: none; }
+}
 
 /* ── Card transitions (reordering on upvote) ────────────── */
 .cards-move { transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1); }
