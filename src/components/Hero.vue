@@ -1,7 +1,7 @@
 <template>
   <section class="hero" id="top">
     <div class="hero__shelf hero__shelf--left">
-      <Bookshelf side="left" :width="180" :height="900" :shelves="8" />
+      <Bookshelf side="left" :width="180" :shelves="8" />
       <div class="hero__shelf-fade hero__shelf-fade--bottom" />
     </div>
 
@@ -57,7 +57,7 @@
     </div>
 
     <div class="hero__shelf hero__shelf--right">
-      <Bookshelf side="right" :width="180" :height="900" :shelves="8" />
+      <Bookshelf side="right" :width="180" :shelves="8" />
       <div class="hero__shelf-fade hero__shelf-fade--bottom" />
     </div>
   </section>
