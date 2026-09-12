@@ -3,9 +3,12 @@
     ref="root"
     class="bk"
     :class="`bk--${side}`"
+    :style="rootStyle"
     aria-hidden="true"
   >
-    <div ref="stage" class="bk__stage">
+    <!-- The wall is a single plane turned away from the viewer, so its boards
+         converge toward a vanishing point past the inner edge — a corridor. -->
+    <div class="bk__wall">
       <div v-for="row in rows" :key="row.id" class="bk__row">
         <div class="bk__back" />
 
@@ -28,8 +31,8 @@
               <span class="bk-f bk-f--top" />
             </div>
 
-            <!-- stack of books lying flat -->
-            <div v-else class="bk__stack" :style="{ width: `${item.w}px` }">
+            <!-- books lying flat -->
+            <div v-else-if="item.kind === 'stack'" class="bk__stack" :style="{ width: `${item.w}px` }">
               <div
                 v-for="flat in item.books"
                 :key="flat.id"
@@ -43,6 +46,12 @@
                 <span class="bk-f bk-f--top" />
               </div>
             </div>
+
+            <!-- upright panel between bays -->
+            <div v-else class="bk-divider" :style="{ width: `${item.w}px` }">
+              <span class="bk-f bk-f--front" />
+              <span class="bk-f bk-f--side" />
+            </div>
           </template>
         </div>
 
@@ -51,33 +60,54 @@
         <div class="bk-plank">
           <span class="bk-plank__top" />
           <span class="bk-plank__front" />
+          <span class="bk-plank__under" />
         </div>
       </div>
     </div>
 
-    <div class="bk__frame" />
+    <!-- Light at the end of the corridor: hides where the wall stops. -->
+    <div class="bk__haze" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, type CSSProperties } from 'vue'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const props = withDefaults(
   defineProps<{
     side?: 'left' | 'right'
-    /** Column width in px — decides how many books fit on a shelf. */
-    width?: number
     shelves?: number
   }>(),
-  { side: 'left', width: 240, shelves: 7 },
+  { side: 'left', shelves: 7 },
 )
 
 const root = ref<HTMLElement | null>(null)
-const stage = ref<HTMLElement | null>(null)
+
+/* ---- corridor geometry ---------------------------------------------------
+   The wall is BAYS bays long in its own flat space, then turned WALL_ANGLE
+   degrees about its near (outer) edge. The viewer sits at ORIGIN_X across the
+   column, so everything converges just past the column's inner edge. */
+const WALL_ANGLE = 60
+const PERSPECTIVE = 600
+const ORIGIN_X = 45 // % of the column width
+const BAY = 112 // wall-space px between dividers
+const BAYS = 4
+const DIVIDER = 6
+const WALL_LEN = BAYS * (BAY + DIVIDER)
+/** Cabinet depth in wall-space px. */
+const SHELF_DEPTH = 30
+
+const rootStyle = computed<CSSProperties>(
+  () =>
+    ({
+      '--wall-w': `${WALL_LEN}px`,
+      '--wall-a': `${WALL_ANGLE}deg`,
+      '--persp': `${PERSPECTIVE}px`,
+      '--origin-x': `${ORIGIN_X}%`,
+      '--shelf-d': `${SHELF_DEPTH}px`,
+    }) as CSSProperties,
+)
 
 const SPINE_COLORS = [
   '#6B2737', '#C4933D', '#2F5D44', '#1F2E54', '#A04A2C',
@@ -115,70 +145,71 @@ type Upright = {
   bands: boolean
   title: boolean
 }
-type Flat = { id: string; h: number; depth: number; color: string; light: boolean; z: number }
+type Flat = { id: string; h: number; depth: number; color: string; z: number }
 type Stack = { kind: 'stack'; id: string; w: number; books: Flat[] }
-type Row = { id: string; items: (Upright | Stack)[] }
-
-/** Shelf depth in px — how far back the cabinet reads. Books stay shallower. */
-const SHELF_DEPTH = 38
+type Divider = { kind: 'divider'; id: string; w: number }
+type Row = { id: string; items: (Upright | Stack | Divider)[] }
 
 const rows = computed<Row[]>(() => {
   const out: Row[] = []
   for (let i = 0; i < props.shelves; i++) {
     const seed = (props.side === 'left' ? 7 : 31) * (i + 1) * 11
     const rnd = mulberry32(seed)
-    const items: (Upright | Stack)[] = []
-    let used = 0
+    const items: (Upright | Stack | Divider)[] = []
     let last: string | null = null
     let idx = 0
-    const limit = props.width + 8
 
-    while (used < limit) {
-      const remaining = limit - used
+    // Bay by bay, so the dividers line up from shelf to shelf.
+    for (let bay = 0; bay < BAYS; bay++) {
+      let used = 0
+      while (used < BAY) {
+        const remaining = BAY - used
 
-      // Occasionally finish a shelf with a small flat stack.
-      if (remaining > 34 && remaining < 64 && rnd() < 0.55) {
-        const w = Math.min(remaining - 2, 28 + Math.floor(rnd() * 10))
-        const count = 2 + Math.floor(rnd() * 2)
-        const books: Flat[] = []
-        for (let k = 0; k < count; k++) {
-          const color = pickColor(rnd, last)
-          last = color
-          books.push({
-            id: `${props.side}-${seed}-s${idx}-${k}`,
-            h: 7 + Math.floor(rnd() * 4),
-            depth: Math.min(SHELF_DEPTH - 6, w - 2),
-            color,
-            light: LIGHT.has(color),
-            z: -Math.floor(rnd() * 5),
-          })
+        // Now and then a bay ends with a few books lying flat.
+        if (remaining > 30 && remaining < 56 && rnd() < 0.45) {
+          const w = Math.min(remaining - 2, 26 + Math.floor(rnd() * 10))
+          const count = 2 + Math.floor(rnd() * 2)
+          const books: Flat[] = []
+          for (let k = 0; k < count; k++) {
+            const color = pickColor(rnd, last)
+            last = color
+            books.push({
+              id: `${props.side}-${seed}-s${idx}-${k}`,
+              h: 7 + Math.floor(rnd() * 4),
+              depth: Math.min(SHELF_DEPTH - 6, w - 2),
+              color,
+              z: -Math.floor(rnd() * 4),
+            })
+          }
+          items.push({ kind: 'stack', id: `${props.side}-${seed}-stack${idx}`, w, books })
+          used += w + 1.5
+          idx++
+          continue
         }
-        items.push({ kind: 'stack', id: `${props.side}-${seed}-stack${idx}`, w, books })
-        used += w + 2
-        idx++
-        continue
-      }
 
-      const w = 9 + Math.floor(rnd() * 14)
-      if (w > remaining) break
-      const color = pickColor(rnd, last)
-      last = color
-      const hPct = 0.58 + rnd() * 0.33
-      items.push({
-        kind: 'book',
-        id: `${props.side}-${seed}-${idx}`,
-        w,
-        hPct,
-        depth: 16 + Math.floor(rnd() * 14),
-        color,
-        light: LIGHT.has(color),
-        lean: rnd() < 0.08 ? (rnd() < 0.5 ? -7 : 7) : 0,
-        z: -Math.floor(rnd() * 7),
-        bands: hPct > 0.7 && idx % 3 === 0,
-        title: hPct > 0.72 && w > 13 && idx % 2 === 0,
-      })
-      used += w + 1.5
-      idx++
+        // Clamp to what is left so a bay packs out instead of ending in a gap.
+        const w = Math.min(14 + Math.floor(rnd() * 17), Math.floor(remaining))
+        if (w < 7) break
+        const color = pickColor(rnd, last)
+        last = color
+        const hPct = 0.64 + rnd() * 0.3
+        items.push({
+          kind: 'book',
+          id: `${props.side}-${seed}-${idx}`,
+          w,
+          hPct,
+          depth: 10 + Math.floor(rnd() * 9),
+          color,
+          light: LIGHT.has(color),
+          lean: rnd() < 0.07 ? (rnd() < 0.5 ? -6 : 6) : 0,
+          z: -Math.floor(rnd() * 6),
+          bands: hPct > 0.78 && idx % 3 === 0,
+          title: hPct > 0.8 && w > 16 && idx % 2 === 0,
+        })
+        used += w + 1.5
+        idx++
+      }
+      items.push({ kind: 'divider', id: `${props.side}-${seed}-div${bay}`, w: DIVIDER })
     }
     out.push({ id: `${props.side}-row-${i}`, items })
   }
@@ -191,8 +222,8 @@ function uprightStyle(b: Upright): CSSProperties {
     height: `${(b.hPct * 100).toFixed(2)}%`,
     '--d': `${b.depth}px`,
     '--col': b.color,
-    '--ink-on': b.light ? 'rgba(40,30,20,.5)' : 'rgba(255,255,255,.5)',
-    '--band': b.light ? 'rgba(40,30,20,.2)' : 'rgba(255,255,255,.24)',
+    '--ink-on': b.light ? 'rgba(40,30,20,.45)' : 'rgba(255,255,255,.45)',
+    '--band': b.light ? 'rgba(40,30,20,.18)' : 'rgba(255,255,255,.2)',
   } as CSSProperties
 }
 
@@ -206,18 +237,18 @@ function flatStyle(f: Flat): CSSProperties {
 }
 
 let mm: gsap.MatchMedia | null = null
-let onMove: ((e: PointerEvent) => void) | null = null
 
 onMounted(() => {
   const el = root.value
-  const stageEl = stage.value
-  if (!el || !stageEl) return
+  if (!el) return
 
   const boxes = Array.from(el.querySelectorAll<HTMLElement>('.bk-box'))
   const planks = Array.from(el.querySelectorAll<HTMLElement>('.bk-plank'))
+  // The viewer stands off the near end of the wall, so turning the spine
+  // toward them means rotating away from the wall's far end.
   const outward = props.side === 'left' ? -1 : 1
 
-  // Resting pose: lean + how far back each book sits on the shelf.
+  // Resting pose: lean, and how far back each book sits on the shelf.
   boxes.forEach((box) => {
     gsap.set(box, {
       rotationZ: Number(box.dataset.lean || 0),
@@ -227,39 +258,29 @@ onMounted(() => {
 
   mm = gsap.matchMedia()
 
-  // Full motion: entrance, pointer parallax, hover pull-out.
+  // The shelf itself never drifts — only the one-off entrance and the hover
+  // respond, so nothing moves under the reader while they read.
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
     tl.from(planks, {
       scaleX: 0,
-      duration: 0.7,
+      duration: 0.8,
       stagger: 0.05,
       transformOrigin: props.side === 'left' ? 'left center' : 'right center',
     }).from(
       boxes,
       {
         // No opacity here on purpose: a non-1 opacity flattens a preserve-3d
-        // box, so the faces would briefly render on top of each other.
+        // box, so its faces would briefly render on top of each other.
         scaleY: 0.12,
         duration: 0.7,
-        ease: 'back.out(1.7)',
-        stagger: { each: 0.012, from: 'start' },
+        ease: 'back.out(1.6)',
+        stagger: { amount: 1, from: 'start' },
       },
-      '-=0.45',
+      '-=0.5',
     )
 
-    const ry = gsap.quickTo(stageEl, 'rotationY', { duration: 0.9, ease: 'power3.out' })
-    const rx = gsap.quickTo(stageEl, 'rotationX', { duration: 0.9, ease: 'power3.out' })
-
-    onMove = (e: PointerEvent) => {
-      const nx = (e.clientX / window.innerWidth) * 2 - 1
-      const ny = (e.clientY / window.innerHeight) * 2 - 1
-      ry(nx * 3.5)
-      rx(-ny * 2)
-    }
-    window.addEventListener('pointermove', onMove, { passive: true })
-
-    // Tracked so that moving between two faces of the same book does not
+    // Tracked so that crossing between two faces of one book does not
     // re-trigger the pull-out (pointerover/out fire per face).
     let hovered: HTMLElement | null = null
 
@@ -268,8 +289,8 @@ onMounted(() => {
       if (!box || !el.contains(box) || box === hovered) return
       hovered = box
       gsap.to(box, {
-        z: Number(box.dataset.z || 0) + 26,
-        rotationY: outward * 11,
+        z: Number(box.dataset.z || 0) + 22,
+        rotationY: outward * 10,
         rotationZ: Number(box.dataset.lean || 0) * 0.4,
         duration: 0.45,
         ease: 'power3.out',
@@ -294,32 +315,15 @@ onMounted(() => {
     el.addEventListener('pointerover', enter)
     el.addEventListener('pointerout', leave)
 
-    // Gentle vertical parallax so the shelf drifts against the hero copy.
-    const drift = gsap.fromTo(
-      stageEl,
-      { y: 40 },
-      {
-        y: -40,
-        ease: 'none',
-        scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
-      },
-    )
-
     return () => {
       tl.kill()
-      drift.scrollTrigger?.kill()
-      drift.kill()
-      if (onMove) window.removeEventListener('pointermove', onMove)
-      onMove = null
       el.removeEventListener('pointerover', enter)
       el.removeEventListener('pointerout', leave)
-      gsap.set(stageEl, { rotationX: 0, rotationY: 0, y: 0 })
     }
   })
 })
 
 onBeforeUnmount(() => {
-  if (onMove) window.removeEventListener('pointermove', onMove)
   mm?.revert()
   mm = null
 })
@@ -331,24 +335,30 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  perspective: 1200px;
-  --shelf-d: 38px;
-  /* Vanishing point sits toward the page centre so each shelf is seen at an
-     angle — the left unit shows its right-hand faces and vice versa. */
-  perspective-origin: 260% 45%;
+  perspective: var(--persp);
+  perspective-origin: var(--origin-x) 50%;
 }
-.bk--right { perspective-origin: -160% 45%; }
+.bk--right { perspective-origin: calc(100% - var(--origin-x)) 50%; }
 
-.bk__stage {
+/* The wall pivots on its near edge — the one at the outside of the page. */
+.bk__wall {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: -48px;
-  height: calc(100% + 96px);
+  top: 0;
+  height: 100%;
+  width: var(--wall-w);
   display: flex;
   flex-direction: column;
   transform-style: preserve-3d;
-  will-change: transform;
+}
+.bk--left .bk__wall {
+  left: 0;
+  transform-origin: left center;
+  transform: rotateY(var(--wall-a));
+}
+.bk--right .bk__wall {
+  right: 0;
+  transform-origin: right center;
+  transform: rotateY(calc(var(--wall-a) * -1));
 }
 
 .bk__row {
@@ -358,24 +368,19 @@ onBeforeUnmount(() => {
   transform-style: preserve-3d;
 }
 
-/* Dim cabinet interior behind the books. */
+/* Back of the cabinet. */
 .bk__back {
   position: absolute;
   inset: 0;
   transform: translateZ(calc(var(--shelf-d) / -2));
-  background: linear-gradient(
-    to top,
-    rgba(20, 25, 58, 0.26),
-    rgba(20, 25, 58, 0.12) 55%,
-    rgba(20, 25, 58, 0.05)
-  );
+  background: linear-gradient(to top, #c9d4e6, #e4eaf4);
 }
 
 .bk__items {
   position: absolute;
-  left: 3px;
+  left: 0;
   right: 0;
-  bottom: 7px;
+  bottom: 6px;
   top: 0;
   display: flex;
   align-items: flex-end;
@@ -390,12 +395,17 @@ onBeforeUnmount(() => {
   transform-style: preserve-3d;
 }
 
-/* ---- a book is a real box: front, one side, one top ---- */
-.bk-box {
+/* ---- a book is a box: spine, one side, one top ---- */
+.bk-box,
+.bk-divider {
   position: relative;
   flex: 0 0 auto;
   transform-style: preserve-3d;
   transform-origin: 50% 100%;
+}
+.bk-divider {
+  align-self: stretch;
+  --d: var(--shelf-d);
 }
 .bk-f {
   position: absolute;
@@ -405,7 +415,6 @@ onBeforeUnmount(() => {
 .bk-f--front {
   inset: 0;
   transform: translateZ(calc(var(--d) / 2));
-  border-radius: 1px 2px 2px 1px;
 }
 .bk-f--side {
   top: 0;
@@ -420,51 +429,46 @@ onBeforeUnmount(() => {
   transform-origin: bottom center;
   transform: translateZ(calc(var(--d) / 2)) rotateX(90deg);
 }
-/* The visible side face is the one turned toward the page centre. */
+/* The visible side is the one turned back toward the near end of the wall. */
 .bk--left .bk-f--side {
-  left: 100%;
-  transform-origin: left center;
-  transform: translateZ(calc(var(--d) / 2)) rotateY(90deg);
-}
-.bk--right .bk-f--side {
   right: 100%;
   transform-origin: right center;
   transform: translateZ(calc(var(--d) / 2)) rotateY(-90deg);
 }
+.bk--right .bk-f--side {
+  left: 100%;
+  transform-origin: left center;
+  transform: translateZ(calc(var(--d) / 2)) rotateY(90deg);
+}
 
-/* Upright: coloured spine in front, paper block to the side and on top. */
+/* Upright: flat spine in front, paper block to the side and on top. */
 .bk-box--up > .bk-f--front {
   background:
     linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.34),
-      rgba(0, 0, 0, 0.06) 14%,
-      rgba(255, 255, 255, 0.14) 38%,
-      rgba(255, 255, 255, 0.02) 62%,
-      rgba(0, 0, 0, 0.3)
+      rgba(0, 0, 0, 0.28),
+      rgba(0, 0, 0, 0) 26%,
+      rgba(255, 255, 255, 0.08) 55%,
+      rgba(0, 0, 0, 0.22)
     ),
     var(--col);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -2px 4px rgba(0, 0, 0, 0.22);
 }
 .bk-box--up > .bk-f--side,
 .bk-box--flat > .bk-f--front,
 .bk-box--flat > .bk-f--side {
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(20, 25, 58, 0.1) 0 1px,
-      rgba(255, 255, 255, 0) 1px 3px
-    ),
-    linear-gradient(to right, #efe7d6, #d8cdb6);
+  background: linear-gradient(to bottom, #f1ead9, #ded3bd);
 }
 .bk-box--up > .bk-f--top {
-  background: linear-gradient(to bottom, #f2ebdb, #cfc3ab);
-  box-shadow: inset 0 0 2px rgba(20, 25, 58, 0.16);
+  background: #e7dfcc;
 }
 /* Flat: the cover faces up, the paper block faces out. */
 .bk-box--flat > .bk-f--top {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.26)), var(--col);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.2)), var(--col);
 }
+
+/* Bay panel. */
+.bk-divider > .bk-f--front { background: linear-gradient(to bottom, #ffffff, #e8eef8); }
+.bk-divider > .bk-f--side { background: linear-gradient(to bottom, #eef2fa, #d7e0ee); }
 
 .bk-band {
   position: absolute;
@@ -478,25 +482,24 @@ onBeforeUnmount(() => {
 .bk-title {
   position: absolute;
   left: 50%;
-  top: 24%;
-  bottom: 24%;
+  top: 26%;
+  bottom: 26%;
   width: 1.4px;
   margin-left: -0.7px;
   background: var(--ink-on);
-  border-radius: 1px;
 }
 
-/* Soft occlusion where the books meet the board. */
+/* Occlusion where the books meet the board. */
 .bk__contact {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 6px;
-  height: 16px;
-  /* Mid-depth, and with no filter: a filtered element is flattened out of the
-     3D scene and would paint over the spines in front of it. */
+  bottom: 5px;
+  height: 14px;
+  /* Mid-depth and unfiltered: a filtered element drops out of the 3D scene
+     and would paint over the spines in front of it. */
   transform: translateZ(0);
-  background: linear-gradient(to top, rgba(20, 25, 58, 0.26), rgba(20, 25, 58, 0));
+  background: linear-gradient(to top, rgba(20, 25, 58, 0.22), rgba(20, 25, 58, 0));
   pointer-events: none;
 }
 
@@ -506,36 +509,43 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 7px;
+  height: 5px;
   transform-style: preserve-3d;
 }
 .bk-plank__front,
-.bk-plank__top {
+.bk-plank__top,
+.bk-plank__under {
   position: absolute;
   display: block;
 }
 .bk-plank__front {
   inset: 0;
   transform: translateZ(calc(var(--shelf-d) / 2));
-  background: linear-gradient(to bottom, #ffffff, #e6ecf6 60%, #cdd8ea);
-  box-shadow: 0 4px 10px -4px rgba(20, 25, 58, 0.35);
+  background: linear-gradient(to bottom, #ffffff, #dde5f2);
 }
-.bk-plank__top {
+.bk-plank__top,
+.bk-plank__under {
   left: 0;
   width: 100%;
   height: var(--shelf-d);
-  bottom: 100%;
   transform-origin: bottom center;
   transform: translateZ(calc(var(--shelf-d) / 2)) rotateX(90deg);
-  background: linear-gradient(to bottom, #ffffff, #dbe3f1);
 }
+.bk-plank__top { bottom: 100%; background: #f4f7fc; }
+/* Seen from below on the shelves above eye level. */
+.bk-plank__under { bottom: 0; background: #c6d2e6; }
 
-/* Cabinet vignette. */
-.bk__frame {
+/* Light spilling in at the far end, which is also where the wall stops. */
+.bk__haze {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 50px rgba(20, 25, 58, 0.1);
+}
+.bk--left .bk__haze {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.9) 95%);
+}
+.bk--right .bk__haze {
+  background: linear-gradient(to left, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.9) 95%);
 }
 
 .bk-box { cursor: pointer; }
