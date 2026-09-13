@@ -2,7 +2,6 @@
   <section class="hero" id="top">
     <div class="hero__shelf hero__shelf--left">
       <Bookshelf side="left" />
-      <div class="hero__shelf-fade hero__shelf-fade--bottom" />
     </div>
 
     <div class="hero__center">
@@ -58,7 +57,6 @@
 
     <div class="hero__shelf hero__shelf--right">
       <Bookshelf side="right" />
-      <div class="hero__shelf-fade hero__shelf-fade--bottom" />
     </div>
   </section>
 </template>
@@ -94,21 +92,19 @@ const bumped = ref(false)
   text-align: center;
   padding: 140px 24px 32px;
 }
+/* The shelves fade out at the bottom by going transparent, not by painting a
+   band of --paper over them: a solid band reads as a seam against the page
+   gradient. One mask layer here, one across the image, so no compositing. */
 .hero__shelf {
   position: relative;
   height: 100%;
   min-height: 100vh;
   align-self: stretch;
   overflow: hidden;
-}
-.hero__shelf-fade {
-  position: absolute; left: 0; right: 0;
-  height: 120px;
-  pointer-events: none;
-}
-.hero__shelf-fade--bottom {
-  bottom: 0;
-  background: linear-gradient(to top, var(--paper) 0%, rgba(247,249,252,.7) 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0%, #000 18%, #000 92%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0) 0%, #000 18%, #000 92%, rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .hero__eyebrow {

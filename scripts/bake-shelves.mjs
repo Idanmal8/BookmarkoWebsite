@@ -10,7 +10,7 @@ import { mkdtemp } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-const URL = process.env.BAKE_URL ?? 'http://localhost:5173/'
+const PAGE_URL = process.env.BAKE_URL ?? 'http://localhost:5173/'
 const CHROME =
   process.env.BAKE_CHROME ??
   homedir() +
@@ -20,12 +20,13 @@ const work = await mkdtemp(join(tmpdir(), 'shelf-bake-'))
 const browser = await chromium.launch({ executablePath: CHROME })
 // 3x for retina; 1600 tall so the art outlasts any viewport height.
 const page = await browser.newPage({ viewport: { width: 1440, height: 1600 }, deviceScaleFactor: 3 })
-await page.goto(URL, { waitUntil: 'networkidle' })
+await page.goto(PAGE_URL, { waitUntil: 'networkidle' })
 await page.addStyleTag({
   content: `
     html, body, .app-wrapper, .app-wrapper.home { background: none !important; background-color: transparent !important; }
     .app-wrapper.home::before { display: none !important; }
-    .hero__shelf-fade, .nav, .cursor-root { display: none !important; }
+    .nav, .cursor-root { display: none !important; }
+    .hero__shelf, .hero__shelf .bk { -webkit-mask-image: none !important; mask-image: none !important; }
   `,
 })
 await page.waitForTimeout(3500) // let the entrance animation finish

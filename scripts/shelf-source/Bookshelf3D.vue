@@ -92,7 +92,7 @@ const WALL_ANGLE = 60
 const PERSPECTIVE = 600
 const ORIGIN_X = 45 // % of the column width
 const BAY = 112 // wall-space px between dividers
-const BAYS = 4
+const BAYS = 7
 const DIVIDER = 6
 const WALL_LEN = BAYS * (BAY + DIVIDER)
 /** Cabinet depth in wall-space px. */
@@ -535,17 +535,18 @@ onBeforeUnmount(() => {
 /* Seen from below on the shelves above eye level. */
 .bk-plank__under { bottom: 0; background: #c6d2e6; }
 
-/* Light spilling in at the far end, which is also where the wall stops. */
+/* A hint of light down the corridor. The dissolve into the page is a mask on
+   the baked image, not a wash of white — white leaves a visible rectangle. */
 .bk__haze {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 .bk--left .bk__haze {
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.9) 95%);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 58%, rgba(255, 255, 255, 0.5) 100%);
 }
 .bk--right .bk__haze {
-  background: linear-gradient(to left, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.9) 95%);
+  background: linear-gradient(to left, rgba(255, 255, 255, 0) 58%, rgba(255, 255, 255, 0.5) 100%);
 }
 
 .bk-box { cursor: pointer; }

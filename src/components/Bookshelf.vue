@@ -58,5 +58,18 @@ onBeforeUnmount(() => {
   object-position: center center;
   user-select: none;
   pointer-events: none;
+  /* The far end dissolves into the page rather than fading to a colour — any
+     solid fade colour shows as a rectangle against the hero's gradient. One
+     mask layer per element, so no mask-composite is needed. */
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.bk--left {
+  -webkit-mask-image: linear-gradient(to right, #000 55%, rgba(0, 0, 0, 0) 99%);
+  mask-image: linear-gradient(to right, #000 55%, rgba(0, 0, 0, 0) 99%);
+}
+.bk--right {
+  -webkit-mask-image: linear-gradient(to left, #000 55%, rgba(0, 0, 0, 0) 99%);
+  mask-image: linear-gradient(to left, #000 55%, rgba(0, 0, 0, 0) 99%);
 }
 </style>
