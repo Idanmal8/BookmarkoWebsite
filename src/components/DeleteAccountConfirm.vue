@@ -10,7 +10,7 @@
         <p>
           Confirmation links expire 30 minutes after they're sent and can only be used once.
         </p>
-        <a href="/delete-account" class="btn-link">Request a new link</a>
+        <a href="/delete-account/" class="btn-link">Request a new link</a>
       </div>
 
       <div v-else-if="store.confirmed" class="state-card success-card">

@@ -44,7 +44,7 @@
 
       <ul v-else class="grid">
         <li v-for="post in store.posts" :key="post.id" class="card">
-          <a :href="`/blog/${post.slug}`" class="card-link">
+          <a :href="`/blog/${post.slug}/`" class="card-link">
             <div class="cover">
               <img v-if="post.coverImageUrl" :src="post.coverImageUrl" :alt="post.bookTitle" />
               <div v-else class="cover-fallback">{{ post.bookTitle }}</div>

@@ -15,7 +15,7 @@
         </svg>
         <span>Home</span>
       </a>
-      <a href="/blog" class="tab tab--ghost">← All posts</a>
+      <a href="/blog/" class="tab tab--ghost">← All posts</a>
     </div>
 
     <article class="post-page">

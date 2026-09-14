@@ -8,8 +8,8 @@
       <a href="#endless-shelf">The shelf</a>
       <a href="#goodreads">Import</a>
       <a href="#ginie">Ask Ginie</a>
-      <a href="/blog">Blog</a>
-      <a href="/roadmap">Requests</a>
+      <a href="/blog/">Blog</a>
+      <a href="/roadmap/">Requests</a>
     </div>
   </nav>
 </template>

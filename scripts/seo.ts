@@ -23,6 +23,18 @@ import { renderMarkdown } from '../src/utils/markdown'
 const ORIGIN = 'https://bookmark-o.com'
 const OG_DEFAULT = `${ORIGIN}/og-welcome.png`
 
+/**
+ * Absolute URL for a route, always trailing-slashed.
+ *
+ * GitHub Pages serves `/blog` as a 301 to `/blog/` (it's really
+ * `/blog/index.html`). Declaring the un-slashed form as canonical points
+ * Google at a URL that immediately redirects back to the page declaring it,
+ * which shows up as "Page with redirect" and burns crawl budget. Every URL we
+ * emit — canonical, og:url, breadcrumbs, sitemap — uses the form Pages
+ * actually serves.
+ */
+const urlFor = (route: string) => `${ORIGIN}${route === '/' ? '/' : `${route}/`}`
+
 interface ApiPost {
   title: string | null
   slug: string | null
@@ -75,7 +87,7 @@ function breadcrumb(trail: { name: string; route: string }[]) {
       '@type': 'ListItem',
       position: i + 1,
       name: t.name,
-      item: `${ORIGIN}${t.route}`,
+      item: urlFor(t.route),
     })),
   }
 }
@@ -121,7 +133,7 @@ function postPage(post: ApiPost): Page {
         datePublished: post.publishedAt ?? undefined,
         author: { '@id': `${ORIGIN}/#org` },
         publisher: { '@id': `${ORIGIN}/#org` },
-        mainEntityOfPage: `${ORIGIN}${route}`,
+        mainEntityOfPage: urlFor(route),
         about: {
           '@type': 'Book',
           name: post.bookTitle,
@@ -150,7 +162,7 @@ function postPage(post: ApiPost): Page {
 
 function staticPages(posts: ApiPost[]): Page[] {
   const blogList = posts
-    .map((p) => `<li><a href="/blog/${encodeURIComponent(p.slug as string)}">${esc(p.title || p.bookTitle)}</a></li>`)
+    .map((p) => `<li><a href="/blog/${encodeURIComponent(p.slug as string)}/">${esc(p.title || p.bookTitle)}</a></li>`)
     .join('')
 
   return [
@@ -165,7 +177,7 @@ function staticPages(posts: ApiPost[]): Page[] {
         {
           '@type': 'Blog',
           name: 'Bookmarko Blog',
-          url: `${ORIGIN}/blog`,
+          url: urlFor('/blog'),
           publisher: { '@id': `${ORIGIN}/#org` },
         },
         breadcrumb([
@@ -238,7 +250,7 @@ function staticPages(posts: ApiPost[]): Page[] {
 }
 
 function headFor(page: Page): string {
-  const url = `${ORIGIN}${page.route}`
+  const url = urlFor(page.route)
   const title = esc(page.title)
   const description = esc(page.description)
   const image = esc(page.image)
@@ -276,14 +288,14 @@ function headFor(page: Page): string {
 
 function sitemap(posts: ApiPost[]): string {
   const urls: { loc: string; lastmod?: string; priority: string }[] = [
-    { loc: `${ORIGIN}/`, priority: '1.0' },
-    { loc: `${ORIGIN}/blog`, priority: '0.8' },
-    { loc: `${ORIGIN}/roadmap`, priority: '0.6' },
-    { loc: `${ORIGIN}/changelog`, priority: '0.5' },
+    { loc: urlFor('/'), priority: '1.0' },
+    { loc: urlFor('/blog'), priority: '0.8' },
+    { loc: urlFor('/roadmap'), priority: '0.6' },
+    { loc: urlFor('/changelog'), priority: '0.5' },
     { loc: `${ORIGIN}/privacy.html`, priority: '0.3' },
     { loc: `${ORIGIN}/terms.html`, priority: '0.3' },
     ...posts.map((p) => ({
-      loc: `${ORIGIN}/blog/${encodeURIComponent(p.slug as string)}`,
+      loc: urlFor(`/blog/${encodeURIComponent(p.slug as string)}`),
       lastmod: p.publishedAt ?? undefined,
       priority: '0.7',
     })),
