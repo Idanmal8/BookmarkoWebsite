@@ -249,6 +249,29 @@ function staticPages(posts: ApiPost[]): Page[] {
   ]
 }
 
+/**
+ * Crawlable markup for the homepage.
+ *
+ * The other routes get their body from `staticPages()`, but `/` is the built
+ * `index.html` itself, so it shipped an empty `#app` — no <h1>, no copy, on
+ * the one page that matters most. Google does render JavaScript, but that is
+ * a queued second pass, so the landing page was the weakest-indexed thing on
+ * the site.
+ *
+ * This mirrors what Hero and the section headings actually render. Keep it
+ * faithful to the components: prerendered markup that disagrees with the
+ * mounted app reads as cloaking.
+ */
+const HOME_BODY = [
+  '<h1>Welcome home, reader.</h1>',
+  "<p>Bookmarko is the warm, well-lit shelf for everything you're reading — the novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
+  '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
+  '<h2>Pour your Goodreads library straight onto your Bookmarko shelf.</h2>',
+  '<h2>Meet Ginie — a librarian who lives in the lamp on your shelf.</h2>',
+  '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
+  ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
+].join('')
+
 function headFor(page: Page): string {
   const url = urlFor(page.route)
   const title = esc(page.title)
@@ -339,6 +362,11 @@ export function seoPlugin(): Plugin {
         await mkdir(dir, { recursive: true })
         await writeFile(path.join(dir, 'index.html'), html)
       }
+
+      // The homepage keeps the head block written by hand in index.html; only
+      // its empty #app needs filling.
+      const homePath = path.join(outDir, 'index.html')
+      await writeFile(homePath, shell.replace('<div id="app"></div>', `<div id="app">${HOME_BODY}</div>`))
 
       await writeFile(path.join(outDir, 'sitemap.xml'), sitemap(posts))
       console.log(`[seo] wrote ${pages.length} static pages + sitemap.xml (${posts.length} blog posts)`)
