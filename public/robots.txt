@@ -1,0 +1,16 @@
+# https://bookmark-o.com/robots.txt
+# This file must exist at the origin: without it Cloudflare serves its own
+# managed robots.txt, which advertises no sitemap.
+#
+# Nothing is disallowed on purpose. The pages we don't want indexed
+# (/delete-account, /newdesign) carry a `robots: noindex` meta tag instead —
+# a crawler has to be allowed to fetch a page before it can see that tag.
+
+User-agent: *
+Allow: /
+
+# The SPA fallback encodes the requested path into ?p=… ; crawling those would
+# duplicate every route under a query string.
+Disallow: /*?p=
+
+Sitemap: https://bookmark-o.com/sitemap.xml

@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # The blog publishes on its own daily schedule, but the static page and
+  # sitemap entry for a post are baked at build time. Without a nightly
+  # rebuild a new post stays invisible to crawlers until the next commit.
+  schedule:
+    - cron: '30 7 * * *'
   workflow_dispatch:
 
 permissions:
