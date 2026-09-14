@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="/src/assets/bookmarkoLogo-mark.png" alt="" class="footer__logo" />
+        <img src="/src/assets/bookmarkoLogo-mark.webp" alt="" class="footer__logo" />
         <span class="footer__wordmark">Bookmarko</span>
       </div>
       <nav class="footer__legal" aria-label="Legal">
@@ -42,7 +42,7 @@
       <span class="footer__sig">Made with a cup of tea and a closed tab.</span>
     </div>
     <div class="footer__mark" aria-hidden="true">
-      <img src="/src/assets/bookmarkoLogo-mark.png" alt="" />
+      <img src="/src/assets/bookmarkoLogo-mark.webp" alt="" />
     </div>
   </footer>
 </template>

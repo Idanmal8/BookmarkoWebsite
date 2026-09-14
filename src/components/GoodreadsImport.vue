@@ -53,12 +53,12 @@
         </svg>
 
         <figure class="gr__chip gr__chip--good">
-          <img src="/src/assets/goodL.png" alt="Goodreads" />
+          <img src="/src/assets/goodL.webp" alt="Goodreads" />
           <figcaption>Goodreads</figcaption>
         </figure>
 
         <figure class="gr__chip gr__chip--book">
-          <img src="/src/assets/bookL.png" alt="Bookmarko" />
+          <img src="/src/assets/bookL.webp" alt="Bookmarko" />
           <figcaption>Bookmarko</figcaption>
         </figure>
       </div>

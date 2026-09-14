@@ -20,7 +20,7 @@
     <section class="blog-page">
       <header class="page-head">
         <a href="/" aria-label="Bookmarko home" class="brand-badge">
-          <img src="/src/assets/bookmarkoLogo.png" alt="Bookmarko" class="brand-logo" />
+          <img src="/src/assets/bookmarkoLogo.webp" alt="Bookmarko" class="brand-logo" />
         </a>
         <h1 class="title">The Reading Blog</h1>
       </header>

@@ -1,7 +1,7 @@
 <template>
   <nav class="nav" :class="{ 'nav--scrolled': scrolled }">
     <a href="/" class="nav__brand">
-      <img src="/src/assets/bookmarkoLogo.png" alt="" class="nav__logo" />
+      <img src="/src/assets/bookmarkoLogo.webp" alt="" class="nav__logo" />
       <span class="nav__wordmark">Bookmarko</span>
     </a>
     <div class="nav__links" v-if="variant === 'home'">

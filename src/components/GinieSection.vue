@@ -14,7 +14,7 @@
         <div class="ginie__card">
           <header class="ginie__header">
             <div class="ginie__avatar">
-              <img src="/src/assets/ginie-lamp.png" alt="" />
+              <img src="/src/assets/ginie-lamp.webp" alt="" />
             </div>
             <div class="ginie__id">
               <div class="ginie__name">Ginie</div>
@@ -33,13 +33,13 @@
               :class="['ginie__msg', `ginie__msg--${m.from}`]"
             >
               <div v-if="m.from === 'ginie'" class="ginie__msg-avatar">
-                <img src="/src/assets/ginie-lamp.png" alt="" />
+                <img src="/src/assets/ginie-lamp.webp" alt="" />
               </div>
               <div class="ginie__bubble">{{ m.text }}</div>
             </div>
             <div v-if="thinking" class="ginie__msg ginie__msg--ginie">
               <div class="ginie__msg-avatar">
-                <img src="/src/assets/ginie-lamp.png" alt="" />
+                <img src="/src/assets/ginie-lamp.webp" alt="" />
               </div>
               <div class="ginie__bubble ginie__bubble--typing">
                 <span /><span /><span />

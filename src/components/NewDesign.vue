@@ -272,10 +272,10 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import appStoreBadge from '@/assets/appStore.png'
 import googleStoreBadge from '@/assets/googleStore.png'
-import logoMark from '@/assets/bookmarkoLogo-mark.png'
+import logoMark from '@/assets/bookmarkoLogo-mark.webp'
 
 /* ── real covers for the orbit ─────────────────────────────────────────── */
-const coverModules = import.meta.glob('../assets/Books/*.jpg', {
+const coverModules = import.meta.glob('../assets/Books/*.webp', {
   eager: true,
   import: 'default',
 }) as Record<string, string>
