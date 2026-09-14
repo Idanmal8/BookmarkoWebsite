@@ -47,6 +47,24 @@ The `home` route renders the landing page as a sequence of sections: `Hero → B
 
 **Path alias:** `@` resolves to `src/` (configured in `vite.config.ts`).
 
+## SEO / static page generation
+
+GitHub Pages has no SPA rewrite, so before this every path except `/` answered with a real HTTP **404** (`404.html` bounced browsers to `/`, but crawlers read the status and dropped the URL — nothing but the homepage could be indexed).
+
+`scripts/seo.ts` is a build-only Vite plugin (`closeBundle`) that fixes this. For every known route it writes `dist/<route>/index.html`, so Pages serves a 200:
+
+- Static routes: `/blog`, `/changelog`, `/roadmap`, `/delete-account`, `/delete-account/confirm`, `/newdesign`
+- One page per blog post, from `GET {VITE_API_BASE_URL}/blog?limit=200` at build time
+
+Each copy is the built `index.html` with two substitutions:
+
+1. The `<!--seo-->…<!--/seo-->` block in `index.html` is swapped for that route's title, description, canonical, OG/Twitter tags and JSON-LD. **Keep those markers** — the build throws without them.
+2. `<div id="app"></div>` is filled with crawlable markup (blog posts ship their full rendered body). Vue discards it when it mounts.
+
+`/delete-account*` and `/newdesign` get `robots: noindex` and stay out of the sitemap. `dist/sitemap.xml` is written in the same hook; `public/robots.txt` points at it — that file must exist at the origin or Cloudflare serves its own managed robots.txt, which advertises no sitemap.
+
+If the blog API is unreachable the build warns and ships without post pages rather than failing the deploy.
+
 ## API Integration
 
 All stores and components that call the backend read `import.meta.env.VITE_API_BASE_URL` — never hardcode the URL. Trailing slashes are stripped in the store. No auth — the website calls only public/unauthenticated endpoints (`/waitlist`, `/delete-account/*`).
@@ -57,5 +75,7 @@ All stores and components that call the backend read `import.meta.env.VITE_API_B
 
 1. `npm ci && npm run build` with `VITE_API_BASE_URL` set to the production Cloud Run URL (`https://bookmarko-backend-production-587868624215.europe-west1.run.app`) — baked into the JS bundle at build time.
 2. `actions/upload-pages-artifact` (path: `dist/`) → `actions/deploy-pages`, protected by `concurrency: group: pages, cancel-in-progress: true`.
+
+A `schedule:` cron also rebuilds nightly (07:30 UTC). This is not cosmetic: `scripts/seo.ts` bakes a static page + sitemap entry per blog post **at build time**, so a post published by the daily blog routine is invisible to crawlers until the next build.
 
 **Merging to `main` is the release.** There is no staging environment. The custom domain (`bookmark-o.com`, `www.bookmark-o.com`) is configured in GitHub Pages settings — not in this codebase. `permissions: pages: write, id-token: write` are required for the deploy step.
