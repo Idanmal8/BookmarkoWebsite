@@ -8,7 +8,7 @@
       <h2 class="section-head__title">Pour your Goodreads library straight onto your Bookmarko shelf.</h2>
       <p class="section-head__sub">
         Export the CSV from Goodreads, drop it into Bookmarko, and watch every
-        book — read, currently-reading, want-to-read — land softly where it belongs.
+        book, whether read, reading, or want to read, land softly where it belongs.
       </p>
     </header>
 
@@ -33,7 +33,7 @@
             <span class="gr__step-num">3</span>
             <div>
               <div class="gr__step-title">Your shelves, intact</div>
-              <div class="gr__step-body">Read, reading, want-to-read — all sorted, covers fetched, ratings kept.</div>
+              <div class="gr__step-body">Read, reading, want to read, all sorted, covers fetched, ratings kept.</div>
             </div>
           </li>
         </ol>

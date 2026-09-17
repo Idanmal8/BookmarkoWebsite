@@ -40,7 +40,7 @@
       </ul>
 
       <div v-else-if="store.error" class="state error">{{ store.error }}</div>
-      <div v-else-if="!store.posts.length" class="state">No posts yet — check back soon.</div>
+      <div v-else-if="!store.posts.length" class="state">No posts yet. Check back soon.</div>
 
       <ul v-else class="grid">
         <li v-for="post in store.posts" :key="post.id" class="card">

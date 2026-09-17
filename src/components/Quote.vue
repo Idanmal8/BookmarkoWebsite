@@ -7,7 +7,7 @@
         <br />
         The man who never reads lives only one.
       </blockquote>
-      <div class="quote__attr">— a reader, on a rainy Sunday</div>
+      <div class="quote__attr">a reader, on a rainy Sunday</div>
     </div>
   </section>
 </template>

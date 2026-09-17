@@ -33,7 +33,7 @@
         @click="trackShopClick('WEBSITE_STOREFRONT')"
       >Gift cards</a>
       <p class="footer__disclosure">
-        Bookshop.org links are affiliate links — we earn a small commission on
+        Bookshop.org links are affiliate links. We earn a small commission on
         purchases, at no extra cost to you. It supports independent bookshops.
       </p>
     </div>

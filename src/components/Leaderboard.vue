@@ -8,7 +8,7 @@
       <h2 class="section-head__title">Every page you turn earns its place on the shelf.</h2>
       <p class="section-head__sub">
         EXP for pages read. A gentle bonus when you close a finished book.
-        A weekly leaderboard for the readers who keep showing up — no flames,
+        A weekly leaderboard for the readers who keep showing up. No flames,
         no pressure, just a quiet record of the habit.
       </p>
     </header>
@@ -77,7 +77,7 @@
             <div>
               <div class="lb__rule-title">Re-reads count, gently</div>
               <div class="lb__rule-body">
-                Restarting a book is a real thing readers do — you still earn,
+                Restarting a book is a real thing readers do, so you still earn,
                 just at a quarter rate. We never take EXP back.
               </div>
             </div>
@@ -87,7 +87,7 @@
             <div>
               <div class="lb__rule-title">Finish the book, take the bow</div>
               <div class="lb__rule-body">
-                Closing the cover on a finished book lands a flat bonus —
+                Closing the cover on a finished book lands a flat bonus,
                 because the last page deserves its own moment.
               </div>
             </div>

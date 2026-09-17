@@ -38,7 +38,7 @@
 
         <p class="act-open__hint">
           <span class="act-open__hint-line" />
-          scroll — and open it
+          scroll, and open it
         </p>
 
         <!-- the book -->
@@ -121,7 +121,7 @@
 
         <!-- whispered captions timed to the opening -->
         <p class="cap cap--1">Paper. Ink. A little courage.</p>
-        <p class="cap cap--2">It only ever asks one thing —</p>
+        <p class="cap cap--2">It only ever asks one thing…</p>
         <p class="cap cap--3">that you begin.</p>
       </div>
     </section>
@@ -142,16 +142,16 @@
         </h2>
 
         <p class="verse__prose" data-in>
-          Not loading. Not buffering. Waiting — the old way. For a reader to
+          Not loading. Not buffering. Waiting the old way. For a reader to
           arrive, to press a thumb into the margin, to whisper
           <em>just one more chapter</em> and mean five.
         </p>
       </div>
 
       <!-- marginalia scattered like a well-loved copy -->
-      <span class="nota nota--1" data-in>— underlined twice</span>
+      <span class="nota nota--1" data-in>underlined twice</span>
       <span class="nota nota--2" data-in>read again in autumn</span>
-      <span class="nota nota--3" data-in>3:12 a.m. — couldn't stop</span>
+      <span class="nota nota--3" data-in>3:12 a.m. couldn't stop</span>
 
       <!-- rotating library stamp -->
       <div class="stamp" data-in aria-hidden="true">
@@ -210,7 +210,7 @@
           Every book you've loved<br />keeps <em>orbiting</em> you.
         </h2>
         <p class="orbit__sub" data-in>
-          Bookmarko keeps the constellation — what you've read, what you're
+          Bookmarko keeps the constellation of what you've read, what you're
           reading, and what's still waiting for its night.
         </p>
       </div>
@@ -286,7 +286,7 @@ const chapters = [
   {
     num: 'I',
     title: 'One quiet shelf',
-    desc: 'Every book you’ve ever loved — reading, read, and next — kept in one warm, well-lit place.',
+    desc: 'Every book you’ve ever loved, reading, read, and next, kept in one warm, well-lit place.',
     page: '04',
   },
   {
@@ -312,7 +312,7 @@ const chapters = [
 /* ── the story set into the pages ──────────────────────────────────────── */
 /* right-hand page (on the back board) — the chapter opening */
 const storyOpening = [
-  'The library on Elm Street kept a shelf for books that had never been finished. Not abandoned — the librarian was firm about the word — merely paused.',
+  'The library on Elm Street kept a shelf for books that had never been finished. Not abandoned, the librarian was firm about the word, merely paused.',
   'On that shelf lived a small blue book with silver letters, and inside it, a door.',
   'Every night the book practiced its first line the way lighthouses practice light. Someday, it knew, a reader would arrive at page one the way travellers arrive at harbours: late, tired, and exactly on time.',
 ]
@@ -330,11 +330,11 @@ const storyPages = [
     'She read standing up. Then sitting. Then cross-legged on the library floor, coat still on, while the rain forgot itself against the windows.',
   ],
   [
-    'The door in the book was small and ordinary, the way real doors are. On its far side stood no castle and no dragon — only Wednesday, waiting to be lived a little braver than Tuesday.',
+    'The door in the book was small and ordinary, the way real doors are. On its far side stood no castle and no dragon, only Wednesday, waiting to be lived a little braver than Tuesday.',
   ],
   [
     'She left with the book under her arm. The librarian smiled and stamped the card:',
-    'RETURN — but not to this shelf.',
+    'RETURN, but not to this shelf.',
   ],
 ]
 
@@ -455,7 +455,7 @@ let io: IntersectionObserver | null = null
 const prevTitle = document.title
 
 onMounted(() => {
-  document.title = 'Bookmarko — Every story is a door'
+  document.title = 'Bookmarko | Every story is a door'
 
   window.addEventListener('scroll', onScroll, { passive: true })
   onScroll()

@@ -83,7 +83,7 @@ export const useFeatureRequestStore = defineStore('featureRequests', {
           body: JSON.stringify({ title, body, website: honeypot }),
         })
         if (res.status === 429) {
-          this.submitError = 'You have sent a few requests already — try again tomorrow.'
+          this.submitError = 'You have sent a few requests already. Try again tomorrow.'
           return false
         }
         if (!res.ok) throw new Error(`Request failed (${res.status})`)

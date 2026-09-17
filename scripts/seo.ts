@@ -119,7 +119,7 @@ function postPage(post: ApiPost): Page {
 
   return {
     route,
-    title: `${title} — Bookmarko`,
+    title: `${title} | Bookmarko`,
     description,
     image,
     ogType: 'article',
@@ -168,9 +168,9 @@ function staticPages(posts: ApiPost[]): Page[] {
   return [
     {
       route: '/blog',
-      title: 'Book Reviews & Reading Notes — Bookmarko Blog',
+      title: 'Book Reviews & Reading Notes | Bookmarko Blog',
       description:
-        'Honest reviews and reading notes from the Bookmarko shelf — fiction, sci-fi, thrillers and the occasional business book worth finishing.',
+        'Honest reviews and reading notes from the Bookmarko shelf: fiction, sci-fi, thrillers and the occasional business book worth finishing.',
       image: OG_DEFAULT,
       ogType: 'website',
       jsonLd: [
@@ -189,7 +189,7 @@ function staticPages(posts: ApiPost[]): Page[] {
     },
     {
       route: '/changelog',
-      title: "What's New in Bookmarko — Changelog",
+      title: "What's New in Bookmarko | Changelog",
       description:
         'Every Bookmarko release, in plain language: new shelves, Goodreads import improvements, Ginie recommendations and the fixes in between.',
       image: OG_DEFAULT,
@@ -204,9 +204,9 @@ function staticPages(posts: ApiPost[]): Page[] {
     },
     {
       route: '/roadmap',
-      title: 'Feature Requests & Roadmap — Bookmarko',
+      title: 'Feature Requests & Roadmap | Bookmarko',
       description:
-        "See what readers have asked for and what's being built next in Bookmarko. Vote on a request or add your own — no account needed.",
+        "See what readers have asked for and what's being built next in Bookmarko. Vote on a request or add your own. No account needed.",
       image: OG_DEFAULT,
       ogType: 'website',
       jsonLd: [
@@ -230,7 +230,7 @@ function staticPages(posts: ApiPost[]): Page[] {
     },
     {
       route: '/delete-account/confirm',
-      title: 'Confirm Account Deletion — Bookmarko',
+      title: 'Confirm Account Deletion | Bookmarko',
       description: 'Confirm deletion of your Bookmarko account.',
       image: OG_DEFAULT,
       ogType: 'website',
@@ -264,10 +264,10 @@ function staticPages(posts: ApiPost[]): Page[] {
  */
 const HOME_BODY = [
   '<h1>Welcome home, reader.</h1>',
-  "<p>Bookmarko is the warm, well-lit shelf for everything you're reading — the novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
+  "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
   '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
   '<h2>Pour your Goodreads library straight onto your Bookmarko shelf.</h2>',
-  '<h2>Meet Ginie — a librarian who lives in the lamp on your shelf.</h2>',
+  '<h2>A librarian who lives in the lamp on your shelf.</h2>',
   '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
   ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
 ].join('')
