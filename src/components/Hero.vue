@@ -11,8 +11,8 @@
       </h1>
 
       <p class="hero__sub">
-        Bookmarko is the warm, well-lit shelf for everything you're reading —
-        the novel by your bed, the longform you saved on the train, the chapter
+        Bookmarko is the warm, well-lit shelf for everything you're reading.
+        The novel by your bed, the longform you saved on the train, the chapter
         you keep meaning to finish. One place. Doom scrolling elimenated.
       </p>
 

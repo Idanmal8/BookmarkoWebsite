@@ -5,7 +5,7 @@
       <p class="lead">
         Enter the email address associated with your Bookmarko account. We'll send you a confirmation
         link. Clicking that link will <strong>permanently delete</strong> your account and all your
-        data — including your library, lists, reviews, posts, and reading history.
+        data, including your library, lists, reviews, posts, and reading history.
       </p>
 
       <p class="lead muted">

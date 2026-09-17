@@ -19,7 +19,7 @@
             class="field"
             type="text"
             maxlength="100"
-            placeholder="A short title — e.g. “Dark mode for the reader”"
+            placeholder="A short title, e.g. “Dark mode for the reader”"
             required
           />
           <textarea

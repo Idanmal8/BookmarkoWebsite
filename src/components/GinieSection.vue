@@ -105,7 +105,7 @@
             </div>
             <div>
               <div class="ginie__ability-title">Track</div>
-              <div class="ginie__ability-body">Move books, mark them finished, save a quote — just ask.</div>
+              <div class="ginie__ability-body">Move books, mark them finished, save a quote. Just ask.</div>
             </div>
           </div>
         </div>
@@ -123,9 +123,9 @@ useReveal()
 const OPENING = "Hi, I'm Ginie. Where is your imagination taking you tonight?"
 
 const PROMPTS = [
-  { q: 'Recommend a slow Sunday read', a: "Try Banana Yoshimoto's Kitchen. It's small, quiet, and tastes like a kitchen that someone once loved you in. A single afternoon and you're done — but it stays with you." },
+  { q: 'Recommend a slow Sunday read', a: "Try Banana Yoshimoto's Kitchen. It's small, quiet, and tastes like a kitchen that someone once loved you in. A single afternoon and you're done, but it stays with you." },
   { q: 'Teaser for chapter 3 of "The Great Gatsby"', a: "It's the party chapter. The garden is full of strangers, the orchestra is too loud, and Nick finally meets the man whose smile, he says, you only see four or five times in a life." },
-  { q: 'Mark "Pride and Prejudice" as finished', a: "Done — I've moved it to your Finished shelf and saved the Pemberley walk as a favourite passage. A good one to keep close." },
+  { q: 'Mark "Pride and Prejudice" as finished', a: "Done. I've moved it to your Finished shelf and saved the Pemberley walk as a favourite passage. A good one to keep close." },
   { q: "What's similar to Italo Calvino?", a: "If you loved his lightness, try Borges' Labyrinths or Lispector's The Hour of the Star. Both feel like Calvino on a different evening." },
 ] as const
 

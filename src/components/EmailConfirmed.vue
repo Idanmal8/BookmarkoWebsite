@@ -15,8 +15,8 @@
 
       <h1 class="heading">You're confirmed!</h1>
       <p class="sub">
-        Your email has been verified. Welcome to the Bookmarko waitlist&nbsp;—
-        we'll be in touch soon.
+        Your email has been verified. Welcome to the Bookmarko waitlist.
+        We'll be in touch soon.
       </p>
 
       <a href="/" class="btn-primary home-btn">Back to homepage</a>

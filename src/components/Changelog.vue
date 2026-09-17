@@ -51,7 +51,7 @@ let prevTitle = ''
 
 onMounted(() => {
   prevTitle = document.title
-  document.title = 'Changelog — Bookmarko'
+  document.title = 'Changelog | Bookmarko'
   robotsMeta = document.createElement('meta')
   robotsMeta.name = 'robots'
   robotsMeta.content = 'noindex, nofollow'
