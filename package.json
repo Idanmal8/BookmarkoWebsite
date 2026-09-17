@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
+    "validate:amp": "npx --yes amphtml-validator dist/blog/*/amp/index.html",
     "preview": "vite preview"
   },
   "dependencies": {

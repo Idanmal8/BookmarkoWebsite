@@ -65,6 +65,27 @@ Each copy is the built `index.html` with two substitutions:
 
 If the blog API is unreachable the build warns and ships without post pages rather than failing the deploy.
 
+### AMP
+
+`scripts/amp.ts` emits an AMP variant of every blog post at `/blog/:slug/amp`, written by the same `closeBundle` hook. Blog posts only: AMP forbids author JavaScript, so the interactive routes (`/`, `/roadmap`, `/delete-account`) cannot have a valid AMP variant that still works, and one that dropped the interaction would violate AMP's content-parity rule.
+
+The pairing Google asks for is bidirectional and both halves are generated:
+
+- the canonical post carries `<link rel="amphtml" href=".../amp/">` (via the `ampRoute` field on `Page` in `seo.ts`)
+- the AMP copy carries `<link rel="canonical">` back at the post
+
+AMP pages stay **out of `sitemap.xml`** — they declare the canonical post as canonical, so that is the URL Google should index.
+
+`assertValidAmp()` runs on every generated document and **throws**, failing the build, if the required tags are missing or something AMP bans slips in (author `<script>`, raw `<img>`, `!important` in `<style amp-custom>`, a stylesheet over 75KB). It is a structural check, not the full spec. For the authoritative answer:
+
+```bash
+npm run build && npm run validate:amp   # pulls the official amphtml-validator via npx
+```
+
+`src/utils/markdown.ts` is shared with the Vue app and currently emits only AMP-safe tags. If it ever learns image or embed syntax, `ampBody()` in `amp.ts` is where that has to be translated to `<amp-img>` / `<amp-iframe>` — the build will fail until it is.
+
+Note that AMP is optional for Google Search: it is not required for Top Stories or any other Search feature, and Google indexes AMP and non-AMP pages by the same standard. This exists as a performance variant, not a ranking one.
+
 ## API Integration
 
 All stores and components that call the backend read `import.meta.env.VITE_API_BASE_URL` — never hardcode the URL. Trailing slashes are stripped in the store. No auth — the website calls only public/unauthenticated endpoints (`/waitlist`, `/delete-account/*`).

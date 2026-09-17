@@ -14,37 +14,18 @@
  * JavaScript. Vue discards that markup when it mounts over `#app`.
  *
  * `404.html` stays as the fallback for paths we don't know about.
+ *
+ * Each blog post additionally gets an AMP variant at `/blog/:slug/amp` (see
+ * `amp.ts`). The canonical post links to it with `rel=amphtml` and the AMP copy
+ * links back with `rel=canonical`, which is the pairing Google's AMP docs ask
+ * for. Only the canonical URL is listed in the sitemap.
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import type { Plugin } from 'vite'
 import { renderMarkdown } from '../src/utils/markdown'
-
-const ORIGIN = 'https://bookmark-o.com'
-const OG_DEFAULT = `${ORIGIN}/og-welcome.png`
-
-/**
- * Absolute URL for a route, always trailing-slashed.
- *
- * GitHub Pages serves `/blog` as a 301 to `/blog/` (it's really
- * `/blog/index.html`). Declaring the un-slashed form as canonical points
- * Google at a URL that immediately redirects back to the page declaring it,
- * which shows up as "Page with redirect" and burns crawl budget. Every URL we
- * emit — canonical, og:url, breadcrumbs, sitemap — uses the form Pages
- * actually serves.
- */
-const urlFor = (route: string) => `${ORIGIN}${route === '/' ? '/' : `${route}/`}`
-
-interface ApiPost {
-  title: string | null
-  slug: string | null
-  excerpt: string | null
-  body: string | null
-  bookTitle: string
-  bookAuthor: string | null
-  coverImageUrl: string | null
-  publishedAt: string | null
-}
+import { ORIGIN, OG_DEFAULT, urlFor, esc, clamp, type ApiPost } from './seo-shared'
+import { ampDocument, ampRouteFor } from './amp'
 
 interface Page {
   /** Route path, always leading-slash and never trailing-slash (except '/'). */
@@ -63,21 +44,11 @@ interface Page {
   noindex?: boolean
   /** Last modification date for the sitemap, ISO-8601. */
   lastmod?: string
-}
-
-const esc = (s: string) =>
-  s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-
-/** Collapse to a single line and cut on a word boundary near `max`. */
-function clamp(text: string, max = 158): string {
-  const flat = text.replace(/\s+/g, ' ').trim()
-  if (flat.length <= max) return flat
-  const cut = flat.slice(0, max)
-  return `${cut.slice(0, cut.lastIndexOf(' '))}…`
+  /**
+   * Route of this page's AMP variant, if it has one. Emitted as
+   * `<link rel="amphtml">`; the AMP copy points back with `rel=canonical`.
+   */
+  ampRoute?: string
 }
 
 function breadcrumb(trail: { name: string; route: string }[]) {
@@ -124,6 +95,7 @@ function postPage(post: ApiPost): Page {
     image,
     ogType: 'article',
     lastmod: post.publishedAt ?? undefined,
+    ampRoute: ampRouteFor(route),
     jsonLd: [
       {
         '@type': 'BlogPosting',
@@ -290,6 +262,7 @@ function headFor(page: Page): string {
     `<meta name="description" content="${description}" />`,
     page.noindex ? '<meta name="robots" content="noindex, follow" />' : '',
     `<link rel="canonical" href="${url}" />`,
+    page.ampRoute ? `<link rel="amphtml" href="${urlFor(page.ampRoute)}" />` : '',
     `<meta property="og:type" content="${page.ogType}" />`,
     '<meta property="og:site_name" content="Bookmarko" />',
     '<meta property="og:locale" content="en_US" />',
@@ -368,8 +341,21 @@ export function seoPlugin(): Plugin {
       const homePath = path.join(outDir, 'index.html')
       await writeFile(homePath, shell.replace('<div id="app"></div>', `<div id="app">${HOME_BODY}</div>`))
 
+      // AMP variants. These are standalone documents — they don't reuse the Vue
+      // shell, because AMP allows no author JavaScript. They stay out of the
+      // sitemap on purpose: each one declares the non-AMP post as its canonical,
+      // so that is the URL Google should index and the only one worth listing.
+      for (const post of posts) {
+        const dir = path.join(outDir, ampRouteFor(`/blog/${post.slug as string}`))
+        await mkdir(dir, { recursive: true })
+        await writeFile(path.join(dir, 'index.html'), ampDocument(post))
+      }
+
       await writeFile(path.join(outDir, 'sitemap.xml'), sitemap(posts))
-      console.log(`[seo] wrote ${pages.length} static pages + sitemap.xml (${posts.length} blog posts)`)
+      console.log(
+        `[seo] wrote ${pages.length} static pages + ${posts.length} AMP pages + sitemap.xml ` +
+          `(${posts.length} blog posts)`,
+      )
     },
   }
 }
