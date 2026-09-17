@@ -82,6 +82,12 @@ AMP pages stay **out of `sitemap.xml`** — they declare the canonical post as c
 npm run build && npm run validate:amp   # pulls the official amphtml-validator via npx
 ```
 
+**Content parity is a hard AMP rule**, so the AMP copy mirrors `BlogPost.vue`: title, book/author, date, cover, rendered body, and the Bookshop.org affiliate CTA. If you add something readers can see or do on `BlogPost.vue`, add it to `ampDocument()` too. (`rating` is on the post but rendered by neither, so it is correctly absent from both.)
+
+The affiliate CTA's click tracking does **not** come along — `BlogPost.vue` fires `trackAffiliateClick` on click, and AMP allows no author JavaScript. Clicks from AMP still earn the commission (Bookshop sets the cookie, we don't), but they are invisible to `/affiliate/click`. Closing that gap needs `amp-analytics` pointed at an endpoint that accepts a beacon.
+
+`/blog/:slug/amp` is also handled in `App.vue`: it redirects to the canonical post. Pages serves the static AMP file so the SPA normally never sees that path, but it does under `npm run dev` and when a build shipped without post pages (blog API down) leaves an indexed AMP URL falling through to `404.html`. Without the redirect it resolves to a `blog-post` whose slug is `<slug>/amp`.
+
 `src/utils/markdown.ts` is shared with the Vue app and currently emits only AMP-safe tags. If it ever learns image or embed syntax, `ampBody()` in `amp.ts` is where that has to be translated to `<amp-img>` / `<amp-iframe>` — the build will fail until it is.
 
 Note that AMP is optional for Google Search: it is not required for Top Stories or any other Search feature, and Google indexes AMP and non-AMP pages by the same standard. This exists as a performance variant, not a ranking one.

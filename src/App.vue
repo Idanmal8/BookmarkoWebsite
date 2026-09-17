@@ -57,6 +57,21 @@ type Route =
   | 'blog'
   | 'blog-post'
 
+/**
+ * `/blog/:slug/amp` is a static AMP document (see `scripts/amp.ts`) that GitHub
+ * Pages serves directly, so the SPA normally never sees that path. It does see
+ * it in two cases: `npm run dev`, which serves no static pages at all, and a
+ * production build that shipped without post pages because the blog API was
+ * down, which leaves an already-indexed AMP URL falling through to `404.html`.
+ *
+ * A slug is a single path segment, so a trailing `/amp` is always the variant
+ * and never part of the slug. Send the browser to the canonical post: without
+ * this the path resolves to a `blog-post` whose slug is `<slug>/amp`, which the
+ * API cannot serve, and the reader gets an error page instead of the article.
+ */
+const ampVariant = /^(\/blog\/[^/]+)\/amp\/?$/.exec(window.location.pathname)
+if (ampVariant) window.location.replace(`${ampVariant[1]}/`)
+
 function resolveRoute(): Route {
   const params = new URLSearchParams(window.location.search)
   if (params.has('confirmed') || window.location.hash === '#confirmed') return 'email-confirmed'
@@ -74,7 +89,7 @@ function resolveRoute(): Route {
 
 /** Slug segment for `/blog/:slug` (empty for other routes). */
 const blogSlug = decodeURIComponent(
-  window.location.pathname.replace(/\/$/, '').split('/blog/')[1] ?? '',
+  window.location.pathname.replace(/\/$/, '').split('/blog/')[1]?.split('/')[0] ?? '',
 )
 
 const route = resolveRoute()

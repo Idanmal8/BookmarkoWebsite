@@ -75,6 +75,11 @@ article blockquote{margin:0 0 1.15rem;padding:.75rem 1.1rem;border-left:3px soli
 article a{color:var(--accent)}
 article code{background:#f1f0fb;border-radius:.3rem;padding:.1rem .35rem;font-size:.9em}
 article strong{color:var(--ink)}
+.buy{margin-top:2.5rem;padding:1.25rem;border:1px solid var(--line);border-radius:.9rem;background:#f6f4ff}
+.buy__lead{font-family:'EB Garamond',Georgia,serif;font-size:1.2rem;color:var(--ink);margin-bottom:.9rem}
+.buy__btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:.9rem;padding:.7rem 1.15rem;border-radius:.65rem}
+.buy__note{color:var(--ink-soft);font-size:.85rem;margin-top:.9rem}
+.buy__disclosure{color:var(--ink-mute);font-size:.75rem;margin-top:.4rem}
 .cta{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line)}
 .cta p{color:var(--ink-soft);font-size:.95rem;margin-bottom:1rem}
 .cta a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:.9rem;padding:.65rem 1.1rem;border-radius:.65rem;margin:0 .5rem .5rem 0}
@@ -143,6 +148,16 @@ function ampBody(html: string): string {
   return html.replace(/<img\b([^>]*?)\/?>/g, (_m, attrs) => `<amp-img${attrs} layout="responsive"></amp-img>`)
 }
 
+/**
+ * Same wording as BlogPost.vue's `formatDate`, but with the locale pinned.
+ * That component formats in the reader's browser locale; this runs once at
+ * build time, where "the current locale" would be whatever the CI runner
+ * happens to be set to. en-US matches the site's declared `og:locale`.
+ */
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
 /** The full AMP document for one blog post. */
 export function ampDocument(post: ApiPost): string {
   const slug = post.slug as string
@@ -179,6 +194,25 @@ export function ampDocument(post: ApiPost): string {
       },
     ],
   })
+
+  // Content parity: the canonical page shows a Bookshop.org buy CTA after the
+  // review, so the AMP copy has to as well. The `@click` affiliate-click
+  // tracking on BlogPost.vue cannot come along — AMP allows no author
+  // JavaScript — so clicks from AMP still earn but arrive unattributed in our
+  // own analytics. The affiliate cookie is set by Bookshop, not by us, so the
+  // commission is unaffected.
+  const buy = post.affiliateUrl
+    ? [
+        '<aside class="buy">',
+        '<p class="buy__lead">Enjoyed this? You can pick it up here.</p>',
+        `<a class="buy__btn" href="${esc(post.affiliateUrl)}" target="_blank" rel="noopener sponsored">`,
+        `Buy \u201C${esc(post.bookTitle)}\u201D on Bookshop.org</a>`,
+        '<p class="buy__note">Bookshop.org supports independent bookshops. Ships to the US and UK.</p>',
+        '<p class="buy__disclosure">We earn a small commission from purchases made through this link, ',
+        'at no extra cost to you.</p>',
+        '</aside>',
+      ].join('')
+    : ''
 
   const cover = post.coverImageUrl
     ? `<amp-img class="cover" src="${esc(post.coverImageUrl)}" alt="${esc(post.bookTitle)} cover" ` +
@@ -222,11 +256,12 @@ ${BOILERPLATE}
 <article>
 <h1>${esc(title)}</h1>
 <p class="meta"><span class="book">${esc(post.bookTitle)}${post.bookAuthor ? ` · ${esc(post.bookAuthor)}` : ''}</span>${
-    post.publishedAt ? ` · <time datetime="${post.publishedAt}">${post.publishedAt.slice(0, 10)}</time>` : ''
+    post.publishedAt ? ` · <time datetime="${post.publishedAt}">${esc(formatDate(post.publishedAt))}</time>` : ''
   }</p>
 ${cover}
 ${ampBody(post.body ? renderMarkdown(post.body) : '')}
 </article>
+${buy}
 <div class="cta">
 <p>Bookmarko is a calm reading tracker for your books and saved articles.</p>
 <a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download on the App Store</a>

@@ -43,4 +43,6 @@ export interface ApiPost {
   bookAuthor: string | null
   coverImageUrl: string | null
   publishedAt: string | null
+  /** Bookshop.org affiliate link, resolved server-side. Null when unpurchasable. */
+  affiliateUrl: string | null
 }
