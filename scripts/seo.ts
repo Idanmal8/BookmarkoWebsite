@@ -244,6 +244,16 @@ const HOME_BODY = [
   ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
 ].join('')
 
+/**
+ * Wrap the crawlable markup in the element that index.html's inline <style>
+ * hides. Without it the browser paints unstyled <h1>/<p> for the moment before
+ * Vue mounts and replaces #app — a flash of raw HTML. The markup is still in
+ * the served HTML, which is all a crawler that doesn't run JavaScript reads.
+ */
+function wrap(body: string | undefined): string {
+  return body ? `<div id="prerender">${body}</div>` : ''
+}
+
 function headFor(page: Page): string {
   const url = urlFor(page.route)
   const title = esc(page.title)
@@ -330,7 +340,7 @@ export function seoPlugin(): Plugin {
       for (const page of pages) {
         const html = shell
           .replace(/<!--seo-->[\s\S]*?<!--\/seo-->/, `<!--seo-->\n${headFor(page)}\n    <!--/seo-->`)
-          .replace('<div id="app"></div>', `<div id="app">${page.body ?? ''}</div>`)
+          .replace('<div id="app"></div>', `<div id="app">${wrap(page.body)}</div>`)
 
         const dir = path.join(outDir, page.route)
         await mkdir(dir, { recursive: true })
@@ -340,7 +350,7 @@ export function seoPlugin(): Plugin {
       // The homepage keeps the head block written by hand in index.html; only
       // its empty #app needs filling.
       const homePath = path.join(outDir, 'index.html')
-      await writeFile(homePath, shell.replace('<div id="app"></div>', `<div id="app">${HOME_BODY}</div>`))
+      await writeFile(homePath, shell.replace('<div id="app"></div>', `<div id="app">${wrap(HOME_BODY)}</div>`))
 
       // AMP variants. These are standalone documents — they don't reuse the Vue
       // shell, because AMP allows no author JavaScript. They stay out of the
