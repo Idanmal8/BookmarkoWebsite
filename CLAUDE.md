@@ -65,6 +65,40 @@ Each copy is the built `index.html` with two substitutions:
 
 If the blog API is unreachable the build warns and ships without post pages rather than failing the deploy.
 
+### AMP
+
+`scripts/amp.ts` emits an AMP variant of every blog post at `/blog/:slug/amp`, written by the same `closeBundle` hook. Blog posts only: AMP forbids author JavaScript, so the interactive routes (`/`, `/roadmap`, `/delete-account`) cannot have a valid AMP variant that still works, and one that dropped the interaction would violate AMP's content-parity rule.
+
+The pairing Google asks for is bidirectional and both halves are generated:
+
+- the canonical post carries `<link rel="amphtml" href=".../amp/">` (via the `ampRoute` field on `Page` in `seo.ts`)
+- the AMP copy carries `<link rel="canonical">` back at the post
+
+AMP pages stay **out of `sitemap.xml`** — they declare the canonical post as canonical, so that is the URL Google should index.
+
+`assertValidAmp()` runs on every generated document and **throws**, failing the build, if the required tags are missing or something AMP bans slips in (author `<script>`, raw `<img>`, `!important` in `<style amp-custom>`, a stylesheet over 75KB). It is a structural check, not the full spec. For the authoritative answer:
+
+```bash
+npm run build && npm run validate:amp   # pulls the official amphtml-validator via npx
+```
+
+**Content parity is a hard AMP rule**, so the AMP copy mirrors `BlogPost.vue`: title, book/author, date, cover, rendered body, and the Bookshop.org affiliate CTA. If you add something readers can see or do on `BlogPost.vue`, add it to `ampDocument()` too. (`rating` is on the post but rendered by neither, so it is correctly absent from both.)
+
+The affiliate CTA is click-tracked through `<amp-analytics>`, not the `trackAffiliateClick` fetch that `BlogPost.vue` uses — AMP allows no author JavaScript. Two things make that work, both of which look odd out of context:
+
+- It posts to **`/affiliate/click/beacon`**, not `/affiliate/click`. amp-analytics builds a single request URL and puts every value in the query string whatever transport it uses, so it can never send the JSON body the regular route reads. The beacon route takes the same fields from `@Query()`.
+- Production CORS must allow **`https://bookmark--o-com.cdn.ampproject.org`**, Google's AMP Cache, which serves these pages from its own domain. That lives in `CORS_ORIGINS` in the backend's `deploy.prod.sh`, not in code.
+
+Clicks are reported with `surface: BLOG_POST_AMP` so they stay separable from the Vue page's `BLOG_POST`. That separation is the health check: a flat zero on that surface means AMP tracking has broken, which is otherwise silent.
+
+Every value in the beacon URL is a per-post constant, so it is baked in at build time and needs no AMP substitution vars. The config is serialised with `JSON.stringify`, *not* the HTML escaper — a `<script type="application/json">` body is not HTML, so an escaped `&` would reach the URL literally as `&amp;`.
+
+`/blog/:slug/amp` is also handled in `App.vue`: it redirects to the canonical post. Pages serves the static AMP file so the SPA normally never sees that path, but it does under `npm run dev` and when a build shipped without post pages (blog API down) leaves an indexed AMP URL falling through to `404.html`. Without the redirect it resolves to a `blog-post` whose slug is `<slug>/amp`.
+
+`src/utils/markdown.ts` is shared with the Vue app and currently emits only AMP-safe tags. If it ever learns image or embed syntax, `ampBody()` in `amp.ts` is where that has to be translated to `<amp-img>` / `<amp-iframe>` — the build will fail until it is.
+
+Note that AMP is optional for Google Search: it is not required for Top Stories or any other Search feature, and Google indexes AMP and non-AMP pages by the same standard. This exists as a performance variant, not a ranking one.
+
 ## API Integration
 
 All stores and components that call the backend read `import.meta.env.VITE_API_BASE_URL` — never hardcode the URL. Trailing slashes are stripped in the store. No auth — the website calls only public/unauthenticated endpoints (`/waitlist`, `/delete-account/*`).
