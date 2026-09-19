@@ -84,20 +84,14 @@ npm run build && npm run validate:amp   # pulls the official amphtml-validator v
 
 **Content parity is a hard AMP rule**, so the AMP copy mirrors `BlogPost.vue`: title, book/author, date, cover, rendered body, and the Bookshop.org affiliate CTA. If you add something readers can see or do on `BlogPost.vue`, add it to `ampDocument()` too. (`rating` is on the post but rendered by neither, so it is correctly absent from both.)
 
-The affiliate CTA's click tracking does **not** come along. `BlogPost.vue` fires `trackAffiliateClick` on click; AMP allows no author JavaScript, so AMP clicks never reach `POST /affiliate/click`. The commission is unaffected — Bookshop sets the affiliate cookie on arrival, we don't — so this is an analytics hole, not a revenue one.
+The affiliate CTA is click-tracked through `<amp-analytics>`, not the `trackAffiliateClick` fetch that `BlogPost.vue` uses — AMP allows no author JavaScript. Two things make that work, both of which look odd out of context:
 
-Tracking it needs a **backend change first**, because Google serves AMP pages from its own cache origin (`bookmark-o.com` → `https://bookmark--o-com.cdn.ampproject.org`), and the backend's CORS allowlist does not include it. Probed against production:
+- It posts to **`/affiliate/click/beacon`**, not `/affiliate/click`. amp-analytics builds a single request URL and puts every value in the query string whatever transport it uses, so it can never send the JSON body the regular route reads. The beacon route takes the same fields from `@Query()`.
+- Production CORS must allow **`https://bookmark--o-com.cdn.ampproject.org`**, Google's AMP Cache, which serves these pages from its own domain. That lives in `CORS_ORIGINS` in the backend's `deploy.prod.sh`, not in code.
 
-| Origin | `Access-Control-Allow-Origin` |
-|---|---|
-| `https://bookmark-o.com` | echoed back — allowed |
-| `https://www.bookmark-o.com` | echoed back — allowed |
-| `https://bookmark--o-com.cdn.ampproject.org` | *none* — blocked |
-| `https://bookmark-o.com.amp.cloudflare.com` | *none* — blocked |
+Clicks are reported with `surface: BLOG_POST_AMP` so they stay separable from the Vue page's `BLOG_POST`. That separation is the health check: a flat zero on that surface means AMP tracking has broken, which is otherwise silent.
 
-So an `amp-analytics` call would work only for direct hits on `bookmark-o.com/blog/:slug/amp/` and would be blocked for exactly the case AMP exists for: a cache-served result in Google Search. Shipping it in that state would under-report silently, so it is deliberately not implemented. Add the two AMP cache origins to the backend allowlist and it can be wired up and verified end to end.
-
-Note when testing this: any `POST` to `/affiliate/click` writes a real affiliate-click row. Use an `OPTIONS` preflight to inspect CORS — it answers the question and logs nothing.
+Every value in the beacon URL is a per-post constant, so it is baked in at build time and needs no AMP substitution vars. The config is serialised with `JSON.stringify`, *not* the HTML escaper — a `<script type="application/json">` body is not HTML, so an escaped `&` would reach the URL literally as `&amp;`.
 
 `/blog/:slug/amp` is also handled in `App.vue`: it redirects to the canonical post. Pages serves the static AMP file so the SPA normally never sees that path, but it does under `npm run dev` and when a build shipped without post pages (blog API down) leaves an indexed AMP URL falling through to `404.html`. Without the redirect it resolves to a `blog-post` whose slug is `<slug>/amp`.
 

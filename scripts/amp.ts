@@ -117,11 +117,12 @@ export function assertValidAmp(html: string, where: string): void {
   }
 
   // Author JavaScript is banned. The only <script> tags allowed here are the
-  // AMP runtime (async, from the AMP CDN) and JSON-LD.
+  // AMP runtime and its extensions (async, from the AMP CDN), JSON-LD, and the
+  // JSON config block inside <amp-analytics>.
   for (const [, attrs] of html.matchAll(/<script\b([^>]*)>/g)) {
     const isRuntime = attrs.includes('cdn.ampproject.org')
-    const isJsonLd = attrs.includes('application/ld+json')
-    if (!isRuntime && !isJsonLd) problems.push(`disallowed <script${attrs}>`)
+    const isJson = /type="application\/(ld\+)?json"/.test(attrs)
+    if (!isRuntime && !isJson) problems.push(`disallowed <script${attrs}>`)
   }
 
   // Raw <img>/<video>/<iframe> must be their amp-* equivalents.
@@ -159,7 +160,7 @@ function formatDate(iso: string): string {
 }
 
 /** The full AMP document for one blog post. */
-export function ampDocument(post: ApiPost): string {
+export function ampDocument(post: ApiPost, apiBase: string): string {
   const slug = post.slug as string
   const route = `/blog/${slug}`
   const canonical = urlFor(route)
@@ -214,6 +215,39 @@ export function ampDocument(post: ApiPost): string {
       ].join('')
     : ''
 
+  // Click tracking. BlogPost.vue fires `trackAffiliateClick` from JavaScript,
+  // which AMP forbids, so AMP reports the same click through <amp-analytics>.
+  //
+  // It targets `/affiliate/click/beacon` rather than `/affiliate/click`:
+  // amp-analytics builds one request URL and puts every value in the query
+  // string whatever transport it uses, so it can never send the JSON body the
+  // regular route reads. Every value here is a per-post constant, so it is
+  // baked in at build time and no AMP substitution vars are needed.
+  //
+  // `surface` is BLOG_POST_AMP so AMP clicks stay separable from the ones the
+  // Vue page reports — if this ever silently stops working, a flat zero on that
+  // surface is the signal.
+  let analytics = ''
+  if (post.affiliateUrl) {
+    const beacon = new URL(`${apiBase.replace(/\/$/, '')}/affiliate/click/beacon`)
+    beacon.searchParams.set('tier', post.affiliateTier || 'D')
+    beacon.searchParams.set('surface', 'BLOG_POST_AMP')
+    if (post.affiliateIsbn13) beacon.searchParams.set('isbn13', post.affiliateIsbn13)
+
+    // Serialised with JSON.stringify, not the HTML escaper: a
+    // `<script type="application/json">` body is not HTML, so an escaped `&`
+    // would arrive in the URL literally as `&amp;`.
+    const config = JSON.stringify({
+      requests: { affiliateClick: beacon.toString() },
+      triggers: {
+        buyClick: { on: 'click', selector: '.buy__btn', request: 'affiliateClick' },
+      },
+      // image is off: the route is a POST on purpose, so a pixel GET would 404.
+      transport: { beacon: true, xhrpost: true, image: false },
+    })
+    analytics = `<amp-analytics><script type="application/json">${config}</script></amp-analytics>`
+  }
+
   const cover = post.coverImageUrl
     ? `<amp-img class="cover" src="${esc(post.coverImageUrl)}" alt="${esc(post.bookTitle)} cover" ` +
       'width="400" height="600" layout="responsive"></amp-img>'
@@ -223,7 +257,9 @@ export function ampDocument(post: ApiPost): string {
 <html amp lang="en">
 <head>
 <meta charset="utf-8">
-<script async src="https://cdn.ampproject.org/v0.js"></script>
+<script async src="https://cdn.ampproject.org/v0.js"></script>${
+    analytics ? '\n<script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>' : ''
+  }
 <title>${esc(title)} | Bookmarko</title>
 <link rel="canonical" href="${canonical}">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -267,6 +303,7 @@ ${buy}
 <a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download on the App Store</a>
 <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get it on Google Play</a>
 </div>
+${analytics}
 </main>
 <footer class="site">
 <a href="${canonical}">View the full version of this page</a> · <a href="${ORIGIN}/blog/">More from the Bookmarko blog</a>

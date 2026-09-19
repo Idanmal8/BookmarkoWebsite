@@ -323,7 +323,8 @@ export function seoPlugin(): Plugin {
         throw new Error('[seo] index.html is missing the <!--seo--> marker block')
       }
 
-      const posts = await fetchPosts(process.env.VITE_API_BASE_URL)
+      const apiBase = process.env.VITE_API_BASE_URL
+      const posts = await fetchPosts(apiBase)
       const pages = [...staticPages(posts), ...posts.map(postPage)]
 
       for (const page of pages) {
@@ -345,10 +346,15 @@ export function seoPlugin(): Plugin {
       // shell, because AMP allows no author JavaScript. They stay out of the
       // sitemap on purpose: each one declares the non-AMP post as its canonical,
       // so that is the URL Google should index and the only one worth listing.
-      for (const post of posts) {
-        const dir = path.join(outDir, ampRouteFor(`/blog/${post.slug as string}`))
-        await mkdir(dir, { recursive: true })
-        await writeFile(path.join(dir, 'index.html'), ampDocument(post))
+      // `posts` is only ever non-empty when `apiBase` is set — fetchPosts returns
+      // [] without it — so this loop cannot run with an undefined base. The
+      // guard states that rather than casting it away.
+      if (apiBase) {
+        for (const post of posts) {
+          const dir = path.join(outDir, ampRouteFor(`/blog/${post.slug as string}`))
+          await mkdir(dir, { recursive: true })
+          await writeFile(path.join(dir, 'index.html'), ampDocument(post, apiBase))
+        }
       }
 
       await writeFile(path.join(outDir, 'sitemap.xml'), sitemap(posts))

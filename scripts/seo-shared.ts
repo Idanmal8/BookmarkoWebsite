@@ -45,4 +45,8 @@ export interface ApiPost {
   publishedAt: string | null
   /** Bookshop.org affiliate link, resolved server-side. Null when unpurchasable. */
   affiliateUrl: string | null
+  /** Commission tier of that link, reported with the click. */
+  affiliateTier: string | null
+  /** ISBN-13 the link resolved to, null for search/storefront links. */
+  affiliateIsbn13: string | null
 }
