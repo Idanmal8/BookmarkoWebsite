@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.idanmal.bookmarko",
+      "sha256_cert_fingerprints": [
+        "BA:9F:02:5D:AD:11:F1:A7:40:05:D7:FB:AD:74:6E:EC:39:FB:E8:66:7C:98:4A:AF:4D:5C:94:53:FC:E0:E1:A1"
+      ]
+    }
+  }
+]

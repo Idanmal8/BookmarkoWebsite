@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["8TG89AW467.com.example.bookmarko"],
+        "components": [
+          {
+            "/": "/get*",
+            "comment": "Smart download link (tasks/DEEP_LINKS.md): opens the app when installed; the /get page redirects to the store when not."
+          }
+        ]
+      }
+    ]
+  }
+}
