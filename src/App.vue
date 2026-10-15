@@ -9,6 +9,7 @@
       <DeleteAccountConfirm v-else-if="route === 'delete-confirm'" />
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
+      <Unsubscribe v-else-if="route === 'unsubscribe'" />
       <Changelog v-else-if="route === 'changelog'" />
       <Roadmap v-else-if="route === 'roadmap'" />
       <BlogPost v-else-if="route === 'blog-post'" :slug="blogSlug" />
@@ -37,6 +38,7 @@ import Quote from './components/Quote.vue'
 import Finale from './components/Finale.vue'
 import Footer from './components/Footer.vue'
 import EmailConfirmed from './components/EmailConfirmed.vue'
+import Unsubscribe from './components/Unsubscribe.vue'
 import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
 import Changelog from './components/Changelog.vue'
@@ -49,6 +51,7 @@ import CustomCursor from './components/CustomCursor.vue'
 type Route =
   | 'home'
   | 'email-confirmed'
+  | 'unsubscribe'
   | 'delete-request'
   | 'delete-confirm'
   | 'changelog'
@@ -79,6 +82,7 @@ function resolveRoute(): Route {
   const path = window.location.pathname.replace(/\/$/, '')
   if (path === '/delete-account/confirm') return 'delete-confirm'
   if (path === '/delete-account') return 'delete-request'
+  if (path === '/unsubscribe') return 'unsubscribe'
   if (path === '/changelog') return 'changelog'
   if (path === '/roadmap') return 'roadmap'
   if (path.toLowerCase() === '/newdesign') return 'new-design'
