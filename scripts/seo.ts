@@ -209,6 +209,16 @@ function staticPages(posts: ApiPost[]): Page[] {
       jsonLd: [],
       noindex: true,
     },
+    // Target of every email's Unsubscribe link.
+    {
+      route: '/unsubscribe',
+      title: 'Unsubscribe | Bookmarko',
+      description: 'Stop product emails from Bookmarko.',
+      image: OG_DEFAULT,
+      ogType: 'website',
+      jsonLd: [],
+      noindex: true,
+    },
     {
       route: '/newdesign',
       title: 'Bookmarko',
