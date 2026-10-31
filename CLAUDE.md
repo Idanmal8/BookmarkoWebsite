@@ -24,6 +24,7 @@ No vue-router. `App.vue` resolves a `Route` at mount time from `window.location`
 | `/delete-account/confirm` | `delete-confirm` | `DeleteAccountConfirm.vue` |
 | `/delete-account` | `delete-request` | `DeleteAccountRequest.vue` |
 | `/changelog` | `changelog` | `Changelog.vue` |
+| `/newsletter` | `newsletter` | `Newsletter.vue` — Idan's personal newsletter, not Bookmarko's (`../tasks/IDAN_NEWSLETTER.md`) |
 | `/newdesign` (case-insensitive) | `new-design` | `NewDesign.vue` |
 | anything else | `home` | Full landing page sequence |
 
