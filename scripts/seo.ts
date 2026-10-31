@@ -189,6 +189,21 @@ function staticPages(posts: ApiPost[]): Page[] {
       ],
       body: '<h1>Bookmarko Roadmap</h1><p>What readers have asked for, and what is being built next.</p>',
     },
+    {
+      route: '/newsletter',
+      title: 'The newsletter by Idan Malka',
+      description:
+        "Idan Malka's journey from zero audience to many, tech guides and industry best practices for your AI companion, and first access to new projects and open source tools.",
+      image: OG_DEFAULT,
+      ogType: 'website',
+      jsonLd: [
+        breadcrumb([
+          { name: 'Home', route: '/' },
+          { name: 'Newsletter', route: '/newsletter' },
+        ]),
+      ],
+      body: '<h1>The newsletter by Idan Malka</h1><p>My journey from zero audience to many, plus tech guides and best practices you can hand straight to your AI companion.</p>',
+    },
     // Store-compliance flows. They must answer 200 (Apple and Google check the
     // link), but they are dead ends for a searcher — hence noindex.
     {
@@ -214,6 +229,25 @@ function staticPages(posts: ApiPost[]): Page[] {
       route: '/unsubscribe',
       title: 'Unsubscribe | Bookmarko',
       description: 'Stop product emails from Bookmarko.',
+      image: OG_DEFAULT,
+      ogType: 'website',
+      jsonLd: [],
+      noindex: true,
+    },
+    // Targets of the newsletter's confirm and unsubscribe links.
+    {
+      route: '/newsletter/confirm',
+      title: 'Confirm your subscription | Idan Malka',
+      description: 'Confirm your subscription to the newsletter by Idan Malka.',
+      image: OG_DEFAULT,
+      ogType: 'website',
+      jsonLd: [],
+      noindex: true,
+    },
+    {
+      route: '/newsletter/unsubscribe',
+      title: 'Unsubscribe | Idan Malka',
+      description: 'Stop the newsletter by Idan Malka.',
       image: OG_DEFAULT,
       ogType: 'website',
       jsonLd: [],
@@ -308,6 +342,7 @@ function sitemap(posts: ApiPost[]): string {
     { loc: urlFor('/blog'), priority: '0.8' },
     { loc: urlFor('/roadmap'), priority: '0.6' },
     { loc: urlFor('/changelog'), priority: '0.5' },
+    { loc: urlFor('/newsletter'), priority: '0.5' },
     { loc: `${ORIGIN}/privacy.html`, priority: '0.3' },
     { loc: `${ORIGIN}/terms.html`, priority: '0.3' },
     ...posts.map((p) => ({

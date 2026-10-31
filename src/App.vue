@@ -2,7 +2,7 @@
   <div class="app-wrapper" :class="{ home: route === 'home' }">
     <Navbar
       v-if="route !== 'new-design' && route !== 'blog' && route !== 'blog-post'"
-      :variant="route === 'home' ? 'home' : 'plain'"
+      :variant="route === 'home' ? 'home' : route === 'newsletter' ? 'newsletter' : 'plain'"
     />
     <main>
       <NewDesign v-if="route === 'new-design'" />
@@ -12,6 +12,9 @@
       <Unsubscribe v-else-if="route === 'unsubscribe'" />
       <Changelog v-else-if="route === 'changelog'" />
       <Roadmap v-else-if="route === 'roadmap'" />
+      <Newsletter v-else-if="route === 'newsletter'" />
+      <NewsletterConfirm v-else-if="route === 'newsletter-confirm'" />
+      <Unsubscribe v-else-if="route === 'newsletter-unsubscribe'" kind="newsletter" />
       <BlogPost v-else-if="route === 'blog-post'" :slug="blogSlug" />
       <Blog v-else-if="route === 'blog'" />
       <template v-else>
@@ -29,6 +32,7 @@
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import BookSectionHero from './components/BookSectionHero.vue'
@@ -43,6 +47,9 @@ import DeleteAccountRequest from './components/DeleteAccountRequest.vue'
 import DeleteAccountConfirm from './components/DeleteAccountConfirm.vue'
 import Changelog from './components/Changelog.vue'
 import Roadmap from './components/Roadmap.vue'
+// Lazy: its GSAP plugins (SplitText, Draggable, Inertia) stay out of the main bundle.
+const Newsletter = defineAsyncComponent(() => import('./components/Newsletter.vue'))
+import NewsletterConfirm from './components/NewsletterConfirm.vue'
 import NewDesign from './components/NewDesign.vue'
 import Blog from './components/Blog.vue'
 import BlogPost from './components/BlogPost.vue'
@@ -56,6 +63,9 @@ type Route =
   | 'delete-confirm'
   | 'changelog'
   | 'roadmap'
+  | 'newsletter'
+  | 'newsletter-confirm'
+  | 'newsletter-unsubscribe'
   | 'new-design'
   | 'blog'
   | 'blog-post'
@@ -85,6 +95,9 @@ function resolveRoute(): Route {
   if (path === '/unsubscribe') return 'unsubscribe'
   if (path === '/changelog') return 'changelog'
   if (path === '/roadmap') return 'roadmap'
+  if (path === '/newsletter') return 'newsletter'
+  if (path === '/newsletter/confirm') return 'newsletter-confirm'
+  if (path === '/newsletter/unsubscribe') return 'newsletter-unsubscribe'
   if (path.toLowerCase() === '/newdesign') return 'new-design'
   if (path === '/blog') return 'blog'
   if (path.startsWith('/blog/')) return 'blog-post'

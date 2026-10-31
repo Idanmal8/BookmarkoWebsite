@@ -33,6 +33,8 @@ jobs:
         env:
           VITE_API_BASE_URL: https://bookmarko-backend-production-587868624215.europe-west1.run.app
           VITE_GA_MEASUREMENT_ID: G-5C3LGSD51W
+          # Idan's newsletter lives on the sandbox service, not production (tasks/IDAN_NEWSLETTER.md).
+          VITE_NEWSLETTER_API_BASE_URL: https://bookmarko-backend-fx62gug2oq-ew.a.run.app
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
