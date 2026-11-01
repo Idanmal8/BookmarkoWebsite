@@ -13,7 +13,6 @@
       <Changelog v-else-if="route === 'changelog'" />
       <Roadmap v-else-if="route === 'roadmap'" />
       <Newsletter v-else-if="route === 'newsletter'" />
-      <NewsletterConfirm v-else-if="route === 'newsletter-confirm'" />
       <Unsubscribe v-else-if="route === 'newsletter-unsubscribe'" kind="newsletter" />
       <BlogPost v-else-if="route === 'blog-post'" :slug="blogSlug" />
       <Blog v-else-if="route === 'blog'" />
@@ -49,7 +48,6 @@ import Changelog from './components/Changelog.vue'
 import Roadmap from './components/Roadmap.vue'
 // Lazy: its GSAP plugins (SplitText, Draggable, Inertia) stay out of the main bundle.
 const Newsletter = defineAsyncComponent(() => import('./components/Newsletter.vue'))
-import NewsletterConfirm from './components/NewsletterConfirm.vue'
 import NewDesign from './components/NewDesign.vue'
 import Blog from './components/Blog.vue'
 import BlogPost from './components/BlogPost.vue'
@@ -64,7 +62,6 @@ type Route =
   | 'changelog'
   | 'roadmap'
   | 'newsletter'
-  | 'newsletter-confirm'
   | 'newsletter-unsubscribe'
   | 'new-design'
   | 'blog'
@@ -96,7 +93,6 @@ function resolveRoute(): Route {
   if (path === '/changelog') return 'changelog'
   if (path === '/roadmap') return 'roadmap'
   if (path === '/newsletter') return 'newsletter'
-  if (path === '/newsletter/confirm') return 'newsletter-confirm'
   if (path === '/newsletter/unsubscribe') return 'newsletter-unsubscribe'
   if (path.toLowerCase() === '/newdesign') return 'new-design'
   if (path === '/blog') return 'blog'

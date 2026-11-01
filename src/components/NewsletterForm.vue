@@ -2,14 +2,14 @@
   <div class="nl-form-wrap" :class="`tone-${tone}`">
     <Transition name="swap" mode="out-in">
       <div v-if="state === 'done'" key="done" class="done">
-        <span class="done-icon" aria-hidden="true">✉️</span>
+        <span class="done-icon" aria-hidden="true">🎉</span>
         <div>
-          <p class="done-title">Check your inbox!</p>
-          <p class="done-sub">I just sent you a confirmation link. Click it and you're in.</p>
+          <p class="done-title">You're in!</p>
+          <p class="done-sub">A hello from me is on its way to your inbox. See you there.</p>
         </div>
       </div>
 
-      <form v-else key="form" class="nl-form" @submit.prevent="onSubmit">
+      <form v-else key="form" class="nl-form" @submit.prevent="onSubmit()">
         <div class="pill">
           <input
             v-model="firstName"
@@ -32,6 +32,7 @@
             placeholder="you@email.com"
             aria-label="Email"
             required
+            @input="onEmailInput"
           />
           <button class="submit" type="submit" :disabled="state === 'sending'">
             <span>{{ state === 'sending' ? 'Signing up…' : 'Sign me up' }}</span>
@@ -40,7 +41,12 @@
         </div>
         <!-- Bots fill every field; people never see this one. -->
         <input v-model="website" class="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <p v-if="error" class="error" role="alert">{{ error }}</p>
+        <!-- Typos are caught here instead of with a confirm email: one tap fixes them. -->
+        <p v-if="suggestion" class="hint" role="status">
+          Did you mean <button type="button" class="hint-fix" @click="useSuggestion">{{ suggestion }}</button>?
+          <button v-if="serverFlagged" type="button" class="hint-keep" @click="keepMine">No, keep mine</button>
+        </p>
+        <p v-else-if="error" class="error" role="alert">{{ error }}</p>
         <p class="fine">{{ finePrint }}</p>
       </form>
     </Transition>
@@ -50,6 +56,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useNewsletterStore } from '@/stores/newsletter'
+import { suggestEmail } from '@/utils/emailTypo'
 
 const props = withDefaults(defineProps<{ source: string; finePrint: string; tone?: 'light' | 'dark' }>(), {
   tone: 'light',
@@ -61,8 +68,32 @@ const email = ref('')
 const website = ref('')
 const state = ref<'idle' | 'sending' | 'done'>('idle')
 const error = ref<string | null>(null)
+const suggestion = ref<string | null>(null)
+// True once the API itself said "did you mean": only then is "keep mine" offered,
+// since a live hint is easy to ignore by just pressing the button.
+const serverFlagged = ref(false)
 
-async function onSubmit() {
+function onEmailInput() {
+  serverFlagged.value = false
+  error.value = null
+  suggestion.value = suggestEmail(email.value.trim())
+}
+
+function useSuggestion() {
+  if (!suggestion.value) return
+  email.value = suggestion.value
+  suggestion.value = null
+  // Fixing it after the API flagged it means they meant to sign up: finish the job.
+  if (serverFlagged.value) onSubmit()
+  serverFlagged.value = false
+}
+
+function keepMine() {
+  suggestion.value = null
+  onSubmit(true)
+}
+
+async function onSubmit(keepEmail = false) {
   state.value = 'sending'
   error.value = null
   const result = await store.subscribe({
@@ -70,11 +101,17 @@ async function onSubmit() {
     firstName: firstName.value.trim(),
     source: props.source,
     website: website.value,
+    keepEmail,
   })
   if (result.success) {
     state.value = 'done'
+    return
+  }
+  state.value = 'idle'
+  if (result.suggestion) {
+    suggestion.value = result.suggestion
+    serverFlagged.value = true
   } else {
-    state.value = 'idle'
     error.value = result.error
   }
 }
@@ -172,6 +209,38 @@ async function onSubmit() {
 .tone-dark .done {
   border-color: #fff;
   box-shadow: 5px 5px 0 var(--nl-accent);
+}
+.hint {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--nl-ink);
+}
+.hint-fix {
+  background: var(--nl-yellow);
+  color: var(--nl-ink);
+  border: 1.5px solid var(--nl-ink);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.hint-fix:hover {
+  background: #ffe39a;
+}
+.hint-keep {
+  margin-left: 0.5rem;
+  background: none;
+  color: var(--nl-mute);
+  text-decoration: underline;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.tone-dark .hint {
+  color: #fff;
+}
+.tone-dark .hint-keep {
+  color: rgba(255, 255, 255, 0.75);
 }
 .tone-dark .fine {
   color: rgba(255, 255, 255, 0.8);
