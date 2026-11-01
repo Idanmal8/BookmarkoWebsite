@@ -8,12 +8,23 @@ export const NEWSLETTER_API_BASE_URL = (
   'http://localhost:3000'
 ).replace(/\/$/, '')
 
-// Idan's personal newsletter (tasks/IDAN_NEWSLETTER.md). The API always answers
-// { success: true } so the page never learns whether an address is already on
-// the list; the confirm email is what actually adds someone.
+export type SubscribeResult =
+  | { success: true }
+  | { success: false; error: string; suggestion?: string }
+
+// Idan's personal newsletter (tasks/IDAN_NEWSLETTER.md). Single opt in: a 200
+// means the reader is on the list. The API never says whether they already
+// were. A 422 is about the address itself: a likely typo (with a suggestion)
+// or a domain that can't receive mail.
 export const useNewsletterStore = defineStore('newsletter', {
   actions: {
-    async subscribe(params: { email: string; firstName: string; source: string; website: string }) {
+    async subscribe(params: {
+      email: string
+      firstName: string
+      source: string
+      website: string
+      keepEmail?: boolean
+    }): Promise<SubscribeResult> {
       try {
         const res = await fetch(`${NEWSLETTER_API_BASE_URL}/newsletter/subscribe`, {
           method: 'POST',
@@ -22,17 +33,21 @@ export const useNewsletterStore = defineStore('newsletter', {
         })
 
         if (res.status === 429) {
-          return { success: false as const, error: 'Too many attempts. Please wait a moment and try again.' }
+          return { success: false, error: 'Too many attempts. Please wait a moment and try again.' }
         }
         if (!res.ok) {
           const data = await res.json().catch(() => null)
           const message = Array.isArray(data?.message) ? data.message[0] : data?.message
-          return { success: false as const, error: message || 'Something went wrong. Please try again.' }
+          return {
+            success: false,
+            error: message || 'Something went wrong. Please try again.',
+            suggestion: typeof data?.suggestion === 'string' ? data.suggestion : undefined,
+          }
         }
-        return { success: true as const }
+        return { success: true }
       } catch {
         return {
-          success: false as const,
+          success: false,
           error: "Couldn't reach the server. An ad blocker or VPN can get in the way, so try turning it off.",
         }
       }

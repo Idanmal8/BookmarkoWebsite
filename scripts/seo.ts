@@ -234,16 +234,7 @@ function staticPages(posts: ApiPost[]): Page[] {
       jsonLd: [],
       noindex: true,
     },
-    // Targets of the newsletter's confirm and unsubscribe links.
-    {
-      route: '/newsletter/confirm',
-      title: 'Confirm your subscription | Idan Malka',
-      description: 'Confirm your subscription to the newsletter by Idan Malka.',
-      image: OG_DEFAULT,
-      ogType: 'website',
-      jsonLd: [],
-      noindex: true,
-    },
+    // Target of the newsletter's unsubscribe links.
     {
       route: '/newsletter/unsubscribe',
       title: 'Unsubscribe | Idan Malka',
