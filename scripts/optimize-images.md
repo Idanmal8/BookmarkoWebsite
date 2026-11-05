@@ -30,7 +30,6 @@ When a layout changes, update both together:
 | `bookmarkoLogo.webp` | 36px navbar, 72px blog badge | 160px |
 | `bookmarkoLogo-mark.webp` | 28px footer | 128px |
 | `bookL.webp`, `goodL.webp` | 112px chip | 224px |
-| `ginie-lamp.webp` | — | 256px |
 
 `public/og-welcome.png` deliberately stays PNG at 1200x630 — several social
 scrapers still won't accept WebP, and this is the image they fetch.

@@ -18,9 +18,11 @@
       <Blog v-else-if="route === 'blog'" />
       <template v-else>
         <Hero />
+        <AppShowcase />
         <BookSectionHero />
         <GoodreadsImport />
         <GinieSection />
+        <QuestsBadges />
         <Quote />
         <Finale />
       </template>
@@ -33,6 +35,8 @@
 import { defineAsyncComponent } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
+import AppShowcase from './components/AppShowcase.vue'
+import QuestsBadges from './components/QuestsBadges.vue'
 import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
 import GinieSection from './components/GinieSection.vue'

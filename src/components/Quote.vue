@@ -28,8 +28,8 @@ useReveal()
   font-family: 'EB Garamond', serif;
   font-size: 200px;
   line-height: .8;
-  color: var(--accent);
-  opacity: .25;
+  color: var(--pink);
+  opacity: .55;
   margin-bottom: -40px;
 }
 .quote__text {
