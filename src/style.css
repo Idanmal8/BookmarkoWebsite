@@ -9,6 +9,10 @@
   --ink-deep: #0E1230;
   --ink-soft: #3D4670;
   --ink-mute: #6B7298;
+  --pink: #FF4F8B;
+  --pink-deep: #E0336F;
+  --pink-soft: #FFB3CE;
+  --pink-tint: #FFE6EF;
   --paper: #F7F9FC;
   --paper-deep: var(--accent-tint);
   --paper-deepest: #D5E1F4;
@@ -44,15 +48,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Home wrapper hosts the long vertical gradient (top: brand blue → middle: paper → bottom: deep indigo) */
+/* Home wrapper hosts the long vertical gradient (top: brand blue → pink → middle: paper → bottom: deep indigo).
+   The pink is landing only; the app keeps its blue. */
 .app-wrapper.home {
   background:
     linear-gradient(
       180deg,
       #5170ff 0%,
       #5170ff 4%,
-      #A5C2F4 10%,
-      #DEEAFC 15%,
+      var(--pink-soft) 10%,
+      var(--pink-tint) 15%,
       var(--paper) 20%,
       var(--paper) 78%,
       #C7CDDF 86%,
