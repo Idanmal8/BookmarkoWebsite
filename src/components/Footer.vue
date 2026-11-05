@@ -41,9 +41,6 @@
       <span>© 2026 Bookmarko. Built quietly, for readers.</span>
       <span class="footer__sig">Made with a cup of tea and a closed tab.</span>
     </div>
-    <div class="footer__mark" aria-hidden="true">
-      <img src="/src/assets/bookmarkoLogo-mark.webp" alt="" />
-    </div>
   </footer>
 </template>
 
@@ -120,18 +117,6 @@ function trackShopClick(surface: string) {
 }
 .footer__sig { font-family: 'EB Garamond', serif; font-style: italic; }
 
-.footer__mark {
-  position: absolute;
-  right: -60px;
-  bottom: -80px;
-  width: 320px;
-  height: 320px;
-  pointer-events: none;
-  opacity: .09;
-  z-index: 1;
-}
-.footer__mark img { width: 100%; height: 100%; object-fit: contain; }
-
 @media (max-width: 720px) {
   .footer__inner {
     flex-direction: column;
@@ -139,7 +124,6 @@ function trackShopClick(surface: string) {
     gap: 18px;
   }
   .footer__base { flex-direction: column; gap: 6px; }
-  .footer__mark { width: 220px; height: 220px; right: -50px; bottom: -60px; }
 }
 
 .footer__shop {

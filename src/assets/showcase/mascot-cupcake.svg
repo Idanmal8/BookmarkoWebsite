@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+<g id="cupcake" transform="rotate(3 120 130)">
+<g id="sticker" stroke-linejoin="round">
+<g id="keyline" fill="#111114" stroke="#111114"><g stroke-width="33"><path d="M64 170 L176 170 L165 206 L75 206 Z"/></g><g stroke-width="25"><rect x="52" y="126" width="136" height="48" rx="24"/><rect x="70" y="94" width="100" height="44" rx="22"/><circle cx="120" cy="82" r="26"/></g><g stroke-width="25"><circle cx="120" cy="46" r="12"/></g><g stroke-width="25"></g></g>
+<g id="cut" fill="#FFFFFF" stroke="#FFFFFF"><g stroke-width="26"><path d="M64 170 L176 170 L165 206 L75 206 Z"/></g><g stroke-width="18"><rect x="52" y="126" width="136" height="48" rx="24"/><rect x="70" y="94" width="100" height="44" rx="22"/><circle cx="120" cy="82" r="26"/></g><g stroke-width="18"><circle cx="120" cy="46" r="12"/></g><g stroke-width="18"></g></g>
+<g id="body_fill"><g fill="#F28C38" stroke="#F28C38" stroke-width="8"><path d="M64 170 L176 170 L165 206 L75 206 Z"/></g><g fill="#F5A9D0" stroke="#F5A9D0" stroke-width="0"><rect x="52" y="126" width="136" height="48" rx="24"/><rect x="70" y="94" width="100" height="44" rx="22"/><circle cx="120" cy="82" r="26"/></g><g fill="#EC6FAE" stroke="#EC6FAE" stroke-width="0"><circle cx="120" cy="46" r="12"/></g></g>
+</g>
+<g id="face">
+<ellipse id="blush_L" cx="74" cy="156" rx="9" ry="5.5" fill="#FF8FB1" opacity="0.7"/>
+<ellipse id="blush_R" cx="166" cy="156" rx="9" ry="5.5" fill="#FF8FB1" opacity="0.7"/>
+<g id="eye_L"><path d="M98 125 Q106 113 114 125" fill="none" stroke="#111114" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g><g id="eye_R"><circle cx="134" cy="122" r="14" fill="#FFFFFF"/><circle cx="129" cy="119" r="6.5" fill="#111114"/></g>
+<path id="mouth" d="M86 136 Q120 170 154 136" fill="none" stroke="#111114" stroke-width="5" stroke-linecap="round"/>
+</g>
+<g id="accessory"><g stroke-width="4.5" stroke-linecap="round">
+<path d="M108 74 L114 70" stroke="#FFD54F"/><path d="M128 80 L134 84" stroke="#64B5F6"/>
+<path d="M90 108 L94 114" stroke="#81C784"/><path d="M146 104 L152 100" stroke="#FFD54F"/>
+<path d="M118 104 L124 106" stroke="#64B5F6"/><path d="M62 146 L66 140" stroke="#81C784"/>
+<path d="M174 140 L178 146" stroke="#64B5F6"/></g></g>
+</g>
+</svg>

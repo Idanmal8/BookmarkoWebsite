@@ -23,7 +23,6 @@ const SINGLES = [
   ['bookmarkoLogo-mark.png', 128], // 28px footer mark
   ['bookL.png', 224], // 112px chip
   ['goodL.png', 224], // 112px chip
-  ['ginie-lamp.png', 256],
 ]
 
 /** Book covers render in a 168px column (112px on mobile). */
