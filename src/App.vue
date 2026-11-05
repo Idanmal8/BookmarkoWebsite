@@ -26,7 +26,6 @@
       </template>
     </main>
     <Footer v-if="route !== 'email-confirmed' && route !== 'new-design'" />
-    <CustomCursor />
   </div>
 </template>
 
@@ -51,7 +50,6 @@ const Newsletter = defineAsyncComponent(() => import('./components/Newsletter.vu
 import NewDesign from './components/NewDesign.vue'
 import Blog from './components/Blog.vue'
 import BlogPost from './components/BlogPost.vue'
-import CustomCursor from './components/CustomCursor.vue'
 
 type Route =
   | 'home'

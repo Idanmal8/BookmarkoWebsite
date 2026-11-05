@@ -1,5 +1,8 @@
 <template>
-  <nav class="nav" :class="{ 'nav--scrolled': scrolled, 'nav--newsletter': variant === 'newsletter' }">
+  <nav
+    class="nav"
+    :class="{ 'nav--scrolled': scrolled, 'nav--home': variant === 'home', 'nav--newsletter': variant === 'newsletter' }"
+  >
     <a href="/" class="nav__brand">
       <!-- The cream newsletter bar needs the transparent mark; the full logo has a blue tile baked in. -->
       <img
@@ -40,11 +43,26 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 36px;
   background: #5170ff;
-  transition: padding .3s;
+  transition: padding .3s, background-color .4s, box-shadow .4s;
 }
 .nav--scrolled { padding: 10px 36px; }
+
+/* Home: solid blue only while it sits on the blue top of the gradient. Once the
+   page scrolls into pink, it frosts over so the colour underneath shows through. */
+.nav--home.nav--scrolled {
+  background: rgba(247, 249, 252, .72);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 1px 0 var(--line);
+}
+.nav--home .nav__wordmark,
+.nav--home .nav__links a { transition: color .4s; }
+.nav--home.nav--scrolled .nav__wordmark { color: var(--ink); }
+.nav--home.nav--scrolled .nav__links a { color: var(--ink-soft); }
+.nav--home.nav--scrolled .nav__links a:hover { color: var(--pink-deep); }
 .nav__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; }
-.nav__logo { width: 36px; height: 36px; object-fit: contain; }
+/* The full logo is a square blue tile; round it like an app icon. */
+.nav__logo { width: 36px; height: 36px; object-fit: contain; border-radius: 9px; }
 .nav__wordmark {
   font-family: 'EB Garamond', serif;
   font-weight: 600;
