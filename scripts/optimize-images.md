@@ -31,8 +31,9 @@ When a layout changes, update both together:
 | `bookmarkoLogo-mark.webp` | 28px footer | 128px |
 | `bookL.webp`, `goodL.webp` | 112px chip | 224px |
 
-`public/og-welcome.png` deliberately stays PNG at 1200x630 — several social
-scrapers still won't accept WebP, and this is the image they fetch.
+`public/og-home.png` (og:image) and `public/og-home-x.png` (twitter:image)
+deliberately stay PNG at 1200x630 — several social scrapers still won't accept
+WebP, and these are the images they fetch.
 
 `shelf-left.webp` / `shelf-right.webp` are not handled here. They are baked
 artwork with their own pipeline — see `bake-shelves.md`.

@@ -17,7 +17,7 @@
  * build instead of shipping an invalid variant.
  */
 import { renderMarkdown } from '../src/utils/markdown'
-import { ORIGIN, OG_DEFAULT, urlFor, esc, clamp, type ApiPost } from './seo-shared'
+import { ORIGIN, OG_DEFAULT, twitterImageFor, urlFor, esc, clamp, type ApiPost } from './seo-shared'
 
 /** The AMP variant of `/blog/:slug` lives at `/blog/:slug/amp`. */
 export const ampRouteFor = (route: string) => `${route}/amp`
@@ -275,7 +275,7 @@ export function ampDocument(post: ApiPost, apiBase: string): string {
 <meta name="twitter:url" content="${canonical}">
 <meta name="twitter:title" content="${esc(title)} | Bookmarko">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="${esc(image)}">
+<meta name="twitter:image" content="${esc(twitterImageFor(image))}">
 <link rel="icon" href="${ORIGIN}/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">

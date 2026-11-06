@@ -58,14 +58,14 @@ for (const [file, width] of SINGLES) {
   saved += b - a
 }
 
-// The OG image stays PNG: several social scrapers still don't accept WebP.
-console.log('\nSocial card:')
-{
-  const src = path.join(PUBLIC, 'og-welcome.png')
+// The OG images stay PNG: several social scrapers still don't accept WebP.
+console.log('\nSocial cards:')
+for (const file of ['og-home.png', 'og-home-x.png']) {
+  const src = path.join(PUBLIC, file)
   const before = (await stat(src)).size
   const buf = await sharp(src).resize({ width: 1200 }).png({ compressionLevel: 9, palette: true }).toBuffer()
   await writeFile(src, buf)
-  console.log(`  og-welcome.png               ${kb(before).padStart(7)} → ${kb(buf.length).padStart(6)}`)
+  console.log(`  ${file.padEnd(28)} ${kb(before).padStart(7)} → ${kb(buf.length).padStart(6)}`)
   total += before
   saved += before - buf.length
 }
