@@ -5,7 +5,10 @@
  */
 
 export const ORIGIN = 'https://bookmark-o.com'
-export const OG_DEFAULT = `${ORIGIN}/og-welcome.png`
+export const OG_DEFAULT = `${ORIGIN}/og-home.png`
+/** X gets its own card (the phone shot); every other scraper reads og:image. */
+export const OG_X_DEFAULT = `${ORIGIN}/og-home-x.png`
+export const twitterImageFor = (image: string) => (image === OG_DEFAULT ? OG_X_DEFAULT : image)
 
 /**
  * Absolute URL for a route, always trailing-slashed.

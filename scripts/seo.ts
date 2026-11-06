@@ -24,7 +24,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import type { Plugin } from 'vite'
 import { renderMarkdown } from '../src/utils/markdown'
-import { ORIGIN, OG_DEFAULT, urlFor, esc, clamp, type ApiPost } from './seo-shared'
+import { ORIGIN, OG_DEFAULT, twitterImageFor, urlFor, esc, clamp, type ApiPost } from './seo-shared'
 import { ampDocument, ampRouteFor } from './amp'
 
 interface Page {
@@ -319,7 +319,7 @@ function headFor(page: Page): string {
     `<meta name="twitter:url" content="${url}" />`,
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${description}" />`,
-    `<meta name="twitter:image" content="${image}" />`,
+    `<meta name="twitter:image" content="${esc(twitterImageFor(page.image))}" />`,
     page.jsonLd.length ? `<script type="application/ld+json">${graph}</script>` : '',
   ]
     .filter(Boolean)
