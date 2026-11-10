@@ -25,6 +25,8 @@ No vue-router. `App.vue` resolves a `Route` at mount time from `window.location`
 | `/delete-account` | `delete-request` | `DeleteAccountRequest.vue` |
 | `/changelog` | `changelog` | `Changelog.vue` |
 | `/newsletter` | `newsletter` | `Newsletter.vue` — Idan's personal newsletter, not Bookmarko's (`../tasks/IDAN_NEWSLETTER.md`) |
+| `/idan` (case-insensitive) | `links` | `LinkPage.vue` — Idan's link-in-bio page (Linktree replacement). Content is in `src/data/links.ts`; no Navbar/Footer |
+| `/idan/picks` (case-insensitive) | `picks` | `PicksPage.vue` — Idan's Amazon affiliate picks (tag `bookmarkostor-20`). Content in `src/data/picks.ts`, covers self-hosted in `public/links/covers/` (Open Library — never Amazon images or hardcoded prices, per the Associates agreement). Shares `LinkBackdrop.vue` with `/idan` |
 | `/newdesign` (case-insensitive) | `new-design` | `NewDesign.vue` |
 | anything else | `home` | Full landing page sequence |
 
