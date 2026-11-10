@@ -1,11 +1,13 @@
 <template>
   <div class="app-wrapper" :class="{ home: route === 'home' }">
     <Navbar
-      v-if="route !== 'new-design' && route !== 'blog' && route !== 'blog-post'"
+      v-if="route !== 'new-design' && route !== 'blog' && route !== 'blog-post' && route !== 'links' && route !== 'picks'"
       :variant="route === 'home' ? 'home' : route === 'newsletter' ? 'newsletter' : 'plain'"
     />
     <main>
       <NewDesign v-if="route === 'new-design'" />
+      <LinkPage v-else-if="route === 'links'" />
+      <PicksPage v-else-if="route === 'picks'" />
       <DeleteAccountConfirm v-else-if="route === 'delete-confirm'" />
       <DeleteAccountRequest v-else-if="route === 'delete-request'" />
       <EmailConfirmed v-else-if="route === 'email-confirmed'" />
@@ -27,7 +29,7 @@
         <Finale />
       </template>
     </main>
-    <Footer v-if="route !== 'email-confirmed' && route !== 'new-design'" />
+    <Footer v-if="route !== 'email-confirmed' && route !== 'new-design' && route !== 'links' && route !== 'picks'" />
   </div>
 </template>
 
@@ -52,6 +54,8 @@ import Roadmap from './components/Roadmap.vue'
 // Lazy: its GSAP plugins (SplitText, Draggable, Inertia) stay out of the main bundle.
 const Newsletter = defineAsyncComponent(() => import('./components/Newsletter.vue'))
 import NewDesign from './components/NewDesign.vue'
+import LinkPage from './components/LinkPage.vue'
+import PicksPage from './components/PicksPage.vue'
 import Blog from './components/Blog.vue'
 import BlogPost from './components/BlogPost.vue'
 
@@ -68,6 +72,8 @@ type Route =
   | 'new-design'
   | 'blog'
   | 'blog-post'
+  | 'links'
+  | 'picks'
 
 /**
  * `/blog/:slug/amp` is a static AMP document (see `scripts/amp.ts`) that GitHub
@@ -97,6 +103,8 @@ function resolveRoute(): Route {
   if (path === '/newsletter') return 'newsletter'
   if (path === '/newsletter/unsubscribe') return 'newsletter-unsubscribe'
   if (path.toLowerCase() === '/newdesign') return 'new-design'
+  if (path.toLowerCase() === '/idan') return 'links'
+  if (path.toLowerCase() === '/idan/picks') return 'picks'
   if (path === '/blog') return 'blog'
   if (path.startsWith('/blog/')) return 'blog-post'
   return 'home'

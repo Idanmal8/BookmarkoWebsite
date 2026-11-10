@@ -26,6 +26,7 @@ import type { Plugin } from 'vite'
 import { renderMarkdown } from '../src/utils/markdown'
 import { ORIGIN, OG_DEFAULT, twitterImageFor, urlFor, esc, clamp, type ApiPost } from './seo-shared'
 import { ampDocument, ampRouteFor } from './amp'
+import { shelves, amazonUrl } from '../src/data/picks'
 
 interface Page {
   /** Route path, always leading-slash and never trailing-slash (except '/'). */
@@ -234,6 +235,48 @@ function staticPages(posts: ApiPost[]): Page[] {
       jsonLd: [],
       noindex: true,
     },
+    // Idan's link-in-bio page (LinkPage.vue, content in src/data/links.ts).
+    {
+      route: '/idan',
+      title: 'Idan Malka | Links',
+      description:
+        'Mobile engineer, book lover, building Bookmarko in public. My app, mobile app guide, newsletter and everything else in one place.',
+      image: OG_DEFAULT,
+      ogType: 'profile',
+      jsonLd: [
+        {
+          '@type': 'ProfilePage',
+          mainEntity: { '@type': 'Person', name: 'Idan Malka', url: urlFor('/idan') },
+        },
+      ],
+      body: '<h1>Idan Malka</h1><p>Mobile engineer, book lover, building Bookmarko in public.</p><ul><li><a href="/get">Get Bookmarko</a></li><li><a href="https://www.patreon.com/IdanMalka/posts/build-your-own-174505343">Build your own mobile app guide</a></li><li><a href="/newsletter">Newsletter</a></li></ul>',
+    },
+    {
+      route: '/idan/picks',
+      title: "Idan Malka's Amazon picks | Books I recommend",
+      description:
+        'The books Idan Malka loved and keeps recommending: the Red Rising saga, Murakami, thrillers and more.',
+      image: OG_DEFAULT,
+      ogType: 'website',
+      jsonLd: [
+        breadcrumb([
+          { name: 'Idan Malka', route: '/idan' },
+          { name: 'Amazon picks', route: '/idan/picks' },
+        ]),
+      ],
+      body:
+        '<h1>My Amazon picks</h1><p>As an Amazon Associate I earn from qualifying purchases.</p>' +
+        shelves
+          .map(
+            (s) =>
+              `<h2>${esc(s.title)}</h2><ul>` +
+              s.picks
+                .map((p) => `<li><a href="${esc(amazonUrl(p.asin))}" rel="sponsored noopener">${esc(p.title)}</a> by ${esc(p.author)}</li>`)
+                .join('') +
+              '</ul>',
+          )
+          .join(''),
+    },
     // Target of the newsletter's unsubscribe links.
     {
       route: '/newsletter/unsubscribe',
@@ -334,6 +377,8 @@ function sitemap(posts: ApiPost[]): string {
     { loc: urlFor('/roadmap'), priority: '0.6' },
     { loc: urlFor('/changelog'), priority: '0.5' },
     { loc: urlFor('/newsletter'), priority: '0.5' },
+    { loc: urlFor('/idan'), priority: '0.5' },
+    { loc: urlFor('/idan/picks'), priority: '0.5' },
     { loc: `${ORIGIN}/privacy.html`, priority: '0.3' },
     { loc: `${ORIGIN}/terms.html`, priority: '0.3' },
     ...posts.map((p) => ({
