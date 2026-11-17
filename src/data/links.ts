@@ -54,10 +54,10 @@ export const links: LinkItem[] = [
     tag: 'my app',
   },
   {
-    id: 'patreon-mobile-guide',
+    id: 'bmc-mobile-guide',
     title: 'Build your own mobile app',
-    subtitle: 'My step-by-step guide, on Patreon',
-    url: 'https://www.patreon.com/IdanMalka/posts/build-your-own-174505343',
+    subtitle: 'My Flutter app guide, on Buy Me a Coffee',
+    url: 'https://buymeacoffee.com/idanmalka/e/599286',
     icon: '🛠️',
     spine: SPINES.mint,
     tag: 'guide',

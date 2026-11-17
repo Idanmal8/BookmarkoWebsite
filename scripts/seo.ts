@@ -249,7 +249,7 @@ function staticPages(posts: ApiPost[]): Page[] {
           mainEntity: { '@type': 'Person', name: 'Idan Malka', url: urlFor('/idan') },
         },
       ],
-      body: '<h1>Idan Malka</h1><p>Mobile engineer, book lover, building Bookmarko in public.</p><ul><li><a href="/get">Get Bookmarko</a></li><li><a href="https://www.patreon.com/IdanMalka/posts/build-your-own-174505343">Build your own mobile app guide</a></li><li><a href="/newsletter">Newsletter</a></li></ul>',
+      body: '<h1>Idan Malka</h1><p>Mobile engineer, book lover, building Bookmarko in public.</p><ul><li><a href="/get">Get Bookmarko</a></li><li><a href="https://buymeacoffee.com/idanmalka/e/599286">Build your own mobile app guide</a></li><li><a href="/newsletter">Newsletter</a></li></ul>',
     },
     {
       route: '/idan/picks',
