@@ -17,7 +17,35 @@
         <p class="disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
       </header>
 
-      <section v-for="shelf in shelves" :key="shelf.id" class="shelf" :aria-labelledby="`shelf-${shelf.id}`">
+      <div class="filters">
+        <input
+          id="picks-search"
+          v-model="query"
+          class="search"
+          type="search"
+          placeholder="Search title or author"
+          aria-label="Search title or author"
+        />
+        <div class="chips" role="group" aria-label="Filter by genre">
+          <button
+            v-for="g in genreList"
+            :key="g.name"
+            type="button"
+            class="chip"
+            :aria-pressed="g.name === activeGenre"
+            @click="selectGenre(g.name)"
+          >
+            {{ g.name }}<span class="chip-count">{{ g.count }}</span>
+          </button>
+        </div>
+      </div>
+
+      <p v-if="!visibleShelves.length" class="empty">
+        No books match.
+        <button type="button" class="reset" @click="resetFilters">Show all</button>
+      </p>
+
+      <section v-for="shelf in visibleShelves" :key="shelf.id" class="shelf" :aria-labelledby="`shelf-${shelf.id}`">
         <h2 :id="`shelf-${shelf.id}`" class="shelf-title">{{ shelf.title }}</h2>
         <p v-if="shelf.subtitle" class="shelf-sub">{{ shelf.subtitle }}</p>
 
@@ -35,6 +63,9 @@
               </span>
               <span class="pick-title">{{ pick.title }}</span>
               <span class="pick-author">{{ pick.author }}</span>
+              <span class="pick-tags">
+                <span v-for="g in pick.genres" :key="g" class="pick-tag">{{ g }}</span>
+              </span>
               <span class="pick-note">{{ pick.note }}</span>
               <span class="cta">View on Amazon →</span>
             </a>
@@ -54,7 +85,47 @@
 import LinkBackdrop from './LinkBackdrop.vue'
 import cupcake from '@/assets/showcase/mascot-cupcake.svg'
 import { profile } from '@/data/links'
+import { computed, ref } from 'vue'
 import { amazonUrl, shelves, type Pick } from '@/data/picks'
+
+const ALL = 'All'
+const activeGenre = ref(ALL)
+const query = ref('')
+
+const allPicks = shelves.flatMap((s) => s.picks)
+
+/** "All" first, then genres by how many books they have (ties alphabetical). */
+const genreList = (() => {
+  const counts = new Map<string, number>()
+  for (const p of allPicks) for (const g of p.genres) counts.set(g, (counts.get(g) ?? 0) + 1)
+  const sorted = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  return [{ name: ALL, count: allPicks.length }, ...sorted.map(([name, count]) => ({ name, count }))]
+})()
+
+/** Shelves with only the matching picks; shelves left empty are dropped. */
+const visibleShelves = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  return shelves
+    .map((shelf) => ({
+      ...shelf,
+      picks: shelf.picks.filter(
+        (p) =>
+          (activeGenre.value === ALL || p.genres.includes(activeGenre.value)) &&
+          (!q || `${p.title} ${p.author}`.toLowerCase().includes(q)),
+      ),
+    }))
+    .filter((shelf) => shelf.picks.length > 0)
+})
+
+function selectGenre(name: string) {
+  activeGenre.value = name
+  if (name !== ALL) window.gtag?.('event', 'picks_filter', { genre: name })
+}
+
+function resetFilters() {
+  activeGenre.value = ALL
+  query.value = ''
+}
 
 function track(pick: Pick, shelf: string) {
   window.gtag?.('event', 'affiliate_click', {
@@ -137,6 +208,74 @@ function track(pick: Pick, shelf: string) {
   border: 1px dashed var(--line);
   font-size: 0.75rem;
   color: var(--ink-mute);
+}
+
+/* ── Filters ── */
+.filters {
+  display: grid;
+  gap: 10px;
+  margin-top: 28px;
+}
+.search {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* One row that scrolls sideways, so 15 genres don't wrap into a wall of buttons. */
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 0 -16px;
+  padding: 2px 16px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chip[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.chip-count { font-weight: 500; color: var(--ink-mute); }
+.chip[aria-pressed='true'] .chip-count { color: #A5C2F4; }
+@media (min-width: 760px) {
+  .chips { margin: 0; padding: 2px 0 4px; flex-wrap: wrap; }
+}
+
+.empty {
+  margin-top: 32px;
+  text-align: center;
+  color: var(--ink-mute);
+}
+.reset {
+  margin-left: 6px;
+  border: 0;
+  background: none;
+  color: var(--accent-deep);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 /* ── Shelves ── */
@@ -241,6 +380,20 @@ function track(pick: Pick, shelf: string) {
 .pick-author {
   font-size: 0.78rem;
   color: var(--ink-mute);
+}
+.pick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.pick-tag {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #EAF0FF;
+  color: var(--accent-deep);
+  font-size: 0.66rem;
+  font-weight: 600;
 }
 .pick-note {
   margin-top: 4px;
