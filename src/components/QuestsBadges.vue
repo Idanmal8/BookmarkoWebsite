@@ -42,6 +42,8 @@
 
     <!-- This month, as the app's Quests screen shows it -->
     <div class="qb-quests" data-reveal>
+      <!-- Boo in her onboarding look (cape, book), posed from tasks/onboarding_v2. Inline so her eyes can blink. -->
+      <div class="qb-boo" aria-hidden="true" v-html="booSvg" />
       <div class="qb-headline">
         <img class="qb-headline__badge" :src="badgeNov" alt="" />
         <div class="qb-headline__body">
@@ -86,6 +88,15 @@ import badge50 from '@/assets/showcase/badge-books-50.webp'
 import badge100 from '@/assets/showcase/badge-books-100.webp'
 import badge150 from '@/assets/showcase/badge-books-150.webp'
 import badge200 from '@/assets/showcase/badge-books-200.webp'
+import badgeFirstLight from '@/assets/showcase/badge-first-light.webp'
+import badgeFullShelf from '@/assets/showcase/badge-full-shelf.webp'
+import badgeDoorstopper from '@/assets/showcase/badge-doorstopper.webp'
+import badgeTenK from '@/assets/showcase/badge-ten-thousand-pages.webp'
+import badgeMoon from '@/assets/showcase/badge-moon-cycle.webp'
+import badgeHundredDays from '@/assets/showcase/badge-hundred-days.webp'
+import badgeMarginalia from '@/assets/showcase/badge-marginalia.webp'
+import badgeCritic from '@/assets/showcase/badge-critic.webp'
+import booSvg from '@/assets/showcase/boo.svg?raw'
 
 useReveal()
 
@@ -98,18 +109,27 @@ const TODAY = [
   { title: 'Perfect week', meta: '5 of 7 days this week', exp: 100, done: false },
 ]
 
-// Titles from Bookmarko/assets/badges/badges.json; the hidden easter egg badge stays out.
+// Art and titles from Bookmarko/assets/badges (badges.json, the award style redrawn 2026-11-12),
+// converted to 460px webp. The hidden easter egg badge (two_books) stays out.
 const BADGES: { title: string; src: string; state: BadgeState; how: string }[] = [
   { title: 'November Reader', src: badgeNov, state: 'progress', how: 'Read on 20 days in November. Only this month.' },
   { title: 'Perfect week', src: badgePerfectWeek, state: 'earned', how: 'Read every day for a week.' },
+  { title: 'First Light', src: badgeFirstLight, state: 'earned', how: 'Finish your first book.' },
+  { title: 'Full Shelf', src: badgeFullShelf, state: 'earned', how: 'Finish ten books.' },
   { title: 'Twenty books', src: badge20, state: 'earned', how: 'Finish twenty books.' },
   { title: 'Twelve genres', src: badgeGenres, state: 'earned', how: 'Read across twelve genres.' },
+  { title: 'Moon Cycle', src: badgeMoon, state: 'earned', how: 'Read 30 days in a row.' },
   { title: 'Your reading goal', src: badgeGoal, state: 'progress', how: 'Hit the goal you set for 2026.' },
+  { title: 'Marginalia', src: badgeMarginalia, state: 'progress', how: 'Write fifty notes in your books.' },
+  { title: 'Critic', src: badgeCritic, state: 'progress', how: 'Write ten reviews.' },
+  { title: 'Ten Thousand Pages', src: badgeTenK, state: 'progress', how: 'Read ten thousand pages.' },
   { title: 'Fifty books', src: badge50, state: 'earned', how: 'Finish fifty books.' },
+  { title: 'Doorstopper', src: badgeDoorstopper, state: 'locked', how: 'Finish a book over 700 pages.' },
   { title: 'Seven in a row', src: badgeDec, state: 'locked', how: "December's badge. Opens on the first." },
-  { title: 'A hundred books', src: badge100, state: 'locked', how: 'Finish a hundred books.' },
-  { title: 'A hundred and fifty', src: badge150, state: 'locked', how: 'Finish a hundred and fifty books.' },
-  { title: 'Two hundred books', src: badge200, state: 'locked', how: 'Finish two hundred books.' },
+  { title: 'Hundred Days', src: badgeHundredDays, state: 'locked', how: 'Read 100 days in a row.' },
+  { title: 'Hundred books', src: badge100, state: 'locked', how: 'Finish a hundred books.' },
+  { title: 'Book fort', src: badge150, state: 'locked', how: 'Finish a hundred and fifty books.' },
+  { title: 'Book royalty', src: badge200, state: 'locked', how: 'Finish two hundred books.' },
 ]
 
 const N = BADGES.length
@@ -216,8 +236,9 @@ onBeforeUnmount(() => {
 
 /* ---------- This month ---------- */
 .qb-quests {
+  position: relative;
   max-width: 900px;
-  margin: 56px auto 0;
+  margin: 150px auto 0;
   padding: 22px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -228,6 +249,28 @@ onBeforeUnmount(() => {
   border: 1px solid var(--line-soft);
   box-shadow: 0 40px 80px -40px rgba(81, 112, 255, .35), 0 12px 30px -18px rgba(20, 25, 58, .18);
 }
+/* ---------- Boo, standing on the card's top edge ---------- */
+.qb-boo {
+  position: absolute;
+  right: 48px;
+  bottom: calc(100% - 14px);
+  width: 170px;
+  pointer-events: none;
+  animation: booBob 3.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.qb-boo :deep(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+/* The lid groups keep their own translate; scaleY 0 is open, 1 is shut. */
+.qb-boo :deep([data-p$='/lid']) { animation: booBlink 4.6s infinite; }
+@keyframes booBob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-6px) rotate(1.5deg); }
+}
+@keyframes booBlink {
+  0%, 93%, 100% { transform: translate(0px, -19.36px) scale(1, 0); }
+  96%           { transform: translate(0px, -19.36px) scale(1, 1); }
+}
+
 .qb-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); }
 .qb-label--list { display: block; margin: 2px 4px 8px; }
 
@@ -285,7 +328,8 @@ onBeforeUnmount(() => {
   .qb-row { height: 230px; }
   .qb-badge { width: 170px; height: 170px; }
   .qb-stage__glow { top: 115px; width: 300px; height: 220px; }
-  .qb-quests { grid-template-columns: 1fr; max-width: 520px; }
+  .qb-quests { grid-template-columns: 1fr; max-width: 520px; margin-top: 120px; }
+  .qb-boo { width: 130px; right: 24px; }
 }
 @media (max-width: 720px) {
   .qb { padding: 100px 18px; }
@@ -294,5 +338,6 @@ onBeforeUnmount(() => {
   .qb-badge { transition: none; }
   .qb-badge.is-active img { animation: none; }
   .qb-bar i { transition: none; }
+  .qb-boo, .qb-boo :deep([data-p$='/lid']) { animation: none; }
 }
 </style>
