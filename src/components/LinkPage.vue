@@ -53,6 +53,11 @@
         <img :src="cupcake" alt="" />
         <span class="bubble" :class="{ show: speaking === 'cupcake' }">{{ LINES.cupcake }}</span>
       </button>
+      <!-- Boo, Bookmarko's mascot in her onboarding look; inline so her eyes can blink. -->
+      <button class="buddy boo" type="button" aria-label="Boo says hi" @click="say('boo')">
+        <span class="boo-art" aria-hidden="true" v-html="booSvg" />
+        <span class="bubble" :class="{ show: speaking === 'boo' }">{{ LINES.boo }}</span>
+      </button>
       <ul class="stack">
         <li v-for="(link, i) in links" :key="link.id" :style="bookStyle(link, i)">
           <a
@@ -106,9 +111,11 @@ import { links, profile, socials, type LinkItem, type SocialItem } from '@/data/
 import heart from '@/assets/showcase/mascot-heart.svg'
 import cupcake from '@/assets/showcase/mascot-cupcake.svg'
 import keycap from '@/assets/showcase/mascot-keycap.svg'
+import booSvg from '@/assets/showcase/boo.svg?raw'
 
 /** Tap a mascot and it says its line. */
 const LINES = {
+  boo: "Hi, I'm Boo! I read along with you in Bookmarko.",
   heart: 'Thanks for stopping by! 💛',
   cupcake: 'Treat yourself to one more chapter.',
   keycap: 'Press B for Bookmarko.',
@@ -284,6 +291,23 @@ async function share() {
 .cupcake { width: 62px; top: -62px; right: 18px; }
 .cupcake .bubble { left: auto; right: 0; transform: translate(0, 6px) scale(0.9); }
 .cupcake .bubble.show { transform: translate(0, -4px) scale(1); }
+
+/* Boo reads on the top of the stack, opposite Cupcake. */
+.boo { width: 92px; top: -84px; left: 6px; }
+.boo .bubble { left: 0; transform: translate(0, 6px) scale(0.9); }
+.boo .bubble.show { transform: translate(0, -4px) scale(1); }
+.boo-art { display: block; animation: booBob 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
+.boo-art :deep(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+/* The lid groups keep their own translate; scaleY 0 is open, 1 is shut. */
+.boo-art :deep([data-p$='/lid']) { animation: booBlink 4.6s infinite; }
+@keyframes booBob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-4px) rotate(1.5deg); }
+}
+@keyframes booBlink {
+  0%, 93%, 100% { transform: translate(0px, -19.36px) scale(1, 0); }
+  96%           { transform: translate(0px, -19.36px) scale(1, 1); }
+}
 
 /* Keycap perches on the corner of the letter card: letters get typed. */
 .keycap { width: 58px; top: -30px; left: -14px; transform: rotate(-10deg); }
@@ -523,5 +547,6 @@ async function share() {
   .polaroid,
   .stack li { animation: none; }
   .book, .mark { transition: none; }
+  .boo-art, .boo-art :deep([data-p$='/lid']) { animation: none; }
 }
 </style>
