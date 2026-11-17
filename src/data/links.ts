@@ -87,6 +87,14 @@ export const links: LinkItem[] = [
     icon: '🛍️',
     spine: SPINES.sun,
   },
+  {
+    id: 'buy-me-a-coffee',
+    title: 'Buy me a coffee',
+    subtitle: 'If my book picks helped you, this keeps them coming',
+    url: 'https://buymeacoffee.com/idanmalka',
+    icon: '☕',
+    spine: SPINES.ink,
+  },
 ]
 
 /**

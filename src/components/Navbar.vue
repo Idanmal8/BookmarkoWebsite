@@ -12,12 +12,22 @@
       />
       <span class="nav__wordmark">Bookmarko</span>
     </a>
-    <div class="nav__links" v-if="variant === 'home'">
-      <a href="#endless-shelf">The shelf</a>
-      <a href="#goodreads">Import</a>
-      <a href="#ginie">Ask Ginie</a>
-      <a href="/blog/">Blog</a>
-      <a href="/roadmap/">Requests</a>
+    <div class="nav__right" v-if="variant !== 'newsletter'">
+      <div class="nav__links" v-if="variant === 'home'">
+        <a href="#endless-shelf">The shelf</a>
+        <a href="#goodreads">Import</a>
+        <a href="#ginie">Ask Ginie</a>
+        <a href="/blog/">Blog</a>
+        <a href="/roadmap/">Requests</a>
+      </div>
+      <!-- Checkout runs on Buy Me a Coffee's own site; nothing payment-related touches ours. -->
+      <a
+        class="nav__coffee"
+        href="https://buymeacoffee.com/idanmalka"
+        target="_blank"
+        rel="noopener"
+        @click="trackCoffeeClick"
+      ><span aria-hidden="true">☕</span> Buy me a coffee</a>
     </div>
     <a v-if="variant === 'newsletter'" href="#join" class="nav__subscribe">Subscribe ✉️</a>
   </nav>
@@ -34,6 +44,10 @@ const scrolled = ref(false)
 const onScroll = () => (scrolled.value = window.scrollY > 40)
 onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+
+function trackCoffeeClick() {
+  window.gtag?.('event', 'coffee_click', { surface: 'navbar' })
+}
 </script>
 
 <style scoped>
@@ -84,6 +98,30 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 }
 .nav__links a:hover { color: #fff; }
 
+.nav__right { display: flex; align-items: center; gap: 24px; }
+.nav__coffee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #FFDD00;
+  color: #14193A;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 0 rgba(20, 25, 58, .18);
+  transition: transform .2s, box-shadow .2s;
+}
+.nav__coffee:hover { transform: translateY(-1px); box-shadow: 0 6px 14px -6px rgba(20, 25, 58, .35); }
+.nav__coffee:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.nav--home.nav--scrolled .nav__coffee:focus-visible { outline-color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .nav__coffee { transition: none; }
+  .nav__coffee:hover { transform: none; }
+}
+
 /* Idan's newsletter: cream paper instead of brand blue, to match the page. */
 .nav--newsletter {
   background: #fbf6ec;
@@ -106,9 +144,8 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 .nav__subscribe:hover { translate: -2px -2px; box-shadow: 5px 5px 0 #ff6b3d; }
 
 @media (max-width: 1040px) {
-  /* Mobile: just the logo, centered — no links, no wordmark. */
-  .nav { justify-content: center; }
-  .nav--newsletter { justify-content: space-between; }
+  /* Mobile: logo on the left, coffee button on the right — no links, no wordmark. */
+  .nav { justify-content: space-between; }
   .nav__links { display: none; }
   .nav__wordmark { display: none; }
 }

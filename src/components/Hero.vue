@@ -19,19 +19,21 @@
       <div class="hero__stores" id="stores">
         <a
           class="store"
-          href="https://apps.apple.com/us/app/bookmarko/id6762641879"
+          href="https://apps.apple.com/us/app/bookmarko/id6762641879?ct=site_hero"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Download Bookmarko on the App Store"
+          @click="trackStoreClick('app_store', 'home_hero')"
         >
           <img :src="appStoreBadge" alt="Download on the App Store" />
         </a>
         <a
           class="store"
-          href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko"
+          href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko&referrer=utm_source%3Dsite%26utm_medium%3Dhero"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Get Bookmarko on Google Play"
+          @click="trackStoreClick('google_play', 'home_hero')"
         >
           <img :src="googleStoreBadge" alt="Get it on Google Play" />
         </a>
@@ -66,6 +68,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import Bookshelf from './Bookshelf.vue'
 import { useWaitlistStore } from '@/stores/waitlist'
+import { trackStoreClick } from '@/utils/analytics'
 import appStoreBadge from '@/assets/appStore.png'
 import googleStoreBadge from '@/assets/googleStore.png'
 
