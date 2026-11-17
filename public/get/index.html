@@ -103,9 +103,12 @@
 
       var playUrl = PLAY_STORE + '&referrer=' +
         encodeURIComponent('utm_source=' + ref + '&utm_medium=share');
+      // Campaign token: App Store Connect groups installs by it in App Analytics.
+      var appleUrl = APP_STORE + '?ct=' + ref;
       document.getElementById('android').href = playUrl;
+      document.getElementById('ios').href = appleUrl;
 
-      var target = isIOS ? APP_STORE : isAndroid ? playUrl : null;
+      var target = isIOS ? appleUrl : isAndroid ? playUrl : null;
       var went = false;
       function go() {
         if (went || !target) return;

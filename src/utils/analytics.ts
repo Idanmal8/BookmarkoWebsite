@@ -31,3 +31,8 @@ export function initAnalytics(): void {
   window.gtag('js', new Date())
   window.gtag('config', measurementId)
 }
+
+/** A tap on a store badge: the last step the site can see before an install. */
+export function trackStoreClick(store: 'app_store' | 'google_play', surface: string): void {
+  window.gtag?.('event', 'store_click', { store, surface })
+}
