@@ -22,10 +22,10 @@
         <Hero />
         <AppShowcase />
         <BookSectionHero />
-        <GoodreadsImport />
-        <GinieSection />
         <ReadingPath />
         <QuestsBadges />
+        <GoodreadsImport />
+        <GinieSection />
         <Quote />
         <Finale />
       </template>

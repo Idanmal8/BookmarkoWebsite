@@ -1,11 +1,12 @@
 <template>
   <section class="gr" id="goodreads">
     <header class="section-head" data-reveal>
-      <span class="section-head__eyebrow">Coming from Goodreads</span>
+      <span class="section-head__eyebrow">Bring your books with you</span>
       <h2 class="section-head__title">Your reading years <em>come with you.</em></h2>
       <p class="section-head__sub">
-        One file and your whole history lands on your shelf: read, reading, want to read,
-        covers and ratings. Then everything Goodreads never gave you starts working.
+        One Goodreads file and your whole history lands on your shelf: read, reading,
+        want to read, covers and ratings. The ebooks you own come along too, from
+        Google Drive and Dropbox.
       </p>
     </header>
 
@@ -51,6 +52,37 @@
         </div>
       </div>
     </div>
+
+    <!-- The reader's own ebook files, from Google Drive or Dropbox (the app's Import books screen) -->
+    <div class="gr-files" data-reveal>
+      <div class="gr-files__text">
+        <span class="gr-files__label">Your own ebooks</span>
+        <h3>Straight from Google Drive and Dropbox</h3>
+        <p>
+          Pick EPUB, PDF or comic files from your Drive or your Dropbox and read them
+          in Bookmarko. The files stay on your phone and are never uploaded to us.
+        </p>
+      </div>
+      <div class="gr-files__demo" aria-hidden="true">
+        <div class="gr-source">
+          <img :src="driveLogo" alt="" />
+          <div><b>Google Drive</b><span>EPUB, PDF or CBZ files from your Drive</span></div>
+        </div>
+        <div class="gr-source">
+          <img :src="dropboxLogo" alt="" />
+          <div><b>Dropbox</b><span>EPUB, PDF or CBZ files from your Dropbox</span></div>
+        </div>
+        <ul class="gr-filelist">
+          <li v-for="f in FILES" :key="f.name">
+            <span class="gr-filelist__kind" :style="{ background: f.tint, color: f.ink }">{{ f.kind }}</span>
+            <span class="gr-filelist__name">{{ f.name }}</span>
+            <span class="gr-filelist__tick">
+              <svg width="12" height="12" viewBox="0 0 14 14"><path d="M3 7.5l2.6 2.6L11 4.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -61,6 +93,9 @@ import mascotHeart from '@/assets/showcase/mascot-heart.svg'
 import mascotClover from '@/assets/showcase/mascot-clover.svg'
 import mascotCupcake from '@/assets/showcase/mascot-cupcake.svg'
 import mascotKeycap from '@/assets/showcase/mascot-keycap.svg'
+// The app's own icons for the two (Bookmarko/assets/icons).
+import driveLogo from '@/assets/showcase/google-drive.svg'
+import dropboxLogo from '@/assets/showcase/dropbox.svg'
 
 useReveal()
 
@@ -69,6 +104,13 @@ const ROWS = [
   { label: 'Want to read', value: 87, color: '#5170FF' },
   { label: 'Currently reading', value: 3, color: '#FF8A3D' },
   { label: 'Ratings kept', value: 248, color: '#FF4F8B' },
+]
+
+// The three kinds of file the app's reader opens.
+const FILES = [
+  { kind: 'EPUB', name: 'A novel for the train', tint: '#E2ECFB', ink: '#3D59E6' },
+  { kind: 'PDF', name: 'The paper you keep meaning to read', tint: '#FFE6EF', ink: '#E0336F' },
+  { kind: 'CBZ', name: 'A comic, volume one', tint: '#DDF5E6', ink: '#1E7A4A' },
 ]
 
 const GETS = [
@@ -234,13 +276,48 @@ onBeforeUnmount(() => {
 .gr-get b { display: block; font-family: 'EB Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.15; }
 .gr-get span { display: block; margin-top: 3px; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
 
+/* The reader's own files */
+.gr-files {
+  max-width: 1000px;
+  margin: 72px auto 0;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 44px;
+  align-items: center;
+  border-radius: 28px;
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 40px 80px -46px rgba(81, 112, 255, .35), 0 12px 30px -20px rgba(20, 25, 58, .18);
+}
+.gr-files__label { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--pink-deep); }
+.gr-files h3 { margin-top: 10px; font-family: 'EB Garamond', serif; font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.12; color: var(--ink); text-wrap: balance; }
+.gr-files p { margin-top: 12px; font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 46ch; }
+.gr-files__demo { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 22px; background: var(--paper); border: 1px solid var(--line-soft); }
+.gr-source { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--line-soft); }
+.gr-source img { width: 36px; height: 36px; flex: none; object-fit: contain; }
+.gr-source div { min-width: 0; }
+.gr-source b { display: block; font-size: 15.5px; color: var(--ink); }
+.gr-source span { display: block; font-size: 13px; color: var(--ink-mute); }
+.gr-filelist { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.gr-filelist li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-soft); opacity: 0; transform: translateY(8px); transition: opacity .5s, transform .5s cubic-bezier(.16, .84, .44, 1); }
+.gr-files.is-revealed .gr-filelist li { opacity: 1; transform: none; }
+.gr-files.is-revealed .gr-filelist li:nth-child(1) { transition-delay: .35s; }
+.gr-files.is-revealed .gr-filelist li:nth-child(2) { transition-delay: .55s; }
+.gr-files.is-revealed .gr-filelist li:nth-child(3) { transition-delay: .75s; }
+.gr-filelist__kind { flex: none; width: 48px; padding: 3px 0; border-radius: 8px; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+.gr-filelist__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gr-filelist__tick { width: 20px; height: 20px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #2BB573; color: #fff; }
+
 @media (max-width: 900px) {
   .gr__grid { grid-template-columns: 1fr; gap: 48px; max-width: 520px; }
+  .gr-files { grid-template-columns: minmax(0, 1fr); gap: 24px; max-width: 520px; padding: 22px; }
 }
 @media (max-width: 720px) {
   .gr { padding: 100px 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .gr-receipt__dots i { animation: none; }
+  .gr-filelist li { opacity: 1; transform: none; transition: none; }
 }
 </style>
