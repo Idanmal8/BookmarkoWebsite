@@ -22,11 +22,19 @@
         <Hero />
         <AppShowcase />
         <BookSectionHero />
-        <ReadingPath />
-        <QuestsBadges />
-        <GoodreadsImport />
-        <GinieSection />
-        <Reviews />
+        <!-- The new landing page, from the moment in src/config/launch.ts. -->
+        <template v-if="nextHome">
+          <ReadingPath />
+          <QuestsBadges next />
+          <GoodreadsImport next />
+          <GinieSection />
+          <Reviews />
+        </template>
+        <template v-else>
+          <GoodreadsImport />
+          <GinieSection />
+          <QuestsBadges />
+        </template>
         <Quote />
         <Finale />
       </template>
@@ -43,6 +51,7 @@ import AppShowcase from './components/AppShowcase.vue'
 import QuestsBadges from './components/QuestsBadges.vue'
 import ReadingPath from './components/ReadingPath.vue'
 import Reviews from './components/Reviews.vue'
+import { newHomeShown } from './config/launch'
 import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
 import GinieSection from './components/GinieSection.vue'
@@ -120,6 +129,9 @@ const blogSlug = decodeURIComponent(
 )
 
 const route = resolveRoute()
+
+/** Read once: a page left open across the moment changes on its next load. */
+const nextHome = newHomeShown(window.location.search)
 </script>
 
 <style>

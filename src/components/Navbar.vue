@@ -15,7 +15,7 @@
     <div class="nav__right" v-if="variant !== 'newsletter'">
       <div class="nav__links" v-if="variant === 'home'">
         <a href="#endless-shelf">The shelf</a>
-        <a href="#path">The path</a>
+        <a v-if="nextHome" href="#path">The path</a>
         <a href="#goodreads">Import</a>
         <a href="#ginie">Ask Ginie</a>
         <a href="/blog/">Blog</a>
@@ -38,6 +38,9 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import logo from '@/assets/bookmarkoLogo.webp'
 import logoMark from '@/assets/bookmarkoLogo-mark.webp'
+import { newHomeShown } from '@/config/launch'
+
+const nextHome = newHomeShown(window.location.search)
 
 withDefaults(defineProps<{ variant?: 'home' | 'plain' | 'newsletter' }>(), { variant: 'home' })
 

@@ -39,6 +39,41 @@
         <span class="qb-caption__how">{{ current.how }}</span>
       </div>
     </div>
+
+    <!-- This month, as the app's Quests screen shows it. Leaves with the new
+         landing page (src/config/launch.ts): delete it, TODAY, booSvg and its
+         styles once that page is live. -->
+    <div v-if="!next" class="qb-quests" data-reveal>
+      <!-- Boo in her onboarding look (cape, book), posed from tasks/onboarding_v2. Inline so her eyes can blink. -->
+      <div class="qb-boo" aria-hidden="true" v-html="booSvg" />
+      <div class="qb-headline">
+        <img class="qb-headline__badge" :src="badgeNov" alt="" />
+        <div class="qb-headline__body">
+          <span class="qb-label">This month</span>
+          <b>November Reader</b>
+          <span>Read on 20 days this month.</span>
+          <span class="qb-bar"><i style="--to: 60%" /></span>
+          <span class="qb-headline__meta"><span>12 of 20</span><span>8 days left</span></span>
+        </div>
+      </div>
+
+      <div class="qb-today">
+        <span class="qb-label qb-label--list">Today</span>
+        <ul class="qb-list">
+          <li v-for="q in TODAY" :key="q.title" :class="{ 'is-done': q.done }">
+            <span class="qb-list__check" aria-hidden="true">
+              <svg v-if="q.done" width="12" height="12" viewBox="0 0 14 14"><path d="M3 7.5l2.6 2.6L11 4.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <span class="qb-list__text"><b>{{ q.title }}</b><span>{{ q.meta }}</span></span>
+            <span class="qb-exp" :class="{ 'is-done': q.done }">
+              <svg v-if="q.done" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg v-else width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.8a.6.6 0 0 1 .3 1l-4.4 4.2 1.1 6.1a.6.6 0 0 1-.9.6L12 18.2l-5.4 2.9a.6.6 0 0 1-.9-.6l1.1-6.1L2.4 10.2a.6.6 0 0 1 .3-1l6.1-.8z" fill="currentColor" /></svg>
+              {{ q.done ? 'Done' : `+${q.exp} EXP` }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -63,11 +98,21 @@ import badgeMoon from '@/assets/showcase/badge-moon-cycle.webp'
 import badgeHundredDays from '@/assets/showcase/badge-hundred-days.webp'
 import badgeMarginalia from '@/assets/showcase/badge-marginalia.webp'
 import badgeCritic from '@/assets/showcase/badge-critic.webp'
+import booSvg from '@/assets/showcase/boo.svg?raw'
+
+/** The new landing page's form: without the "This month" card. */
+defineProps<{ next?: boolean }>()
 
 useReveal()
 
 type BadgeState = 'earned' | 'progress' | 'locked'
 const STATE_LABEL: Record<BadgeState, string> = { earned: 'Earned', progress: 'In progress', locked: 'Still to earn' }
+
+const TODAY = [
+  { title: 'Ten pages', meta: 'Done before breakfast', exp: 15, done: true },
+  { title: 'A note in the margin', meta: 'Save a thought on any book', exp: 10, done: false },
+  { title: 'Perfect week', meta: '5 of 7 days this week', exp: 100, done: false },
+]
 
 // Art and titles from Bookmarko/assets/badges (badges.json, the award style redrawn 2026-11-12),
 // converted to 460px webp. The hidden easter egg badge (two_books) stays out.
@@ -194,10 +239,102 @@ onBeforeUnmount(() => {
 .qb-caption__state.is-locked { background: var(--line-soft); color: var(--ink-mute); }
 .qb-caption__how { font-size: 15px; color: var(--ink-soft); }
 
+/* ---------- This month ---------- */
+.qb-quests {
+  position: relative;
+  max-width: 900px;
+  margin: 150px auto 0;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+  border-radius: 28px;
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 40px 80px -40px rgba(81, 112, 255, .35), 0 12px 30px -18px rgba(20, 25, 58, .18);
+}
+/* ---------- Boo, standing on the card's top edge ---------- */
+.qb-boo {
+  position: absolute;
+  right: 48px;
+  bottom: calc(100% - 14px);
+  width: 170px;
+  pointer-events: none;
+  animation: booBob 3.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.qb-boo :deep(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+/* The lid groups keep their own translate; scaleY 0 is open, 1 is shut. */
+.qb-boo :deep([data-p$='/lid']) { animation: booBlink 4.6s infinite; }
+@keyframes booBob {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-6px) rotate(1.5deg); }
+}
+@keyframes booBlink {
+  0%, 93%, 100% { transform: translate(0px, -19.36px) scale(1, 0); }
+  96%           { transform: translate(0px, -19.36px) scale(1, 1); }
+}
+
+.qb-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); }
+.qb-label--list { display: block; margin: 2px 4px 8px; }
+
+.qb-headline {
+  display: flex; gap: 16px; align-items: center;
+  padding: 16px;
+  border-radius: 22px;
+  background: #E5F5FE;
+  border: 2px solid #1CB0F6;
+}
+.qb-headline__badge { width: 84px; height: 84px; flex: none; object-fit: contain; }
+.qb-headline__body { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; color: var(--ink-soft); }
+.qb-headline__body b { font-family: 'EB Garamond', serif; font-size: 23px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+.qb-headline__meta { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #0B7FB8; }
+
+.qb-bar { display: block; height: 8px; margin: 8px 0 4px; border-radius: 999px; background: rgba(28, 176, 246, .18); overflow: hidden; }
+.qb-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: #1CB0F6; transition: width 1.4s cubic-bezier(.16, .84, .44, 1) .3s; }
+.qb-quests.is-revealed .qb-bar i { width: var(--to); }
+
+.qb-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.qb-list li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  border-radius: 16px;
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+}
+.qb-list__check {
+  width: 24px; height: 24px; flex: none;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid var(--line);
+  color: #fff;
+}
+.qb-list li.is-done .qb-list__check { background: #2BB573; border-color: #2BB573; }
+.qb-list__text { flex: 1; display: flex; flex-direction: column; font-size: 12.5px; color: var(--ink-mute); min-width: 0; }
+.qb-list__text b { font-size: 14.5px; color: var(--ink); }
+.qb-list li.is-done .qb-list__text b { text-decoration: line-through; text-decoration-color: var(--ink-mute); }
+/* The app's QuestRewardPill: a sticker chip with an ink edge and a hard shadow,
+   yellow while open and green once done */
+.qb-exp {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 4px 10px 4px 7px;
+  border-radius: 999px;
+  font-size: 12px; font-weight: 800;
+  color: #111114;
+  background: #FFE58A;
+  border: 2px solid #111114;
+  box-shadow: 0 2px 0 #111114;
+}
+.qb-exp.is-done { background: #B9E8AE; }
+
 @media (max-width: 860px) {
   .qb-row { height: 230px; }
   .qb-badge { width: 170px; height: 170px; }
   .qb-stage__glow { top: 115px; width: 300px; height: 220px; }
+  .qb-quests { grid-template-columns: 1fr; max-width: 520px; margin-top: 120px; }
+  .qb-boo { width: 130px; right: 24px; }
 }
 @media (max-width: 720px) {
   .qb { padding: 100px 18px; }
@@ -205,5 +342,7 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
   .qb-badge { transition: none; }
   .qb-badge.is-active img { animation: none; }
+  .qb-bar i { transition: none; }
+  .qb-boo, .qb-boo :deep([data-p$='/lid']) { animation: none; }
 }
 </style>

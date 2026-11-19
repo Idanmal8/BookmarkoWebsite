@@ -1,12 +1,17 @@
 <template>
   <section class="gr" id="goodreads">
     <header class="section-head" data-reveal>
-      <span class="section-head__eyebrow">Bring your books with you</span>
+      <span class="section-head__eyebrow">{{ next ? 'Bring your books with you' : 'Coming from Goodreads' }}</span>
       <h2 class="section-head__title">Your reading years <em>come with you.</em></h2>
-      <p class="section-head__sub">
+      <p v-if="next" class="section-head__sub">
         One Goodreads file and your whole history lands on your shelf: read, reading,
         want to read, covers and ratings. The ebooks you own come along too, from
         Google Drive and Dropbox.
+      </p>
+      <!-- The page as it was before src/config/launch.ts's date. -->
+      <p v-else class="section-head__sub">
+        One file and your whole history lands on your shelf: read, reading, want to read,
+        covers and ratings. Then everything Goodreads never gave you starts working.
       </p>
     </header>
 
@@ -54,7 +59,7 @@
     </div>
 
     <!-- The reader's own ebook files, from Google Drive or Dropbox (the app's Import books screen) -->
-    <div class="gr-files" data-reveal>
+    <div v-if="next" class="gr-files" data-reveal>
       <div class="gr-files__text">
         <span class="gr-files__label">Your own ebooks</span>
         <h3>Straight from Google Drive and Dropbox</h3>
@@ -96,6 +101,9 @@ import mascotKeycap from '@/assets/showcase/mascot-keycap.svg'
 // The app's own icons for the two (Bookmarko/assets/icons).
 import driveLogo from '@/assets/showcase/google-drive.svg'
 import dropboxLogo from '@/assets/showcase/dropbox.svg'
+
+/** The new landing page's form: with the Google Drive and Dropbox part. */
+defineProps<{ next?: boolean }>()
 
 useReveal()
 
