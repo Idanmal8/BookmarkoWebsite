@@ -321,6 +321,8 @@ const HOME_BODY = [
   '<h2>Your reading years come with you.</h2>',
   '<p>One Goodreads file and your whole history lands on your shelf: read, reading, want to read, covers and ratings. The ebooks you own come along too, from Google Drive and Dropbox.</p>',
   '<h2>A librarian who lives in the lamp on your shelf.</h2>',
+  '<h2>Readers said it first.</h2>',
+  '<p>Reviews readers left on Google Play.</p>',
   '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
   ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
 ].join('')
