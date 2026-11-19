@@ -10,14 +10,16 @@
     </header>
 
     <!-- The path as the app draws it: the days behind Boo, today's coin beside
-         her, the days to come leading to a reward book. The app's own art. -->
+         her, the days to come going on past a reward book. The app's own art.
+         The scene is drawn wider than its box and left to show (the section
+         clips it), so the road runs off both edges of any screen. -->
     <div class="rp-stage" data-reveal>
       <svg
         class="rp-scene"
         viewBox="0 0 1600 560"
         preserveAspectRatio="xMidYMid slice"
         role="img"
-        aria-label="A winding path of day coins. Boo toasts a marshmallow at her campfire beside today's coin; the days ahead lead to a reward book."
+        aria-label="A winding path of day coins that runs across the whole screen. Boo toasts a marshmallow at her campfire beside today's coin; the days ahead go on past a reward book."
       >
         <path :d="road" class="rp-road rp-road--edge" transform="translate(0 9)" />
         <path :d="road" class="rp-road" />
@@ -55,11 +57,11 @@
         </g>
 
         <g
-          v-for="(c, i) in coins"
-          :key="i"
+          v-for="c in coins"
+          :key="c.order + ':' + c.x"
           class="rp-coin"
           :class="{ 'rp-coin--today': c.today }"
-          :style="{ '--i': i }"
+          :style="{ '--i': c.order }"
         >
           <image :href="art[c.art]" :x="c.x - c.w / 2" :y="c.y - c.w * 0.6" :width="c.w" :height="c.w" />
           <image v-if="c.crown" :href="art.crown" :x="c.x - c.w / 2" :y="c.y - c.w * 0.6" :width="c.w" :height="c.w" />
@@ -78,7 +80,11 @@
         </g>
 
         <image :href="art.gamestick_looks_right" x="18" y="312" width="184" height="184" />
-        <image :href="art.earth_looks_left" x="1248" y="352" width="158" height="158" />
+        <image :href="art.earth_looks_left" x="1590" y="368" width="158" height="158" />
+        <!-- Further along the road, for the widest screens. -->
+        <image :href="art.triangle_looks_right" x="-590" y="318" width="170" height="170" />
+        <image :href="art.keyboard_looks_right" x="-1030" y="30" width="200" height="200" />
+        <image :href="art.heart_looks_left" x="2010" y="372" width="160" height="160" />
       </svg>
     </div>
 
@@ -198,11 +204,23 @@ for (const [path, url] of Object.entries(files)) art[path.split('/').pop()!.repl
 // through a few waypoints, a coin every so often along it.
 
 type Pt = [number, number]
-const WAYPOINTS: Pt[] = [[-120, 330], [130, 205], [335, 335], [545, 425], [750, 412], [945, 300], [1135, 388], [1290, 292], [1392, 222]]
+// The road runs off both edges of the screen, however wide: the days behind
+// come in from the left, the days ahead go on past the reward book.
+const WAYPOINTS: Pt[] = [
+  [-1760, 250], [-1550, 345], [-1340, 235], [-1130, 345], [-920, 232], [-710, 348], [-500, 225], [-290, 345], [-80, 330],
+  [130, 205], [335, 335], [545, 425], [750, 412], [945, 300], [1135, 388], [1290, 300],
+  [1470, 372], [1670, 285], [1880, 385], [2090, 290], [2300, 392], [2510, 288], [2720, 385], [2930, 290], [3140, 380], [3350, 300],
+]
 const COIN = 126
 const TODAY_NEAR: Pt = [945, 300]
-// Oldest first: three books' colours, a crown on the perfect days.
+// Oldest first: a colour for each book, a crown on the perfect days.
 const DAYS: { art: string; crown: boolean; stars: 2 | 3 }[] = [
+  { art: 'coin_green_read', crown: true, stars: 3 },
+  { art: 'coin_green_read', crown: true, stars: 3 },
+  { art: 'coin_green_read', crown: false, stars: 2 },
+  { art: 'coin_violet_read', crown: false, stars: 2 },
+  { art: 'coin_violet_read', crown: true, stars: 3 },
+  { art: 'coin_violet_read', crown: true, stars: 3 },
   { art: 'coin_teal_read', crown: true, stars: 3 },
   { art: 'coin_teal_read', crown: false, stars: 2 },
   { art: 'coin_teal_read', crown: true, stars: 3 },
@@ -260,10 +278,12 @@ function dist(a: Pt, b: Pt) {
 
 const coins = spots
   .map(([x, y], i) => {
-    if (i === todayAt) return { x, y, w: COIN * 1.12, art: 'coin_orange_today', crown: false, stars: 0, today: true }
-    if (i > todayAt) return { x, y, w: COIN, art: 'coin_future', crown: false, stars: 0, today: false }
-    const day = DAYS[(DAYS.length - (todayAt - i) + DAYS.length * 4) % DAYS.length]
-    return { x, y, w: COIN, art: day.art, crown: day.crown, stars: day.stars, today: false }
+    // The order they drop in: along the road, from the first day a laptop shows.
+    const order = Math.max(0, i - (todayAt - 9))
+    if (i === todayAt) return { x, y, order, w: COIN * 1.12, art: 'coin_orange_today', crown: false, stars: 0, today: true }
+    if (i > todayAt) return { x, y, order, w: COIN, art: 'coin_future', crown: false, stars: 0, today: false }
+    const day = DAYS[(DAYS.length - (todayAt - i) + DAYS.length * 8) % DAYS.length]
+    return { x, y, order, w: COIN, art: day.art, crown: day.crown, stars: day.stars, today: false }
   })
   // The nearer coin is drawn over the further one.
   .sort((a, b) => a.y - b.y)
@@ -378,7 +398,7 @@ onBeforeUnmount(() => {
 /* Each day's coin drops onto the path in turn once the scene is in view. */
 .rp-coin { transform-origin: 50% 100%; }
 .rp-stage:not(.is-revealed) .rp-coin { opacity: 0; }
-.rp-stage.is-revealed .rp-coin { animation: rpDrop .62s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(var(--i) * 70ms + 200ms); }
+.rp-stage.is-revealed .rp-coin { animation: rpDrop .62s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(min(var(--i), 22) * 70ms + 200ms); }
 @keyframes rpDrop {
   0%   { opacity: 0; transform: translateY(-34px) scale(.86); }
   60%  { opacity: 1; }
