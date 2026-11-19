@@ -318,6 +318,8 @@ const HOME_BODY = [
   '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
   '<h2>Pour your Goodreads library straight onto your Bookmarko shelf.</h2>',
   '<h2>A librarian who lives in the lamp on your shelf.</h2>',
+  '<h2>Just one more page.</h2>',
+  '<p>Every day you read drops a coin on your path. Friends along the road hand out little quests, and a finished book pays out in gems.</p>',
   '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
   ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
 ].join('')

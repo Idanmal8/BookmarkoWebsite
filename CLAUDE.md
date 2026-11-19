@@ -30,7 +30,7 @@ No vue-router. `App.vue` resolves a `Route` at mount time from `window.location`
 | `/newdesign` (case-insensitive) | `new-design` | `NewDesign.vue` |
 | anything else | `home` | Full landing page sequence |
 
-The `home` route renders the landing page as a sequence of sections: `Hero → BookSectionHero → GoodreadsImport → Leaderboard → GinieSection → Quote → Finale`. `Navbar` and `Footer` are shown on all routes except `email-confirmed` and `new-design`.
+The `home` route renders the landing page as a sequence of sections: `Hero → BookSectionHero → GoodreadsImport → Leaderboard → GinieSection → Quote → Finale`. (On the branch `feat/reading-game-section`, `ReadingPath` sits after `GinieSection`: the reading game's section, with the app's own vector art in `src/assets/reading-path/`. It waits for the game's release; do not merge it before.) `Navbar` and `Footer` are shown on all routes except `email-confirmed` and `new-design`.
 
 **Components (`src/components/`):**
 - `Navbar.vue` — two variants: `home` (transparent/scroll) and `plain`

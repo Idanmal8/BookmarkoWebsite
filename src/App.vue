@@ -24,6 +24,7 @@
         <BookSectionHero />
         <GoodreadsImport />
         <GinieSection />
+        <ReadingPath />
         <QuestsBadges />
         <Quote />
         <Finale />
@@ -39,6 +40,7 @@ import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import AppShowcase from './components/AppShowcase.vue'
 import QuestsBadges from './components/QuestsBadges.vue'
+import ReadingPath from './components/ReadingPath.vue'
 import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
 import GinieSection from './components/GinieSection.vue'
