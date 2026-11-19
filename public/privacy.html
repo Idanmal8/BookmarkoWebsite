@@ -203,7 +203,7 @@
 
 <div class="hero">
   <h1>Privacy Policy</h1>
-  <p>Last updated: July 5, 2026 &nbsp;·&nbsp; Effective: July 5, 2026</p>
+  <p>Last updated: November 19, 2026 &nbsp;·&nbsp; Effective: November 19, 2026</p>
 </div>
 
 <div class="container">
@@ -229,7 +229,7 @@
       <li><a href="#ccpa">California Users (CCPA)</a></li>
       <li><a href="#cookies">Cookies &amp; Tracking</a></li>
       <li><a href="#third-party-links">Third-Party Links</a></li>
-      <li><a href="#ereader-files">Imported Book Files (E-Reader)</a></li>
+      <li><a href="#ereader-files">Imported Book Files, Google Drive &amp; Dropbox</a></li>
       <li><a href="#changes">Changes to This Policy</a></li>
       <li><a href="#contact">Contact Us</a></li>
     </ol>
@@ -252,7 +252,7 @@
       <li><strong>Social sign-in:</strong> if you sign in with Google or Apple, we receive a unique identifier and your email from those providers. We do not receive your password.</li>
       <li><strong>Profile content:</strong> reading preferences (favorite genres, reading goals), bio, and a profile photo you optionally upload. You may choose an existing image from your device's photo library or take a new one with the camera; the app requests permission before accessing either, and we only receive the single image you select.</li>
       <li><strong>Library data:</strong> books you add, reading status (Want to Read, Reading, Finished, Did Not Finish), reading progress, and favorite passages.</li>
-      <li><strong>Imported book files:</strong> e-book files (EPUB) you choose to import into the personal e-reader. These files are stored <strong>only on your device</strong> and are never uploaded to or accessible by Bookmarko (see Section 15).</li>
+      <li><strong>Imported book files:</strong> ebook files (EPUB, PDF and CBZ comics) you choose to import into the personal reader, either from your device or from your own Google Drive or Dropbox. These files are stored <strong>only on your device</strong> and are never uploaded to or accessible by Bookmarko (see Section 15).</li>
       <li><strong>Collections:</strong> custom book lists, names, descriptions, icons, and colors you create.</li>
       <li><strong>Community content:</strong> posts (quotes, captions), comments, likes, and book reviews/ratings you author.</li>
       <li><strong>AI conversations:</strong> messages you send to our AI assistant, Ginnie, powered by Google Gemini.</li>
@@ -272,6 +272,7 @@
     <ul>
       <li><strong>Book metadata:</strong> titles, authors, descriptions, cover images, and ISBNs retrieved from Google Books API, Open Library, and similar public catalogues.</li>
       <li><strong>Authentication providers:</strong> Google and Apple supply a user identifier and email when you use social sign-in.</li>
+      <li><strong>Google Drive and Dropbox (optional):</strong> if you choose to import a book from one of these services, the app receives the file you pick, and for Dropbox the names of your folders and book files so you can browse them. This happens on your device only; see Section 15.</li>
     </ul>
   </section>
 
@@ -316,6 +317,9 @@
         <tr><td><strong>Apple Sign-In</strong></td><td>OAuth authentication</td><td>Apple user ID and email (received, not sent)</td></tr>
         <tr><td><strong>Apple App Store / Google Play</strong></td><td>In-app purchase processing</td><td>Purchase events and transaction IDs</td></tr>
         <tr><td><strong>Book data APIs</strong> (Google Books, Open Library, NLI)</td><td>Book search results</td><td>Search queries only; no personal data</td></tr>
+        <tr><td><strong>PostHog</strong></td><td>Product analytics and error reports</td><td>Usage events, device information and error details; never the contents or names of your book files</td></tr>
+        <tr><td><strong>Google Drive</strong> (optional)</td><td>Importing a book file you pick from your Drive</td><td>Nothing is sent by us; your device downloads the file you chose directly from Google (see Section 15)</td></tr>
+        <tr><td><strong>Dropbox</strong> (optional)</td><td>Browsing your Dropbox and importing book files you pick</td><td>Nothing is sent by us; your device talks to Dropbox directly (see Section 15)</td></tr>
       </tbody>
     </table>
     <p>All service providers are contractually required to handle your data only as instructed by us and in compliance with applicable privacy laws.</p>
@@ -450,14 +454,39 @@
 
   <!-- 15 -->
   <section id="ereader-files">
-    <h2>15. Imported Book Files (E-Reader)</h2>
-    <p>Bookmarko's personal e-reader lets you open e-book files (EPUB) that you import from your own device. We designed this feature to be <strong>private by default</strong>:</p>
+    <h2>15. Imported Book Files, Google Drive &amp; Dropbox</h2>
+    <p>Bookmarko's personal reader lets you open ebook files (EPUB, PDF and CBZ comics) that you import from your own device, Google Drive or Dropbox. We designed this feature to be <strong>private by default</strong>:</p>
     <ul>
       <li><strong>Local storage only:</strong> Imported files are saved in Bookmarko's private storage area on your device. They are <strong>never uploaded</strong> to our servers, Supabase, or any cloud service we operate.</li>
       <li><strong>No access by us:</strong> We cannot read, scan, copy, analyze, or back up the contents of files you import. The text you read in the e-reader is not transmitted to Bookmarko.</li>
       <li><strong>Reading data:</strong> Lightweight data you create while reading, such as reading progress, highlights, and saved passages, may be synced to your account so your library stays consistent across devices. This is the same library data described in Section 2 and does not include the underlying file itself.</li>
       <li><strong>AI features:</strong> If you use the Ginnie assistant from within the reader (for example, to explain a passage), only the specific text you select or send is processed as described in Section 5. The full file is not sent.</li>
       <li><strong>Deletion:</strong> Removing the book, or deleting the app, deletes the imported file from your device. Because we never held a copy, there is nothing for us to delete on our side.</li>
+    </ul>
+
+    <h3>15.1 Importing from Google Drive</h3>
+    <ul>
+      <li><strong>You choose the file:</strong> Bookmarko opens Google's own file picker inside a Google sign in window. We request only the <code>drive.file</code> permission, which lets the app open <strong>only the files you pick</strong> there. We cannot see, list or search the rest of your Drive.</li>
+      <li><strong>Straight to your device:</strong> your device downloads the chosen file directly from Google and saves it in Bookmarko's private storage, as described above. The file never passes through our servers.</li>
+      <li><strong>No stored access:</strong> the access token Google issues is used once for that download and then discarded. It is never sent to or stored by Bookmarko, so the app keeps no ongoing access to your Drive.</li>
+      <li><strong>Limited Use:</strong> Bookmarko's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. We do not use Google Drive data for advertising, we do not sell it, we do not use it to train AI models, and no person at Bookmarko reads it.</li>
+      <li><strong>Revoking access:</strong> you can review or remove Bookmarko's access at any time from your <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google Account</a>.</li>
+      <li>On Android, Google Drive files may instead be chosen through your device's own file picker, which hands the app only the file you select.</li>
+    </ul>
+
+    <h3>15.2 Importing from Dropbox</h3>
+    <ul>
+      <li><strong>Read only:</strong> when you connect Dropbox, the app asks for permission to view the names and contents of your Dropbox files. It cannot change, move, share or delete anything in your Dropbox.</li>
+      <li><strong>Browsing on your device:</strong> the folder list and search results you see are fetched by your device directly from Dropbox and shown only to you. Folder and file names are not sent to or stored by Bookmarko.</li>
+      <li><strong>Straight to your device:</strong> books you pick are downloaded directly from Dropbox to Bookmarko's private storage on your device, never through our servers.</li>
+      <li><strong>Your connection stays on your phone:</strong> the Dropbox sign in token is kept in your device's secure storage (the iOS Keychain or Android Keystore) so you don't have to sign in each time. It is never sent to Bookmarko.</li>
+      <li><strong>Disconnecting:</strong> use <strong>Disconnect Dropbox</strong> in the Dropbox browser to revoke the token and delete it from your device. You can also remove Bookmarko under Connected apps in your Dropbox account settings. Deleting the app removes the token as well.</li>
+    </ul>
+
+    <h3>15.3 What reaches Bookmarko</h3>
+    <ul>
+      <li><strong>Your library entry:</strong> when a book is imported, its title and author (read from the file, or taken from the file name when the file has none) are added to your library like any other book you add, so it can be matched to our catalogue and appear in your shelves.</li>
+      <li><strong>Usage events:</strong> we record that an import happened, which source it came from (device, Google Drive or Dropbox), the file format and size, and whether it succeeded. We never record file names, folder names or file contents.</li>
     </ul>
   </section>
 
