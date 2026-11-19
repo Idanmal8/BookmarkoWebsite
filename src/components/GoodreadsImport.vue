@@ -8,7 +8,7 @@
         want to read, covers and ratings. The ebooks you own come along too, from
         Google Drive and Dropbox.
       </p>
-      <!-- The page as it was before src/config/launch.ts's date. -->
+      <!-- The page as it was, while src/config/launch.ts's switch is off. -->
       <p v-else class="section-head__sub">
         One file and your whole history lands on your shelf: read, reading, want to read,
         covers and ratings. Then everything Goodreads never gave you starts working.

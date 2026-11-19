@@ -22,7 +22,7 @@
         <Hero />
         <AppShowcase />
         <BookSectionHero />
-        <!-- The new landing page, from the moment in src/config/launch.ts. -->
+        <!-- The new landing page, once src/config/launch.ts's switch is on. -->
         <template v-if="nextHome">
           <ReadingPath />
           <QuestsBadges next />
@@ -130,7 +130,6 @@ const blogSlug = decodeURIComponent(
 
 const route = resolveRoute()
 
-/** Read once: a page left open across the moment changes on its next load. */
 const nextHome = newHomeShown(window.location.search)
 </script>
 

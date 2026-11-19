@@ -24,7 +24,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import type { Plugin } from 'vite'
 import { renderMarkdown } from '../src/utils/markdown'
-import { newHomeLive } from '../src/config/launch'
+import { NEW_HOME_LIVE } from '../src/config/launch'
 import { ORIGIN, OG_DEFAULT, twitterImageFor, urlFor, esc, clamp, type ApiPost } from './seo-shared'
 import { ampDocument, ampRouteFor } from './amp'
 import { shelves, amazonUrl } from '../src/data/picks'
@@ -314,7 +314,7 @@ function staticPages(posts: ApiPost[]): Page[] {
  * mounted app reads as cloaking.
  */
 const HOME_BODY = (
-  newHomeLive()
+  NEW_HOME_LIVE
     ? [
         '<h1>Welcome home, reader.</h1>',
         "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
@@ -329,7 +329,7 @@ const HOME_BODY = (
         '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
         ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
       ]
-    : // The page before src/config/launch.ts's date, as it was.
+    : // The page while src/config/launch.ts's switch is off, as it was.
       [
         '<h1>Welcome home, reader.</h1>',
         "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
