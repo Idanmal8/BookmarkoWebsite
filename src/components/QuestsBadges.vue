@@ -40,8 +40,10 @@
       </div>
     </div>
 
-    <!-- This month, as the app's Quests screen shows it -->
-    <div class="qb-quests" data-reveal>
+    <!-- This month, as the app's Quests screen shows it. Leaves with the new
+         landing page (src/config/launch.ts): delete it, TODAY, booSvg and its
+         styles once that page is live. -->
+    <div v-if="!next" class="qb-quests" data-reveal>
       <!-- Boo in her onboarding look (cape, book), posed from tasks/onboarding_v2. Inline so her eyes can blink. -->
       <div class="qb-boo" aria-hidden="true" v-html="booSvg" />
       <div class="qb-headline">
@@ -97,6 +99,9 @@ import badgeHundredDays from '@/assets/showcase/badge-hundred-days.webp'
 import badgeMarginalia from '@/assets/showcase/badge-marginalia.webp'
 import badgeCritic from '@/assets/showcase/badge-critic.webp'
 import booSvg from '@/assets/showcase/boo.svg?raw'
+
+/** The new landing page's form: without the "This month" card. */
+defineProps<{ next?: boolean }>()
 
 useReveal()
 

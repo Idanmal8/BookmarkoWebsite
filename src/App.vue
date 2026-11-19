@@ -22,9 +22,19 @@
         <Hero />
         <AppShowcase />
         <BookSectionHero />
-        <GoodreadsImport />
-        <GinieSection />
-        <QuestsBadges />
+        <!-- The new landing page, once src/config/launch.ts's switch is on. -->
+        <template v-if="nextHome">
+          <ReadingPath />
+          <QuestsBadges next />
+          <GoodreadsImport next />
+          <GinieSection />
+          <Reviews />
+        </template>
+        <template v-else>
+          <GoodreadsImport />
+          <GinieSection />
+          <QuestsBadges />
+        </template>
         <Quote />
         <Finale />
       </template>
@@ -39,6 +49,9 @@ import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import AppShowcase from './components/AppShowcase.vue'
 import QuestsBadges from './components/QuestsBadges.vue'
+import ReadingPath from './components/ReadingPath.vue'
+import Reviews from './components/Reviews.vue'
+import { newHomeShown } from './config/launch'
 import BookSectionHero from './components/BookSectionHero.vue'
 import GoodreadsImport from './components/GoodreadsImport.vue'
 import GinieSection from './components/GinieSection.vue'
@@ -116,6 +129,8 @@ const blogSlug = decodeURIComponent(
 )
 
 const route = resolveRoute()
+
+const nextHome = newHomeShown(window.location.search)
 </script>
 
 <style>
