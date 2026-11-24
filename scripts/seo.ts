@@ -24,7 +24,6 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import type { Plugin } from 'vite'
 import { renderMarkdown } from '../src/utils/markdown'
-import { NEW_HOME_LIVE } from '../src/config/launch'
 import { ORIGIN, OG_DEFAULT, twitterImageFor, urlFor, esc, clamp, type ApiPost } from './seo-shared'
 import { ampDocument, ampRouteFor } from './amp'
 import { shelves, amazonUrl } from '../src/data/picks'
@@ -313,33 +312,20 @@ function staticPages(posts: ApiPost[]): Page[] {
  * faithful to the components: prerendered markup that disagrees with the
  * mounted app reads as cloaking.
  */
-const HOME_BODY = (
-  NEW_HOME_LIVE
-    ? [
-        '<h1>Welcome home, reader.</h1>',
-        "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
-        '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
-        '<h2>Just one more page.</h2>',
-        '<p>Every day you read drops a coin on your path. Friends along the road hand out little quests, and a finished book pays out in gems.</p>',
-        '<h2>Your reading years come with you.</h2>',
-        '<p>One Goodreads file and your whole history lands on your shelf: read, reading, want to read, covers and ratings. The ebooks you own come along too, from Google Drive and Dropbox.</p>',
-        '<h2>A librarian who lives in the lamp on your shelf.</h2>',
-        '<h2>Readers said it first.</h2>',
-        '<p>Reviews readers left on Google Play.</p>',
-        '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
-        ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
-      ]
-    : // The page while src/config/launch.ts's switch is off, as it was.
-      [
-        '<h1>Welcome home, reader.</h1>',
-        "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
-        '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
-        '<h2>Pour your Goodreads library straight onto your Bookmarko shelf.</h2>',
-        '<h2>A librarian who lives in the lamp on your shelf.</h2>',
-        '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
-        ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
-      ]
-).join('')
+const HOME_BODY = [
+  '<h1>Welcome home, reader.</h1>',
+  "<p>Bookmarko is the warm, well-lit shelf for everything you're reading. The novel by your bed, the longform you saved on the train, the chapter you keep meaning to finish. One place.</p>",
+  '<h2>An endless shelf of every book you\u2019ve ever loved.</h2>',
+  '<h2>Just one more page.</h2>',
+  '<p>Every day you read drops a coin on your path. Friends along the road hand out little quests, and a finished book pays out in gems.</p>',
+  '<h2>Your reading years come with you.</h2>',
+  '<p>One Goodreads file and your whole history lands on your shelf: read, reading, want to read, covers and ratings. The ebooks you own come along too, from Google Drive and Dropbox.</p>',
+  '<h2>A librarian who lives in the lamp on your shelf.</h2>',
+  '<h2>Readers said it first.</h2>',
+  '<p>Reviews readers left on Google Play.</p>',
+  '<p><a href="https://apps.apple.com/us/app/bookmarko/id6762641879">Download Bookmarko on the App Store</a>',
+  ' · <a href="https://play.google.com/store/apps/details?id=com.idanmal.bookmarko">Get Bookmarko on Google Play</a></p>',
+].join('')
 
 /**
  * Wrap the crawlable markup in the element that index.html's inline <style>
