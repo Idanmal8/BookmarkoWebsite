@@ -40,6 +40,7 @@
             v-model="form.title"
             class="field"
             type="text"
+            minlength="3"
             maxlength="100"
             placeholder="A short title, e.g. “Dark mode for the reader”"
             required
@@ -47,6 +48,7 @@
           <textarea
             v-model="form.body"
             class="field area"
+            minlength="10"
             maxlength="1000"
             rows="4"
             placeholder="Tell us what you'd love and why it matters to you…"
@@ -154,6 +156,7 @@
             v-model="bugForm.title"
             class="field"
             type="text"
+            minlength="3"
             maxlength="100"
             placeholder="What broke? e.g. “Import stops at 50 books”"
             required
@@ -161,6 +164,7 @@
           <textarea
             v-model="bugForm.body"
             class="field area"
+            minlength="10"
             maxlength="2000"
             rows="5"
             placeholder="What did you do, what happened, and what did you expect? Your phone and app version help a lot."

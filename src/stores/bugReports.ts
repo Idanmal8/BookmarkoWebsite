@@ -2,6 +2,22 @@ import { defineStore } from 'pinia'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
 
+// Name the field the server actually rejected; only a bad email is about the email.
+async function invalidFieldMessage(res: Response): Promise<string> {
+  let messages: string[] = []
+  try {
+    const data = (await res.json()) as { message?: string | string[] }
+    messages = Array.isArray(data.message) ? data.message : [data.message ?? '']
+  } catch {
+    // Fall through to the generic hint.
+  }
+  const about = (field: string) => messages.some((m) => m.startsWith(field))
+  if (about('title')) return 'Give the title a few more characters.'
+  if (about('body')) return 'Add a little more detail, at least 10 characters.'
+  if (about('email')) return 'Please check the email address, or leave it empty.'
+  return 'Please check the form and try again.'
+}
+
 /** Write only: bug reports are private and never read back on the website. */
 export const useBugReportStore = defineStore('bugReports', {
   state: () => ({
@@ -26,7 +42,7 @@ export const useBugReportStore = defineStore('bugReports', {
           return false
         }
         if (res.status === 400) {
-          this.submitError = 'Please check the email address, or leave it empty.'
+          this.submitError = await invalidFieldMessage(res)
           return false
         }
         if (!res.ok) throw new Error(`Request failed (${res.status})`)
