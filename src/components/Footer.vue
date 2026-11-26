@@ -7,6 +7,7 @@
       </div>
       <nav class="footer__legal" aria-label="Legal">
         <a href="/roadmap/">Requests</a>
+        <a href="/roadmap/?tab=bug">Report a bug</a>
         <a href="/blog/">Blog</a>
         <a href="/privacy.html">Privacy</a>
         <a href="/terms.html">Terms</a>

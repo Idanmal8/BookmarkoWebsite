@@ -1,14 +1,36 @@
 <template>
   <section class="roadmap-page">
     <header class="page-head">
-      <p class="eyebrow">Roadmap</p>
-      <h1 class="title">What we're building</h1>
+      <p class="eyebrow">{{ tab === 'bug' ? 'Support' : 'Roadmap' }}</p>
+      <h1 class="title">{{ tab === 'bug' ? 'Something broken?' : "What we're building" }}</h1>
       <p class="lede">
-        Shape Bookmarko with us. Suggest a feature, upvote what you want most, and watch
-        it move from idea to shipped.
+        <template v-if="tab === 'bug'">
+          Tell us what went wrong and we'll fix it. Every report is read by a person on our team.
+        </template>
+        <template v-else>
+          Shape Bookmarko with us. Suggest a feature, upvote what you want most, and watch
+          it move from idea to shipped.
+        </template>
       </p>
     </header>
 
+    <div class="tabs" role="tablist" aria-label="Feedback type">
+      <span class="tabs-pill" :class="{ right: tab === 'bug' }" aria-hidden="true" />
+      <button
+        v-for="t in tabs"
+        :key="t.key"
+        class="tab"
+        :class="{ active: tab === t.key }"
+        role="tab"
+        :aria-selected="tab === t.key"
+        type="button"
+        @click="setTab(t.key)"
+      >
+        {{ t.label }}
+      </button>
+    </div>
+
+    <template v-if="tab === 'feature'">
     <!-- Submit form -->
     <div class="submit-card" :class="{ done: submitted }">
       <Transition name="swap" mode="out-in">
@@ -122,11 +144,71 @@
         </button>
       </div>
     </div>
+    </template>
+
+    <div v-else class="submit-card" :class="{ done: bugStore.submitted }">
+      <Transition name="swap" mode="out-in">
+        <form v-if="!bugStore.submitted" key="form" class="submit-form" @submit.prevent="onBugSubmit">
+          <h2 class="submit-title">Report a bug</h2>
+          <input
+            v-model="bugForm.title"
+            class="field"
+            type="text"
+            maxlength="100"
+            placeholder="What broke? e.g. “Import stops at 50 books”"
+            required
+          />
+          <textarea
+            v-model="bugForm.body"
+            class="field area"
+            maxlength="2000"
+            rows="5"
+            placeholder="What did you do, what happened, and what did you expect? Your phone and app version help a lot."
+            required
+          />
+          <input
+            v-model="bugForm.email"
+            class="field"
+            type="email"
+            maxlength="200"
+            placeholder="Your email (optional), so we can reply"
+          />
+          <!-- Honeypot: hidden from humans, catches bots. Never remove. -->
+          <input
+            v-model="bugForm.website"
+            class="honeypot"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
+          <div class="submit-row">
+            <span v-if="bugStore.submitError" class="submit-error">{{ bugStore.submitError }}</span>
+            <span v-else class="private-note">Private. Only our team sees it.</span>
+            <button class="btn" type="submit" :disabled="bugStore.submitting">
+              <span v-if="!bugStore.submitting">Send report →</span>
+              <span v-else class="spinner" />
+            </button>
+          </div>
+        </form>
+        <div v-else key="thanks" class="thanks">
+          <div class="thanks-check">
+            <svg viewBox="0 0 52 52"><path d="M14 27l8 8 16-18" /></svg>
+          </div>
+          <h2 class="submit-title">Thanks for telling us</h2>
+          <p class="thanks-note">
+            We read every report. If you left an email, we'll write back once it's fixed.
+          </p>
+          <button class="btn ghost" type="button" @click="resetBugForm">Send another</button>
+        </div>
+      </Transition>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useBugReportStore } from '../stores/bugReports'
 import {
   useFeatureRequestStore,
   type FeatureRequest,
@@ -134,6 +216,41 @@ import {
 } from '../stores/featureRequests'
 
 const store = useFeatureRequestStore()
+const bugStore = useBugReportStore()
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+// Kept in ?tab=bug so the app and emails can link straight to the bug form.
+type Tab = 'feature' | 'bug'
+const tabs = [
+  { key: 'feature' as const, label: 'Request a feature' },
+  { key: 'bug' as const, label: 'Report a bug' },
+]
+const tab = ref<Tab>(
+  new URLSearchParams(window.location.search).get('tab') === 'bug' ? 'bug' : 'feature',
+)
+function setTab(next: Tab) {
+  tab.value = next
+  const url = new URL(window.location.href)
+  if (next === 'bug') url.searchParams.set('tab', 'bug')
+  else url.searchParams.delete('tab')
+  window.history.replaceState(window.history.state, '', url)
+}
+
+const bugForm = reactive({ title: '', body: '', email: '', website: '' })
+async function onBugSubmit() {
+  await bugStore.submit(
+    bugForm.title.trim(),
+    bugForm.body.trim(),
+    bugForm.email.trim(),
+    bugForm.website,
+  )
+}
+function resetBugForm() {
+  bugForm.title = ''
+  bugForm.body = ''
+  bugForm.website = ''
+  bugStore.reset()
+}
 
 // The board is read-only here — moderation and column moves happen only in the
 // BookmarkoDesktop admin console. The website can display, submit, and upvote.
@@ -228,6 +345,50 @@ onMounted(() => store.fetchBoard())
   line-height: 1.6;
   margin: 0;
 }
+
+/* ── Tabs ───────────────────────────────────────────────── */
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(100%, 380px);
+  margin: 0 auto 2rem;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.tabs-pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  background: var(--white);
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.tabs-pill.right { transform: translateX(100%); }
+.tab {
+  position: relative;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink-mute);
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.tab.active { color: var(--ink); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .tabs-pill { transition: none; }
+}
+.private-note { color: var(--ink-mute); font-size: 0.82rem; margin-right: auto; }
 
 /* ── Submit card ────────────────────────────────────────── */
 .submit-card {
